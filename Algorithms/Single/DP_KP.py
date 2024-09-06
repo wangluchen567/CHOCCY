@@ -11,19 +11,20 @@ class DP_KP(ALGORITHM):
         if problem.num_obj > 1:
             raise ValueError("This method can only solve single objective problems")
         # 问题必须为二进制问题
-        if problem.problem_type != 1:
+        if all(problem.problem_type != 1):
             raise ValueError("This method can only solve binary problems")
         # 问题必须为背包问题
         if hasattr(problem, 'weights') and hasattr(problem, 'values') and hasattr(problem, 'capacity'):
-            self.weighs = problem.weights.astype(int)
-            self.values = problem.values.astype(int)
+            self.weighs = problem.weights.astype(int).flatten()
+            self.values = problem.values.astype(int).flatten()
             self.capacity = int(problem.capacity)
             # 问题中的数据必须是整数
             if not (problem.weights.dtype == np.int and
                     problem.values.dtype == np.int and
                     isinstance(problem.capacity, int)):
                 warnings.warn(
-                    "This method can only solve integer type knapsack problems, and the provided dataset will be forcibly converted to integer type")
+                    "This method can only solve integer type knapsack problems, "
+                    "and the provided dataset will be forcibly converted to integer type")
         else:
             raise ValueError("This method can only solve knapsack problems")
 

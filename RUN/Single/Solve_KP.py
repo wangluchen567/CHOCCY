@@ -45,8 +45,8 @@ def NNDREA_Solve_KP(problem, num_pop=100, num_iter=100):
 
 
 if __name__ == '__main__':
-    problem = KP(num_dec=10000)
+    problem = KP(num_dec=1000)
     # DP_Solve_KP(problem)
     Greedy_Solve_KP(problem)
-    # GA_Solve_KP(problem)
+    GA_Solve_KP(problem)
     NNDREA_Solve_KP(problem)

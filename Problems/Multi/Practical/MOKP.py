@@ -21,7 +21,7 @@ class MOKP(PROBLEM):
             # 得到项目的根目录
             project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir] * 2))
             # 保存到Datasets中
-            file_name = project_root + "\\Datasets\\Multi\\KP-" + str(self.num_dec) + ".txt"
+            file_name = project_root + "\\Datasets\\Multi\\MOKP-" + str(self.num_dec) + ".txt"
             if os.path.isfile(file_name):
                 data = np.loadtxt(file_name, delimiter=',')
                 self.weights = data[0, :]
@@ -40,6 +40,9 @@ class MOKP(PROBLEM):
                 data[0, :], data[1, :] = self.weights, self.values
                 data[2, 0] = self.capacity
                 np.savetxt(file_name, data, fmt="%d", delimiter=',')
+        else:
+            raise ValueError("All three parameters (weights, values, capacity) must be provided, "
+                             "not just a portion")
         # 储存实例数据集以便 NNDREA 使用
         self.instance = np.hstack((self.weights.reshape(-1, 1), self.values.reshape(-1, 1)))
 

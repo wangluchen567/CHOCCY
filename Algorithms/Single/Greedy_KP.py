@@ -22,7 +22,7 @@ class Greedy_KP(ALGORITHM):
 
     @ALGORITHM.record_time
     def run(self):
-        cost = self.values / self.weighs
+        cost = (self.values / self.weighs).flatten()
         cost_sort = np.argsort(-cost)
         Sum_Weight = 0
         chosen = []
