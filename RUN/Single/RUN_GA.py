@@ -48,7 +48,7 @@ def Solve_FixLabelCluster():
     alg.plot_scores()
 
 def Solve_MixFixLabelCluster():
-    problem = MixFixLabelCluster()
+    problem = MixFixLabelCluster(90)
     alg = GA(problem, num_pop=100, num_iter=200, show_mode=4)
     alg.run()
     print(alg.get_best()[1])

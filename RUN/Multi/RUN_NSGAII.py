@@ -9,10 +9,11 @@ from Problems.Multi.DTLZ.DTLZ3 import DTLZ3
 from Problems.Multi.DTLZ.DTLZ4 import DTLZ4
 from Problems.Multi.DTLZ.DTLZ5 import DTLZ5
 from Problems.Multi.DTLZ.DTLZ7 import DTLZ7
+from Problems.Multi.Practical.MOKP import MOKP
 from Algorithms.Multi.NSGAII import NSGAII
 
 if __name__ == '__main__':
-    problem = ZDT3()
+    problem = MOKP()
     alg = NSGAII(problem, num_pop=100, num_iter=100, show_mode=1)
     alg.run()
     print("Run time: ", alg.run_time)

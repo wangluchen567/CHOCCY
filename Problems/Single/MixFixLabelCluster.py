@@ -6,10 +6,9 @@ from mpl_toolkits.mplot3d import Axes3D
 
 class MixFixLabelCluster(PROBLEM):
     """混合固定标签聚类"""
-    def __init__(self, num_points=None, lower=1, upper=4, real_lower=0, real_upper=1):
+    def __init__(self, num_points=120, lower=1, upper=4, real_lower=0, real_upper=1):
         num_obj = 1
         self.num_points = num_points
-        if self.num_points is None: self.num_points = 120
         num_dec = self.num_points + (upper - lower) * 2
         # 决策变量由两部分组成，第一部分为固定标签类型，第二部分为实数类型
         problem_type = np.zeros(num_dec)

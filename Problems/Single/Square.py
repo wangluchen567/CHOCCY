@@ -3,10 +3,9 @@ from Problems.PROBLEM import PROBLEM
 
 
 class Square(PROBLEM):
-    def __init__(self, num_dec=None, lower=-10, upper=10):
+    def __init__(self, num_dec=30, lower=-10, upper=10):
         problem_type = 0
         num_obj = 1
-        if num_dec is None: num_dec = 30
         super().__init__(problem_type, num_dec, num_obj, lower, upper)
 
     def cal_objs(self, X):

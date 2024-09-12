@@ -5,10 +5,9 @@ from mpl_toolkits.mplot3d import Axes3D
 
 
 class FixLabelCluster(PROBLEM):
-    def __init__(self, num_dec=None, lower=1, upper=4):
+    def __init__(self, num_dec=120, lower=1, upper=4):
         problem_type = 3
         num_obj = 1
-        if num_dec is None: num_dec = 120
         self.example_dec = np.repeat(np.arange(lower, upper), int(num_dec / (upper - lower)))
         super().__init__(problem_type, num_dec, num_obj, lower, upper)
         # 随机生成数据

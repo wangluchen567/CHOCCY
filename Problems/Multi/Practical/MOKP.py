@@ -4,9 +4,8 @@ from Problems.PROBLEM import PROBLEM
 
 
 class MOKP(PROBLEM):
-    def __init__(self, num_dec, weights=None, values=None, capacity=None):
+    def __init__(self, num_dec=100, num_obj=2, weights=None, values=None, capacity=None):
         problem_type = 1
-        num_obj = 2
         lower = 0
         upper = 1
         super().__init__(problem_type, num_dec, num_obj, lower, upper)
@@ -19,42 +18,45 @@ class MOKP(PROBLEM):
         elif (weights is None) and (values is None) and (capacity is None):
             # 若给定参数均为空，则需要检查当前路径是否有数据集
             # 得到项目的根目录
-            project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir] * 2))
+            project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir] * 3))
             # 保存到Datasets中
-            file_name = project_root + "\\Datasets\\Multi\\MOKP-" + str(self.num_dec) + ".txt"
+            file_name = project_root + "\\Datasets\\Multi\\MOKP-" + str(self.num_dec) + "-M-" + str(self.num_obj) + ".txt"
             if os.path.isfile(file_name):
                 data = np.loadtxt(file_name, delimiter=',')
-                self.weights = data[0, :]
-                self.values = data[1, :]
-                self.capacity = data[2, 0]
+                self.weights = data[:, 0]
+                self.values = data[:, 1: self.num_obj + 1]
+                self.capacity = data[0, self.num_obj + 1]
             else:
                 # 若没有数据集则随机生成数据集并保存
-                self.weights = np.random.randint(10, 100, size=num_dec)
-                self.values = np.random.randint(10, 100, size=num_dec)
+                self.weights = np.random.randint(10, 100, size=self.num_dec)
+                self.values = np.random.randint(10, 100, size=(self.num_dec, self.num_obj))
                 self.capacity = int(np.sum(self.weights) / 2)
                 # self.weights = np.random.uniform(10, 100, size=num_dec)
                 # self.values = np.random.uniform(10, 100, size=num_dec)
                 # self.capacity = np.sum(self.weights) / 2
                 # 保存数据集
-                data = np.zeros(shape=(3, self.num_dec), dtype=int)
-                data[0, :], data[1, :] = self.weights, self.values
-                data[2, 0] = self.capacity
+                data = np.zeros(shape=(self.num_dec, self.num_obj + 2), dtype=int)
+                data[:, 0], data[:, 1: self.num_obj + 1] = self.weights, self.values
+                data[0, self.num_obj + 1] = self.capacity
                 np.savetxt(file_name, data, fmt="%d", delimiter=',')
         else:
             raise ValueError("All three parameters (weights, values, capacity) must be provided, "
                              "not just a portion")
+        # 若给定的数据集不是纵向排布的则进行转换
+        if self.weights.ndim == 1:
+            self.weights = self.weights.reshape(-1, 1)
         # 储存实例数据集以便 NNDREA 使用
-        self.instance = np.hstack((self.weights.reshape(-1, 1), self.values.reshape(-1, 1)))
+        self.instance = np.hstack((self.weights, self.values))
 
     def cal_objs(self, X):
-        V = self.values.reshape(-1, 1)
-        objs = np.sum(self.values) - X.dot(V)
+        objs = np.sum(self.values, axis=0) - X.dot(self.values)
         cons = self.cal_cons(X)
         feas = cons <= 0
         objs = feas * objs + (1 - feas) * (cons + 1e10)
+        # 还需要归一化
+        objs = objs / np.sum(self.values, axis=0)
         return objs
 
     def cal_cons(self, X):
-        W = self.weights.reshape(-1, 1)
-        cons = X.dot(W) - self.capacity
+        cons = X.dot(self.weights) - self.capacity
         return cons

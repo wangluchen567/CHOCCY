@@ -4,7 +4,7 @@ from Problems.PROBLEM import PROBLEM
 
 
 class KP(PROBLEM):
-    def __init__(self, num_dec, weights=None, values=None, capacity=None):
+    def __init__(self, num_dec=100, weights=None, values=None, capacity=None):
         problem_type = 1
         num_obj = 1
         lower = 0
@@ -29,8 +29,8 @@ class KP(PROBLEM):
                 self.capacity = data[0, 2]
             else:
                 # 若没有数据集则随机生成数据集并保存
-                self.weights = np.random.randint(10, 100, size=num_dec)
-                self.values = np.random.randint(10, 100, size=num_dec)
+                self.weights = np.random.randint(10, 100, size=self.num_dec)
+                self.values = np.random.randint(10, 100, size=self.num_dec)
                 self.capacity = int(np.sum(self.weights) / 2)
                 # self.weights = np.random.uniform(10, 100, size=num_dec)
                 # self.values = np.random.uniform(10, 100, size=num_dec)
