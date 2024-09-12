@@ -6,8 +6,10 @@ from Algorithms.Utility.Operators import operator_real, operator_binary, operato
 class MOEAD(ALGORITHM):
     def __init__(self, problem, num_pop, num_iter, func_type=1, cross_prob=None, mutate_prob=None, show_mode=None):
         """
-        MOEA/D: A multi-objective evolutionary algorithm based on decomposition
-        (Q. Zhang and H. Li)
+        This code is based on the research presented in
+        "MOEA/D: A multi-objective evolutionary algorithm based on decomposition"
+        by Q. Zhang and H. Li
+        *Code Author: Luchen Wang
         :param problem: 问题对象
         :param num_pop: 种群大小
         :param num_iter: 迭代次数
@@ -40,20 +42,20 @@ class MOEAD(ALGORITHM):
         for i in self.iterator:
             for j in range(self.num_pop):
                 # 随机选择两个个体作为父代个体
-                mating_pool = self.selection(j)
+                mating_pool = self.selection_single(j)
                 # 进行交叉变异得到一个新的子代
                 offspring = self.operator(mating_pool)[0]
                 # 进行环境选择更新种群
-                self.environmental_selection(offspring, j)
+                self.environmental_selection_single(offspring, j)
             # 绘制迭代过程中每步状态
             self.plot(pause=True, n_iter=i + 1)
             # 记录每步状态
             self.record()
 
-    def selection(self, j):
+    def selection_single(self, j):
         return np.random.choice(self.indexes[j], size=2, replace=False)
 
-    def environmental_selection(self, offspring, j):
+    def environmental_selection_single(self, offspring, j):
         """进行环境选择(分解式)"""
         # 计算该子代的目标值
         offspring_obj = self.cal_objs(offspring)

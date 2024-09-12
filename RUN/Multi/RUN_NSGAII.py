@@ -13,7 +13,7 @@ from Problems.Multi.Practical.MOKP import MOKP
 from Algorithms.Multi.NSGAII import NSGAII
 
 if __name__ == '__main__':
-    problem = MOKP()
+    problem = ZDT3()
     alg = NSGAII(problem, num_pop=100, num_iter=100, show_mode=1)
     alg.run()
     print("Run time: ", alg.run_time)

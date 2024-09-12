@@ -3,9 +3,10 @@ from tqdm import tqdm
 from Algorithms.ALGORITHM import ALGORITHM
 from Algorithms.Utility.Selections import tournament_selection
 from Algorithms.Utility.Operators import operator_real, operator_binary
+from Algorithms.Utility.Utils import fast_nd_sort, cal_crowd_dist, cal_fitness
 
 
-class NNDREAS(ALGORITHM):
+class NNDREA(ALGORITHM):
     def __init__(self, problem, num_pop, num_iter, structure=None, search_range=None, delta=0.5, cross_prob=None,
                  mutate_prob=None, show_mode=None):
         """
@@ -54,7 +55,7 @@ class NNDREAS(ALGORITHM):
             self.num_dec += self.structure[i + 1]
         # 由于问题转换为了实数问题，所以需要重新初始化算法相关参数
         if search_range is None:
-            search_range = np.array([-100, 100])
+            search_range = np.array([-1, 1])
         self.lower = search_range[0] + np.zeros(self.num_dec)
         self.upper = search_range[1] + np.zeros(self.num_dec)
         # 初始化交叉和变异概率
@@ -76,9 +77,6 @@ class NNDREAS(ALGORITHM):
 
     def init_pop_weights(self):
         pop_weights = np.random.uniform(self.upper, self.lower, size=(self.num_pop, self.num_dec))
-        # np.fill_diagonal(pop_weights[:self.num_dec], self.lower[0])
-        # np.fill_diagonal(pop_weights[self.num_dec: 2*self.num_dec], self.upper[0])
-        # np.random.shuffle(pop_weights)
         return pop_weights
 
     @ALGORITHM.record_time
@@ -95,9 +93,6 @@ class NNDREAS(ALGORITHM):
                 # 进行环境选择
                 self.environmental_selection_weights(offspring_weights)
             else:
-                # if self.delta < i <= self.delta + 1:
-                #     # 对种群去重并添加新个体
-                #     self.unique_pop()
                 # 获取交配池
                 mating_pool = self.mating_pool_selection()
                 # 交叉变异生成子代
@@ -109,15 +104,19 @@ class NNDREAS(ALGORITHM):
             # 绘制迭代过程中每步状态
             self.plot(pause=True, n_iter=i + 1)
 
-    def unique_pop(self):
-        """对种群去重并添加新个体防止陷入局部最优"""
-        uniques = np.unique(self.pop, axis=0)
-        new_pop = np.random.randint(2, size=(self.num_pop, self.problem.num_dec))
-        new_pop[:len(uniques)] = uniques
-        np.random.shuffle(new_pop)
-        self.pop = new_pop
-        self.objs = self.cal_objs(self.pop)
-        self.cons = self.cal_cons(self.pop)
+    def get_fitness(self, objs, cons):
+        """根据给定目标值和约束值得到适应度值"""
+        # 检查是否均满足约束，若均满足约束则无需考虑约束
+        if np.all(cons <= 0):
+            objs_based_cons = objs
+        else:
+            objs_based_cons = self.cal_objs_based_cons(objs, cons)
+        # 对于多目标问题则需要考虑所在前沿面及拥挤度情况
+        fronts, ranks = fast_nd_sort(objs_based_cons)
+        crowd_dist = cal_crowd_dist(objs, fronts)
+        fitness = cal_fitness(ranks, crowd_dist)
+
+        return fitness
 
     def operator_weights(self, mating_pool):
         # 进行交叉变异生成子代

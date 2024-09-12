@@ -8,8 +8,8 @@ class MOKP(PROBLEM):
         problem_type = 1
         lower = 0
         upper = 1
-        super().__init__(problem_type, num_dec, num_obj, lower, upper)
-
+        self.num_dec = num_dec
+        self.num_obj = num_obj
         if (weights is not None) and (values is not None) and (capacity is not None):
             # 若给定参数均非空，则根据指定参数
             self.weights = weights
@@ -47,16 +47,16 @@ class MOKP(PROBLEM):
             self.weights = self.weights.reshape(-1, 1)
         # 储存实例数据集以便 NNDREA 使用
         self.instance = np.hstack((self.weights, self.values))
+        # 调用父类初始化
+        super().__init__(problem_type, num_dec, num_obj, lower, upper)
 
     def cal_objs(self, X):
         objs = np.sum(self.values, axis=0) - X.dot(self.values)
-        cons = self.cal_cons(X)
-        feas = cons <= 0
-        objs = feas * objs + (1 - feas) * (cons + 1e10)
-        # 还需要归一化
-        objs = objs / np.sum(self.values, axis=0)
         return objs
 
     def cal_cons(self, X):
         cons = X.dot(self.weights) - self.capacity
         return cons
+
+    def get_optimum(self):
+        return np.sum(self.values, axis=0)

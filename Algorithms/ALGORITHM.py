@@ -2,6 +2,7 @@ import time
 import numpy as np
 from tqdm import tqdm
 from Metrics.Hypervolume import cal_hv
+from Algorithms.Utility.Selections import tournament_selection
 from Algorithms.Utility.Utils import fast_nd_sort, shuffle_matrix_in_row
 from Algorithms.Utility.Plots import plot_scores, plot_data, plot_objs, plot_decs_objs
 from Algorithms.Utility.Operators import operator_real, operator_binary, operator_permutation, operator_fix_label
@@ -10,7 +11,8 @@ from Algorithms.Utility.Operators import operator_real, operator_binary, operato
 class ALGORITHM(object):
     def __init__(self, problem, num_pop, num_iter, cross_prob=None, mutate_prob=None, show_mode=None):
         """
-        算法类
+        算法父类
+        *Code Author: LuChen Wang
         :param problem: 问题对象
         :param num_pop: 种群大小
         :param num_iter: 迭代次数
@@ -37,6 +39,7 @@ class ALGORITHM(object):
         self.pop = None
         self.objs = None
         self.cons = None
+        self.fitness = None
         # 初始化种群最优个体及其目标值
         self.best = None
         self.best_obj = None
@@ -60,6 +63,7 @@ class ALGORITHM(object):
             self.example_dec = problem.example_dec
 
     def set_problem_type(self, problem_type):
+        """设置问题类型"""
         self.problem_type = problem_type
         self.unique_type = np.unique(self.problem_type)
         # 确定每个问题类别对应的位置
@@ -68,20 +72,23 @@ class ALGORITHM(object):
             self.type_indices[t] = np.where(self.problem_type == t)[0]
 
     def init_algorithm(self):
+        """初始化算法"""
         # 初始化交叉和变异概率
         self.cross_prob = 1.0 if self.cross_prob is None else self.cross_prob
         self.mutate_prob = 1 / self.num_dec if self.mutate_prob is None else self.mutate_prob
-        # 初始化种群，计算目标值和约束值
+        # 初始化种群，计算目标值和约束值以及适应度值
         self.pop = self.init_pop()
         self.objs = self.cal_objs(self.pop)
         self.cons = self.cal_cons(self.pop)
+        self.fitness = self.get_fitness(self.objs, self.cons)
         # 记录最优个体
         self.record()
         # 构建迭代器
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
 
     def cal_objs(self, X):
-        """对参数进行浅拷贝，防止其被修改"""
+        """计算目标值"""
+        # 对参数进行浅拷贝，防止其被修改
         X_ = X.copy()
         # 保证二维形状方便并行操作
         if X_.ndim == 1:
@@ -93,7 +100,8 @@ class ALGORITHM(object):
             return objs
 
     def cal_cons(self, X):
-        """对参数进行浅拷贝，防止其被修改"""
+        """计算约束值"""
+        # 对参数进行浅拷贝，防止其被修改
         X_ = X.copy()
         # 保证二维形状方便并行操作
         if X_.ndim == 1:
@@ -103,6 +111,21 @@ class ALGORITHM(object):
             return cons.reshape(-1, 1)
         else:
             return cons
+
+    @staticmethod
+    def cal_objs_based_cons(objs, cons):
+        """计算约束松弛后的目标值"""
+        objs_based_cons = objs.copy()
+        # 找出所有不满足约束的个体
+        not_feas = np.any(cons > 0, axis=1)
+        # 计算当前种群中每个目标的最大值
+        max_objs = np.max(objs, axis=0)
+        # 计算不满足约束的个体的不满足约束的程度值
+        penalty = np.sum(np.maximum(cons[not_feas], 0), axis=1)
+        # 利用广播机制更新不满足约束的个体的目标函数值
+        objs_based_cons[not_feas] = max_objs + penalty.reshape(-1, 1)
+
+        return objs_based_cons
 
     @staticmethod
     def record_time(method):
@@ -162,7 +185,7 @@ class ALGORITHM(object):
         return pop
 
     def operator(self, mating_pool):
-        # 进行交叉变异生成子代
+        """进行交叉变异生成子代"""
         offspring = self.pop[mating_pool]
         for t in self.unique_type:
             offspring[:, self.type_indices[t]] = self.operator_(t)(offspring[:, self.type_indices[t]],
@@ -173,6 +196,7 @@ class ALGORITHM(object):
 
     @staticmethod
     def operator_(problem_type):
+        """根据问题类型返回对应函数"""
         if problem_type == 0:
             return operator_real
         elif problem_type == 1:
@@ -184,11 +208,37 @@ class ALGORITHM(object):
         else:
             raise ValueError("The problem type does not exist")
 
-    def selection(self, *args, **kwargs):
-        pass
+    def get_fitness(self, objs, cons):
+        """根据给定目标值和约束值得到适应度值(默认是单目标情况)"""
+        # 检查是否均满足约束，若均满足约束则无需考虑约束
+        if np.all(cons <= 0):
+            return objs.flatten()
+        else:
+            return self.cal_objs_based_cons(objs, cons).flatten()
 
-    def environmental_selection(self, *args, **kwargs):
-        pass
+    def mating_pool_selection(self, k=2):
+        """交配池选择"""
+        # 使用锦标赛选择获取交配池
+        return tournament_selection(self.objs, k)
+
+    def environmental_selection(self, offspring):
+        """进行环境选择"""
+        # 先计算子代目标值与
+        off_objs = self.cal_objs(offspring)
+        off_cons = self.cal_cons(offspring)
+        # 将父代与子代合并获得新种群
+        new_pop = np.vstack((self.pop, offspring))
+        new_objs = np.vstack((self.objs, off_objs))
+        new_cons = np.vstack((self.cons, off_cons))
+        # 重新计算合并种群的的等价适应度值
+        fitness = self.get_fitness(new_objs, new_cons)
+        # 根据适应度值对种群中的个体进行排序
+        index_sort = np.argsort(fitness)
+        # 取目标值最优的个体组成新的种群
+        self.pop = new_pop[index_sort][:self.num_pop]
+        self.objs = new_objs[index_sort][:self.num_pop]
+        self.cons = new_cons[index_sort][:self.num_pop]
+        self.fitness = fitness[index_sort][:self.num_pop]
 
     def run(self):
         """运行算法(主函数)"""
@@ -243,6 +293,7 @@ class ALGORITHM(object):
             self.best_con_his.append(best[2])
 
     def plot(self, show_mode=None, pause=False, n_iter=None):
+        """绘图函数，根据不同模式进行绘图"""
         if show_mode is not None:
             self.show_mode = show_mode
         if self.show_mode == 0:
@@ -259,9 +310,11 @@ class ALGORITHM(object):
             raise ValueError("There is no such plotting mode")
 
     def plot_pop(self, pause=False, n_iter=None, pause_time=0.1):
+        """绘制种群个体决策向量"""
         plot_data(self.pop, pause, n_iter, pause_time)
 
     def plot_objs(self, pause=False, n_iter=None, pause_time=0.1):
+        """绘制种群目标值"""
         if self.num_obj == 1:
             # 若是单目标问题，绘制目标值无意义，这里绘制最优目标值记录
             plot_objs(self.best_obj_his, pause, n_iter, pause_time)
@@ -269,6 +322,7 @@ class ALGORITHM(object):
             plot_objs(self.objs, pause, n_iter, pause_time, self.problem.pareto_front)
 
     def plot_decs_objs(self, pause=False, n_iter=None, pause_time=0.1, contour=True):
+        """在特定条件下可同时绘制决策向量与目标值"""
         plot_decs_objs(self.problem, self.pop, self.objs, pause, n_iter, pause_time, contour=contour)
 
     def get_scores(self):
@@ -285,6 +339,7 @@ class ALGORITHM(object):
         return self.scores
 
     def plot_scores(self, score_type=None):
+        """绘制指标的变化情况"""
         if score_type is None:
             if self.num_obj == 1:
                 score_type = "Fitness"

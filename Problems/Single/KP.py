@@ -53,9 +53,6 @@ class KP(PROBLEM):
 
     def cal_objs(self, X):
         objs = np.sum(self.values) - X.dot(self.values)
-        cons = self.cal_cons(X)
-        feas = cons <= 0
-        objs = feas * objs + (1 - feas) * (cons + 1e10)
         return objs
 
     def cal_cons(self, X):

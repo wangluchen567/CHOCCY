@@ -57,9 +57,9 @@ def Solve_MixFixLabelCluster():
 
 
 if __name__ == '__main__':
-    # Solve_Ackley()
+    Solve_Ackley()
     # Solve_Square()
     # Solve_KP()
     # Solve_TSP()
     # Solve_FixLabelCluster()
-    Solve_MixFixLabelCluster()
+    # Solve_MixFixLabelCluster()

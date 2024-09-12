@@ -25,7 +25,7 @@ class GA(ALGORITHM):
         self.plot(pause=True, n_iter=0)
         for i in self.iterator:
             # 获取交配池
-            mating_pool = self.selection()
+            mating_pool = self.mating_pool_selection()
             # 交叉变异生成子代
             offspring = self.operator(mating_pool)
             # 进行环境选择
@@ -34,23 +34,3 @@ class GA(ALGORITHM):
             self.record()
             # 绘制迭代过程中每步状态
             self.plot(pause=True, n_iter=i + 1)
-
-    def selection(self, k=2):
-        # 使用锦标赛选择获取交配池
-        return tournament_selection(self.objs, k)
-
-    def environmental_selection(self, offspring):
-        # 进行环境选择
-        # 先计算子代目标值与
-        off_objs = self.cal_objs(offspring)
-        off_cons = self.cal_cons(offspring)
-        # 将父代与子代合并获得新种群
-        new_pop = np.vstack((self.pop, offspring))
-        new_objs = np.vstack((self.objs, off_objs))
-        new_cons = np.vstack((self.cons, off_cons))
-        # 根据目标值对种群中的个体进行排序
-        index_sort = np.argsort(new_objs.flatten())
-        # 取目标值最优的个体组成新的种群
-        self.pop = new_pop[index_sort][:self.num_pop]
-        self.objs = new_objs[index_sort][:self.num_pop]
-        self.cons = new_cons[index_sort][:self.num_pop]

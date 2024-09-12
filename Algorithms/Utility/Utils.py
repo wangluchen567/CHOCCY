@@ -113,7 +113,7 @@ def get_uniform_vectors(N, M):
     while len(list(itertools.combinations(range(H1 + M), M - 1))) <= N:
         H1 = H1 + 1
     W = np.array(list(itertools.combinations(range(H1 + M - 1), M - 1)))
-    W = W - np.repeat([range(M - 1)], len(W), axis=0)
+    W = W - np.repeat(np.array([range(M - 1)]), len(W), axis=0)
     W = (np.hstack((W, np.zeros((len(W), 1)) + H1)) - np.hstack((np.zeros((len(W), 1)), W))) / H1
     return W
 
@@ -135,5 +135,5 @@ def shuffle(x):
     """
     for i in reversed(np.arange(1, len(x))):
         # pick an element in x[:i+1] with which to exchange x[i]
-        j = int(random.random() * (i + 1))
+        j = int(np.random.random() * (i + 1))
         x[i], x[j] = x[j], x[i]
