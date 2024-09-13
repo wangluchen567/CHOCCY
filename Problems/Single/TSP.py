@@ -65,7 +65,6 @@ class TSP(PROBLEM):
         nx.draw(graph, pos, node_size=node_size)
         if pause:
             plt.pause(pause_time)
-            plt.savefig('D:/Plots/TSP1/' + str(n_iter) + '.png', format='png', dpi=100)
         else:
             plt.show()
 
