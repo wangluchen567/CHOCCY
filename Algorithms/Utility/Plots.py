@@ -44,8 +44,11 @@ def plot_data(X, pause=False, n_iter=None, pause_time=0.1):
         ax.set_ylabel('y')
         ax.set_zlabel('z')
     else:
+        plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
         for i in range(len(X)):
             plt.plot(np.arange(1, X_dim + 1), X[i, :])
+        plt.xlabel('dim')
+        plt.ylabel('x')
     plt.grid()
     if pause:
         if n_iter is not None:
