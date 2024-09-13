@@ -43,9 +43,11 @@ Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimizatio
 
 ## 效果展示
 
-- GA Solve Ackley (num_obj = 1) and GA Solve Ackley (num_obj = 2)  :<br>
+- GA Solve Ackley (num_obj = 1) and GA Solve Ackley (num_obj = 2): <br>
 <img src="Results/Ackley1.gif" width="288" height="220"/> <img src="Results/Ackley2.gif" width="288" height="220"/><br/>
 
+- GA Solve Ackley (num_obj = 2)(3D) and GA Solve Ackley (num_obj = 30): <br>
+<img src="Results/Ackley3.gif" width="288" height="230"/> <img src="Results/Ackley2.gif" width="288" height="230"/><br/>
 ## 参与贡献
 
 Luchen Wang
