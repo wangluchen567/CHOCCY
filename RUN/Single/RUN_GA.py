@@ -9,11 +9,11 @@ from Problems.Single.MixFixLabelCluster import MixFixLabelCluster
 
 def Solve_Ackley():
     problem = Ackley(num_dec=2)
-    alg = GA(problem, num_pop=100, num_iter=50, show_mode=3)
+    alg = GA(problem, num_pop=100, num_iter=100, show_mode=3)
     alg.run()
     print(alg.get_best()[1])
     # alg.plot()
-    # alg.plot_scores()
+    alg.plot_scores()
 
 
 def Solve_Square():
@@ -35,7 +35,7 @@ def Solve_KP():
 
 
 def Solve_TSP():
-    problem = TSP(20)
+    problem = TSP(30)
     alg = GA(problem, num_pop=100, num_iter=100, show_mode=4)
     alg.run()
     print(alg.get_best()[1])
@@ -54,7 +54,7 @@ def Solve_FixLabelCluster():
 
 def Solve_MixFixLabelCluster():
     problem = MixFixLabelCluster(90)
-    alg = GA(problem, num_pop=100, num_iter=200, show_mode=4)
+    alg = GA(problem, num_pop=100, num_iter=100, show_mode=4)
     alg.run()
     print(alg.get_best()[1])
     # alg.plot()

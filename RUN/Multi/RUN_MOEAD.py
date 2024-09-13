@@ -12,8 +12,8 @@ from Problems.Multi.DTLZ.DTLZ7 import DTLZ7
 from Algorithms.Multi.MOEAD import MOEAD
 
 if __name__ == '__main__':
-    problem = DTLZ1()
-    alg = MOEAD(problem, num_pop=100, num_iter=300, func_type=1, show_mode=1)
+    problem = DTLZ2()
+    alg = MOEAD(problem, num_pop=100, num_iter=100, func_type=1, show_mode=1)
     alg.run()
     print("Run time: ", alg.run_time)
     alg.plot(show_mode=1)
