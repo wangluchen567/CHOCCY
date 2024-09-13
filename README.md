@@ -76,7 +76,7 @@ Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimizatio
 - Comparison of HV performance between NSGA-II and NNDREA for MOKP-100000: <br>
 <img src="Results/MOKP100k_NSGAII.png" width="288" height="230"/> <img src="Results/MOKP100k_NNDREA.png" width="288" height="230"/><br/>
 
-(PS: 可以看到即使问题扩大十倍，NNDREA的效果依然不变)
+(PS: 可以看到即使问题扩大十倍，NNDREA的效果依然不变，仍然是收敛快且效果好)
 ## 参与贡献
 
 Luchen Wang
