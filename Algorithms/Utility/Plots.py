@@ -20,17 +20,29 @@ def plot_data(X, pause=False, n_iter=None, pause_time=0.1):
     plt.clf()
     X_dim = X.shape[1]
     if X_dim == 1:
+        plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
         X_stack = np.hstack((X, X))
         for i in range(len(X)):
             plt.plot(np.arange(0, 2), X_stack[i, :])
         plt.xlim((0, 1))
+        plt.xlabel('dim')
+        plt.ylabel('x')
     elif X_dim == 2:
+        plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
         plt.scatter(X[:, 0], X[:, 1], marker="o", c="blue")
+        plt.xlabel('x')
+        plt.ylabel('y')
     elif X_dim == 3:
         ax = plt.subplot(111, projection='3d')
+        ax.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+        ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        ax.ticklabel_format(style='sci', axis='z', scilimits=(0, 0))
         ax.scatter(X[:, 0], X[:, 1], X[:, 2], marker="o", c="blue")
         # 设置三维图像角度(仰角方位角)
         # ax.view_init(elev=30, azim=30)
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+        ax.set_zlabel('z')
     else:
         for i in range(len(X)):
             plt.plot(np.arange(1, X_dim + 1), X[i, :])
@@ -53,18 +65,23 @@ def plot_objs(objs, pause=False, n_iter=None, pause_time=0.1, pareto_front=None)
     if not pause: plt.figure()
     plt.clf()
     if obj_dim == 1:
+        plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
         plt.plot(np.arange(len(objs)), objs, marker=".", c="blue")
-        plt.xlabel('N_iter')
-        plt.ylabel('Fitness')
+        plt.xlabel('n_iter')
+        plt.ylabel('fitness')
     elif obj_dim == 2:
+        plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
         plt.scatter(objs[:, 0], objs[:, 1], marker="o", c="blue")
         # 绘制最优前沿面
         if pareto_front is not None:
             plt.plot(pareto_front[:, 0], pareto_front[:, 1], marker="", c="red")
-        plt.xlabel('F1')
-        plt.ylabel('F2')
+        plt.xlabel('obj1')
+        plt.ylabel('obj2')
     elif obj_dim == 3:
         ax = plt.subplot(111, projection='3d')
+        ax.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+        ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        ax.ticklabel_format(style='sci', axis='z', scilimits=(0, 0))
         ax.scatter(objs[:, 0], objs[:, 1], objs[:, 2], marker="o", c="blue")
         # 绘制最优前沿面
         if pareto_front is not None:
@@ -80,9 +97,9 @@ def plot_objs(objs, pause=False, n_iter=None, pause_time=0.1, pareto_front=None)
             ax.plot_wireframe(xi, yi, zi, color='red', linewidth=0.3)
         # 设置三维图像角度(仰角方位角)
         ax.view_init(elev=30, azim=30)
-        ax.set_xlabel('F1')
-        ax.set_ylabel('F2')
-        ax.set_zlabel('F3')
+        ax.set_xlabel('obj1')
+        ax.set_ylabel('obj2')
+        ax.set_zlabel('obj3')
     else:
         x = np.arange(1, obj_dim + 1)
         for i in range(len(objs)):
