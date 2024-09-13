@@ -107,6 +107,8 @@ def plot_objs(objs, pause=False, n_iter=None, pause_time=0.1, pareto_front=None)
         x = np.arange(1, obj_dim + 1)
         for i in range(len(objs)):
             plt.plot(x, objs[i, :])
+        plt.xlabel('dim')
+        plt.ylabel('obj')
     plt.grid()
     if pause:
         if n_iter is not None:
