@@ -36,7 +36,7 @@ def plot_data(X, pause=False, n_iter=None, pause_time=0.1):
             plt.plot(np.arange(1, X_dim + 1), X[i, :])
     plt.grid()
     if pause:
-        if n_iter:
+        if n_iter is not None:
             plt.title("iter: " + str(n_iter))
         plt.pause(pause_time)
     else:
@@ -89,7 +89,7 @@ def plot_objs(objs, pause=False, n_iter=None, pause_time=0.1, pareto_front=None)
             plt.plot(x, objs[i, :])
     plt.grid()
     if pause:
-        if n_iter:
+        if n_iter is not None:
             plt.title("iter: " + str(n_iter))
         plt.pause(pause_time)
     else:
@@ -157,7 +157,7 @@ def plot_decs_objs(problem, decs, objs, pause=False, n_iter=None, pause_time=0.1
         raise ValueError("The decision vector dimension must be less than 3 dimensions")
     plt.grid()
     if pause:
-        if n_iter:
+        if n_iter is not None:
             plt.title("iter: " + str(n_iter))
         plt.pause(pause_time)
     else:
