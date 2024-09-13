@@ -96,7 +96,7 @@ def plot_objs(objs, pause=False, n_iter=None, pause_time=0.1, pareto_front=None)
         plt.show()
 
 
-def plot_decs_objs(problem, decs, objs, pause=False, n_iter=None, pause_time=0.1, contour=True):
+def plot_decs_objs(problem, decs, objs, pause=False, n_iter=None, pause_time=0.1, contour=True, sym=True):
     """绘制混合图像方便展示"""
     decs_dim = decs.shape[1]
     if objs.ndim == 1:
@@ -109,27 +109,42 @@ def plot_decs_objs(problem, decs, objs, pause=False, n_iter=None, pause_time=0.1
     if decs_dim == 1:
         plt.scatter(decs, objs, marker="o", c="red")
         # 对问题进行采样绘制问题图像
-        x = np.linspace(np.min(decs), np.max(decs), 1000).reshape(-1, 1)
+        if sym is True:  # 对称图像绘制
+            x_min, x_max = -np.max(np.abs(decs)), np.max(np.abs(decs))
+        else:
+            x_min, x_max = np.min(decs), np.max(decs)
+        x = np.linspace(x_min, x_max, 1000).reshape(-1, 1)
         y = problem.cal_objs(x)
         plt.plot(x, y)
+        plt.xlabel('x')
+        plt.ylabel('obj')
     elif decs_dim == 2:
         # 对问题进行采样绘制问题图像
         # x = np.linspace(problem.lower[0], problem.upper[0], 1000).reshape(-1, 1)
         # y = np.linspace(problem.lower[1], problem.upper[1], 1000).reshape(-1, 1)
-        x = np.linspace(np.min(decs[:, 0]), np.max(decs[:, 0]), 1000).reshape(-1, 1)
-        y = np.linspace(np.min(decs[:, 1]), np.max(decs[:, 1]), 1000).reshape(-1, 1)
+        if sym is True:  # 对称图像绘制
+            x_min, x_max = -np.max(np.abs(decs)), np.max(np.abs(decs))
+            y_min, y_max = -np.max(np.abs(decs)), np.max(np.abs(decs))
+        else:
+            x_min, x_max = np.min(decs[:, 0]), np.max(decs[:, 0])
+            y_min, y_max = np.min(decs[:, 1]), np.max(decs[:, 1])
+        x = np.linspace(x_min, x_max, 1000).reshape(-1, 1)
+        y = np.linspace(y_min, y_max, 1000).reshape(-1, 1)
         X, Y = np.meshgrid(x, y)
         Z = problem.cal_objs(np.concatenate((np.expand_dims(X, -1), np.expand_dims(Y, -1)), -1))
         if contour:
             plt.contour(X, Y, Z, levels=np.linspace(np.min(Z), np.max(Z), 20))
             # plt.clabel(contour, inline=True, fontsize=8)  # 添加等高线标签
             plt.scatter(decs[:, 0], decs[:, 1], marker="o", c="red")
-            # plt.xlim(get_scale(decs[:, 0]))
-            # plt.ylim(get_scale(decs[:, 1]))
+            plt.xlabel('x')
+            plt.ylabel('y')
         else:
             ax = plt.subplot(111, projection='3d')
-            ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.8, zorder=1)
-            ax.scatter(decs[:, 0], decs[:, 1], objs, marker="o", c="red")
+            ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.5, zorder=1)
+            ax.scatter(decs[:, 0], decs[:, 1], objs.flatten(), marker="o", s=50, c="red", zorder=2)
+            ax.set_xlabel('x')
+            ax.set_ylabel('y')
+            ax.set_zlabel('obj')
     else:
         raise ValueError("The decision vector dimension must be less than 3 dimensions")
     plt.grid()

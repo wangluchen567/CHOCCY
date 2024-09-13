@@ -321,7 +321,7 @@ class ALGORITHM(object):
         else:
             plot_objs(self.objs, pause, n_iter, pause_time, self.problem.pareto_front)
 
-    def plot_decs_objs(self, pause=False, n_iter=None, pause_time=0.1, contour=True):
+    def plot_decs_objs(self, pause=False, n_iter=None, pause_time=0.1, contour=False):
         """在特定条件下可同时绘制决策向量与目标值"""
         plot_decs_objs(self.problem, self.pop, self.objs, pause, n_iter, pause_time, contour=contour)
 
