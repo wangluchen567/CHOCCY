@@ -64,6 +64,19 @@ Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimizatio
 - MOEA/D Solve DTLZ1 (num_dec = 7) and Solve DTLZ2 (num_obj = 12) : <br>
 <img src="Results/DTLZ1_MOEAD.gif" width="288" height="230"/> <img src="Results/DTLZ2_MOEAD.gif" width="288" height="230"/><br/>
 
+- Comparison of the performance of NSGA-II and NNDREA for MOKP-10000: <br>
+<img src="Results/MOKP10k_NSGAII.gif" width="288" height="230"/> <img src="Results/MOKP10k_NNDREA.gif" width="288" height="230"/><br/>
+
+- Comparison of HV performance between NSGA-II and NNDREA for MOKP-10000: <br>
+<img src="Results/MOKP10k_NSGAII.png" width="288" height="230"/> <img src="Results/MOKP10k_NNDREA.png" width="288" height="230"/><br/>
+
+- Comparison of the performance of NSGA-II and NNDREA for MOKP-100000: <br>
+<img src="Results/MOKP100k_NSGAII.gif" width="288" height="230"/> <img src="Results/MOKP100k_NNDREA.gif" width="288" height="230"/><br/>
+
+- Comparison of HV performance between NSGA-II and NNDREA for MOKP-100000: <br>
+<img src="Results/MOKP100k_NSGAII.png" width="288" height="230"/> <img src="Results/MOKP100k_NNDREA.png" width="288" height="230"/><br/>
+
+(PS: 可以看到即使问题扩大十倍，NNDREA的效果依然不变)
 ## 参与贡献
 
 Luchen Wang
