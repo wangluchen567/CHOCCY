@@ -53,7 +53,7 @@ class MixFixLabelCluster(PROBLEM):
         plt.scatter(self.points[:, 0], self.points[:, 1], c=best_types, cmap='rainbow')
         plt.scatter(best_centroids[:, 0], best_centroids[:, 1], c='black', marker='x')
         plt.grid()
-        if pause:
+        if pause is not None:
             if n_iter:
                 plt.title("iter: " + str(n_iter))
             plt.pause(pause_time)

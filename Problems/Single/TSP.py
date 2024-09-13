@@ -63,7 +63,7 @@ class TSP(PROBLEM):
         if pause and n_iter:
             plt.title("iter: " + str(n_iter))
         nx.draw(graph, pos, node_size=node_size)
-        if pause:
+        if pause is not None:
             plt.pause(pause_time)
         else:
             plt.show()
