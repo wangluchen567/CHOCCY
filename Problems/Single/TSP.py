@@ -60,11 +60,12 @@ class TSP(PROBLEM):
         else:
             node_size = 100
         # 画图
-        if pause and n_iter:
+        if pause and n_iter is not None:
             plt.title("iter: " + str(n_iter))
         nx.draw(graph, pos, node_size=node_size)
-        if pause is not None:
+        if pause:
             plt.pause(pause_time)
+            plt.savefig('D:/Plots/TSP1/' + str(n_iter) + '.png', format='png', dpi=100)
         else:
             plt.show()
 

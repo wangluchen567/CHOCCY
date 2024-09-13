@@ -33,8 +33,8 @@ class FixLabelCluster(PROBLEM):
         plt.clf()
         plt.scatter(self.points[:, 0], self.points[:, 1], c=best, cmap='rainbow')
         plt.grid()
-        if pause is not None:
-            if n_iter:
+        if pause:
+            if n_iter is not None:
                 plt.title("iter: " + str(n_iter))
             plt.pause(pause_time)
         else:
