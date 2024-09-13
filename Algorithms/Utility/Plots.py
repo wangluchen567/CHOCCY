@@ -20,7 +20,7 @@ def plot_data(X, pause=False, n_iter=None, pause_time=0.1):
     plt.clf()
     X_dim = X.shape[1]
     if X_dim == 1:
-        plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
+        plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
         X_stack = np.hstack((X, X))
         for i in range(len(X)):
             plt.plot(np.arange(0, 2), X_stack[i, :])
@@ -44,7 +44,7 @@ def plot_data(X, pause=False, n_iter=None, pause_time=0.1):
         ax.set_ylabel('y')
         ax.set_zlabel('z')
     else:
-        plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
+        plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
         for i in range(len(X)):
             plt.plot(np.arange(1, X_dim + 1), X[i, :])
         plt.xlabel('dim')
