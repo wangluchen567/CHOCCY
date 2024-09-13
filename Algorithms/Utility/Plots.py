@@ -104,6 +104,7 @@ def plot_objs(objs, pause=False, n_iter=None, pause_time=0.1, pareto_front=None)
         ax.set_ylabel('obj2')
         ax.set_zlabel('obj3')
     else:
+        plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
         x = np.arange(1, obj_dim + 1)
         for i in range(len(objs)):
             plt.plot(x, objs[i, :])
