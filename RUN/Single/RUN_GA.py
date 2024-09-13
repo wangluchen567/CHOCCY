@@ -13,7 +13,7 @@ def Solve_Ackley():
     alg.run()
     print(alg.get_best()[1])
     # alg.plot()
-    alg.plot_scores()
+    # alg.plot_scores()
 
 
 def Solve_Square():

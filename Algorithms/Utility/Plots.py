@@ -115,6 +115,8 @@ def plot_decs_objs(problem, decs, objs, pause=False, n_iter=None, pause_time=0.1
             x_min, x_max = np.min(decs), np.max(decs)
         x = np.linspace(x_min, x_max, 1000).reshape(-1, 1)
         y = problem.cal_objs(x)
+        # 设置x轴和y轴使用科学计数法
+        plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
         plt.plot(x, y)
         plt.xlabel('x')
         plt.ylabel('obj')
@@ -133,6 +135,8 @@ def plot_decs_objs(problem, decs, objs, pause=False, n_iter=None, pause_time=0.1
         X, Y = np.meshgrid(x, y)
         Z = problem.cal_objs(np.concatenate((np.expand_dims(X, -1), np.expand_dims(Y, -1)), -1))
         if contour:
+            # 设置x轴和y轴使用科学计数法
+            plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
             plt.contour(X, Y, Z, levels=np.linspace(np.min(Z), np.max(Z), 20))
             # plt.clabel(contour, inline=True, fontsize=8)  # 添加等高线标签
             plt.scatter(decs[:, 0], decs[:, 1], marker="o", c="red")
@@ -140,6 +144,10 @@ def plot_decs_objs(problem, decs, objs, pause=False, n_iter=None, pause_time=0.1
             plt.ylabel('y')
         else:
             ax = plt.subplot(111, projection='3d')
+            # 设置x轴、y轴和z轴使用科学计数法
+            ax.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+            ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+            ax.ticklabel_format(style='sci', axis='z', scilimits=(0, 0))
             ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.5, zorder=1)
             ax.scatter(decs[:, 0], decs[:, 1], objs.flatten(), marker="o", s=50, c="red", zorder=2)
             ax.set_xlabel('x')
