@@ -151,19 +151,19 @@ class NNDREAS(ALGORITHM):
 
     def model_forward(self, weights):
         """神经网络映射函数"""
-        Num = len(weights)
+        num_weights = len(weights)
         ins_size = len(self.instance)
-        output = np.array([self.instance]).repeat(Num, 0)
+        output = np.array([self.instance]).repeat(num_weights, 0)
         pointer = 0
         for i in range(len(self.slist)):
             if len(self.slist[i]) > 1:
                 weight = weights[:, pointer: pointer + self.slist[i][0] * self.slist[i][1]]
                 pointer = pointer + self.slist[i][0] * self.slist[i][1]
-                output = np.matmul(output, weight.reshape(Num, self.slist[i][0], self.slist[i][1]))
+                output = np.matmul(output, weight.reshape(num_weights, self.slist[i][0], self.slist[i][1]))
             else:
                 bias = weights[:, pointer: pointer + self.slist[i][0]]
                 pointer = pointer + self.slist[i][0]
-                output = output + bias.reshape(Num, 1, -1).repeat(ins_size, 1)
+                output = output + bias.reshape(num_weights, 1, -1).repeat(ins_size, 1)
                 if i == len(self.slist) - 1:
                     output = self.step(output)
                 else:

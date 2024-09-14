@@ -1,7 +1,7 @@
 import numpy as np
 from Algorithms.ALGORITHM import ALGORITHM
 from Algorithms.Utility.Utils import get_uniform_vectors
-from Algorithms.Utility.Operators import operator_real, operator_binary, operator_permutation, operator_fix_label
+
 
 class MOEAD(ALGORITHM):
     def __init__(self, problem, num_pop, num_iter, func_type=1, cross_prob=None, mutate_prob=None, show_mode=None):
