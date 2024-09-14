@@ -1,8 +1,8 @@
 # CHOCCY
 
 ## 介绍
-基于NumPy构建的优化器框架<br>
-CHen's Optimizer Constructed with Core numpY
+基于NumPy构建的启发式优化器框架<br>
+Chen's Heuristic Optimizer Constructed with Core numpY
 
 PS: 框架中包含本人研究工作：<br>
 Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimization with Millions of Variables (NNDREA), IEEE Transactions on Evolutionary Computation <br>
