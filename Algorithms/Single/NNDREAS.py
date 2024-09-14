@@ -1,7 +1,6 @@
 import numpy as np
 from tqdm import tqdm
 from Algorithms.ALGORITHM import ALGORITHM
-from Algorithms.Utility.Selections import tournament_selection
 from Algorithms.Utility.Operators import operator_real, operator_binary
 
 
