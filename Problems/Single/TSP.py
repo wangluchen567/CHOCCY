@@ -11,7 +11,7 @@ class TSP(PROBLEM):
         problem_type = 2
         num_obj = 1
         lower = 0
-        upper = 30
+        upper = num_dec
         super().__init__(problem_type, num_dec, num_obj, lower, upper)
 
         if data is None:

@@ -223,7 +223,7 @@ class ALGORITHM(object):
 
     def environmental_selection(self, offspring):
         """进行环境选择"""
-        # 先计算子代目标值与
+        # 先计算子代目标值与约束值
         off_objs = self.cal_objs(offspring)
         off_cons = self.cal_cons(offspring)
         # 将父代与子代合并获得新种群

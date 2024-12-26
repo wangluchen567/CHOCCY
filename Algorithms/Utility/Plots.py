@@ -160,8 +160,8 @@ def plot_decs_objs(problem, decs, objs, pause=False, n_iter=None, pause_time=0.1
         if contour:
             # 设置x轴和y轴使用科学计数法
             plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
-            plt.contour(X, Y, Z, levels=np.linspace(np.min(Z), np.max(Z), 20))
-            # plt.clabel(contour, inline=True, fontsize=8)  # 添加等高线标签
+            contour_ = plt.contour(X, Y, Z, levels=np.linspace(np.min(Z), np.max(Z), 20))
+            plt.clabel(contour_, inline=True, fontsize=8)  # 添加等高线标签
             plt.scatter(decs[:, 0], decs[:, 1], marker="o", c="red")
             plt.xlabel('x')
             plt.ylabel('y')

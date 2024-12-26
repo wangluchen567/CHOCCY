@@ -1,13 +1,11 @@
-import numpy as np
 from Algorithms.ALGORITHM import ALGORITHM
-from Algorithms.Utility.Selections import tournament_selection
-
 
 
 class GA(ALGORITHM):
     def __init__(self, problem, num_pop, num_iter, cross_prob=None, mutate_prob=None, show_mode=None):
         """
         遗传算法
+        *Code Author: Luchen Wang
         :param problem: 问题对象
         :param num_pop: 种群大小
         :param num_iter: 迭代次数
