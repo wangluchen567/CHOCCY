@@ -37,9 +37,6 @@ class Greedy_KP(ALGORITHM):
             Sum_Weight += self.weighs[cost_sort[i]]
         solution = np.zeros(len(self.weighs), dtype=int)
         solution[chosen] = 1
-        self.pop = np.array([solution])
-        self.objs = self.cal_objs(self.pop)
-        self.cons = self.cal_cons(self.pop)
-
-    def get_best(self, **kwargs):
-        return self.pop[0], self.objs[0], self.cons[0]
+        self.best = solution
+        self.best_obj = self.cal_objs(self.best)[0]
+        self.best_con = self.cal_cons(self.best)[0]

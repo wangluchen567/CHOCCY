@@ -149,6 +149,9 @@ class ALGORITHM(object):
                      2: self.init_pop_permute,
                      3: self.init_pop_fix_label}
         pop = np.zeros((self.num_pop, self.num_dec))
+        # 若没有实数部分则初始化为整型
+        if np.all(self.unique_type > 0):
+            pop = np.zeros((self.num_pop, self.num_dec), dtype=int)
         # 遍历所有问题类型
         for t in self.unique_type:
             pop[:, self.type_indices[t]] = init_dict.get(t)()

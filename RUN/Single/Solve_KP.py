@@ -12,7 +12,7 @@ def DP_Solve_KP(problem):
     alg.run()
     print("DP Solve KP")
     print("Run time: ", alg.run_time)
-    print("best value: ", alg.get_best()[1])
+    print("best value: ", alg.best_obj[0])
 
 
 def Greedy_Solve_KP(problem):
@@ -20,7 +20,7 @@ def Greedy_Solve_KP(problem):
     alg.run()
     print("Greedy Solve KP")
     print("Run time: ", alg.run_time)
-    print("best value: ", alg.get_best()[1])
+    print("best value: ", alg.best_obj[0])
 
 
 def GA_Solve_KP(problem, num_pop=100, num_iter=100):
@@ -28,7 +28,7 @@ def GA_Solve_KP(problem, num_pop=100, num_iter=100):
     alg.run()
     print("GA Solve KP")
     print("Run time: ", alg.run_time)
-    print("best value: ", alg.get_best()[1])
+    print("best value: ", alg.best_obj[0])
     # alg.plot_scores()
 
 
@@ -37,7 +37,7 @@ def NNDREA_Solve_KP(problem, num_pop=100, num_iter=100):
     alg.run()
     print("NNDREA Solve KP")
     print("Run time: ", alg.run_time)
-    print("best value: ", alg.get_best()[1])
+    print("best value: ", alg.best_obj[0])
     print(np.min(alg.pop_weights), np.max(alg.pop_weights))
 
     sns.heatmap(alg.pop_weights, cmap="YlGnBu")
