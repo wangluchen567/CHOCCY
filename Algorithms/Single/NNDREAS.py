@@ -20,7 +20,7 @@ class NNDREAS(ALGORITHM):
         :param delta: 第一阶段搜索占比
         :param cross_prob: 交叉概率
         :param mutate_prob: 变异概率
-        :param show_mode: 绘图模式 (0:不绘制图像, 1:目标空间, 2:决策空间)
+        :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, show_mode)
         # 问题必须为二进制问题
@@ -67,7 +67,7 @@ class NNDREAS(ALGORITHM):
         self.cons = self.cal_cons(self.pop)
         self.fitness = self.get_fitness(self.objs, self.cons)
         # 记录最优个体
-        self.record()
+        self.record(0)
         # 构建迭代器
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
         # 按照delta占比分为两个阶段
@@ -104,7 +104,7 @@ class NNDREAS(ALGORITHM):
                 # 进行环境选择
                 self.environmental_selection(offspring)
             # 记录每步状态
-            self.record()
+            self.record(i + 1)
             # 绘制迭代过程中每步状态
             self.plot(pause=True, n_iter=i + 1)
 

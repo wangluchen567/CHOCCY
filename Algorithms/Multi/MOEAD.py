@@ -16,7 +16,7 @@ class MOEAD(ALGORITHM):
         :param func_type: 聚合函数类型
         :param cross_prob: 交叉概率
         :param mutate_prob: 变异概率
-        :param show_mode: 绘图模式 (0:不绘制图像, 1:目标空间, 2:决策空间)
+        :param show_mode: 绘图模式
         """
         # 聚合函数类型
         self.func_type = func_type
@@ -47,10 +47,11 @@ class MOEAD(ALGORITHM):
                 offspring = self.operator(mating_pool)[0]
                 # 进行环境选择更新种群
                 self.environmental_selection_single(offspring, j)
+            # 记录每步状态
+            self.record(i + 1)
             # 绘制迭代过程中每步状态
             self.plot(pause=True, n_iter=i + 1)
-            # 记录每步状态
-            self.record()
+
 
     def selection_single(self, j):
         return np.random.choice(self.indexes[j], size=2, replace=False)
@@ -73,17 +74,17 @@ class MOEAD(ALGORITHM):
         self.cons[neighbors[better]] = offspring_con
 
     @staticmethod
-    def get_neighbor_index(W, T):
+    def get_neighbor_index(weights, t):
         """
         获取每个权重向量的前T个邻居向量的下标
-        :param W: 权重向量
-        :param T: 最近邻居的数量
-        :return: 前T个邻居向量的下标
+        :param weights: 权重向量
+        :param t: 最近邻居的数量
+        :return: 前t个邻居向量的下标
         """
         # 计算欧式距离矩阵
-        dist_matrix = np.sqrt(np.sum((W[:, np.newaxis, :] - W[np.newaxis, :, :]) ** 2, axis=2))
+        dist_matrix = np.sqrt(np.sum((weights[:, np.newaxis, :] - weights[np.newaxis, :, :]) ** 2, axis=2))
         # 获取前T个最近的邻居的下标
-        return np.argsort(dist_matrix, axis=1)[:, :T]
+        return np.argsort(dist_matrix, axis=1)[:, :t]
 
     def aggregate(self, vectors, objs):
         # 改变形状方便矩阵运算

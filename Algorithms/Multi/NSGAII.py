@@ -3,7 +3,6 @@ from Algorithms.ALGORITHM import ALGORITHM
 from Algorithms.Utility.Utils import fast_nd_sort, cal_crowd_dist, cal_fitness
 
 
-
 class NSGAII(ALGORITHM):
     def __init__(self, problem, num_pop, num_iter, cross_prob=None, mutate_prob=None, show_mode=None):
         """
@@ -16,7 +15,7 @@ class NSGAII(ALGORITHM):
         :param num_iter: 迭代次数
         :param cross_prob: 交叉概率
         :param mutate_prob: 变异概率
-        :param show_mode: 绘图模式 (0:不绘制图像, 1:目标空间, 2:决策空间)
+        :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, show_mode)
         self.init_algorithm()
@@ -34,7 +33,7 @@ class NSGAII(ALGORITHM):
             # 进行环境选择
             self.environmental_selection(offspring)
             # 记录每步状态
-            self.record()
+            self.record(i + 1)
             # 绘制迭代过程中每步状态
             self.plot(pause=True, n_iter=i + 1)
 

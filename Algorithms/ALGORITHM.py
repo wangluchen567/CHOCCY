@@ -18,7 +18,7 @@ class ALGORITHM(object):
         :param num_iter: 迭代次数
         :param cross_prob: 交叉概率
         :param mutate_prob: 变异概率
-        :param show_mode: 绘图模式 (0:不绘制图像, 1:目标空间, 2:决策空间, 3:混合模式)
+        :param show_mode: 绘图模式 (0:不绘制图像, 1:目标空间, 2:决策空间, 3:混合模式, 4:问题独有模式)
         """
         self.problem = problem
         self.num_dec = problem.num_dec
@@ -40,9 +40,10 @@ class ALGORITHM(object):
         self.objs = None
         self.cons = None
         self.fitness = None
-        # 初始化种群最优个体及其目标值
+        # 初始化历史最优个体及其目标值和约束
         self.best = None
-        self.best_obj = None
+        self.best_obj = 1e9
+        self.best_con = 1e9
         # 记录种群个体及其目标值
         self.pop_history = []
         self.objs_history = []
@@ -82,7 +83,7 @@ class ALGORITHM(object):
         self.cons = self.cal_cons(self.pop)
         self.fitness = self.get_fitness(self.objs, self.cons)
         # 记录最优个体
-        self.record()
+        self.record(0)
         # 构建迭代器
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
 
@@ -244,24 +245,27 @@ class ALGORITHM(object):
         """运行算法(主函数)"""
         raise NotImplemented
 
-    def get_best(self, pop=None, objs=None, cons=None):
-        """获取最优解"""
+    def get_best(self):
+        """获取当前种群的最优解"""
+        self.best, self.best_obj, self.best_con = self.get_best_(self.pop, self.objs, self.cons)
+
+    @staticmethod
+    def get_best_(pop, objs, cons):
+        """获取给定种群的最优解"""
+        num_obj = objs.shape[1]
         # 先判断是否满足约束
-        if pop is None:
-            pop = self.pop
-        if objs is None:
-            objs = self.objs
-        if cons is None:
-            cons = self.cons
         feas = (cons <= 0).flatten()
         pop_sat = pop[feas]
         objs_sat = objs[feas]
         cons_sat = cons[feas]
         if len(pop_sat) == 0:
-            return pop_sat, objs_sat, cons_sat
-        if self.num_obj == 1:
+            # 若没有满足约束的解则返回约束最小的解
+            min_index = np.argmin(cons_sat)
+        elif num_obj == 1:
+            # 若目标个数为1，则只选择一个最优解返回
             min_index = np.argmin(objs_sat)
         else:
+            # 若为多目标问题，则返回全部的最优前沿
             fronts, _ = fast_nd_sort(objs_sat)
             min_index = fronts[0]
         best = pop_sat[min_index]
@@ -269,17 +273,20 @@ class ALGORITHM(object):
         best_con = cons_sat[min_index]
         return best, best_obj, best_con
 
-    def record(self):
+    def record(self, i):
         """记录种群个体及其目标值"""
         self.pop_history.append(self.pop.copy())
         self.objs_history.append(self.objs.copy())
         self.cons_history.append(self.cons.copy())
         # 若是单目标问题则直接记录最优个体及其目标(复杂度低)
         if self.num_obj == 1:
-            best = self.get_best()
-            self.best_history.append(best[0])
-            self.best_obj_his.append(best[1])
-            self.best_con_his.append(best[2])
+            self.get_best()
+            self.best_history.append(self.best)
+            self.best_obj_his.append(self.best_obj)
+            self.best_con_his.append(self.best_con)
+        # 若是多目标问题则只记录最后一步的最优个体及其目标
+        if i == self.num_iter:
+            self.get_best()
 
     def get_best_history(self):
         """记录种群最优个体及其目标值"""
@@ -287,7 +294,7 @@ class ALGORITHM(object):
         self.best_obj_his = []
         self.best_con_his = []
         for i in range(len(self.pop_history)):
-            best = self.get_best(self.pop_history[i], self.objs_history[i], self.cons_history[i])
+            best = self.get_best_(self.pop_history[i], self.objs_history[i], self.cons_history[i])
             self.best_history.append(best[0])
             self.best_obj_his.append(best[1])
             self.best_con_his.append(best[2])

@@ -13,7 +13,7 @@ class SA(ALGORITHM):
         :param init_temp: 初始温度
         :param alpha: 温度衰减系数
         :param perturb_prob: 扰动概率(变异概率)
-        :param show_mode: 绘图模式 (0:不绘制图像, 1:目标空间, 2:决策空间, 3:混合模式)
+        :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, None, perturb_prob, show_mode)
         self.init_temp = init_temp
@@ -46,7 +46,7 @@ class SA(ALGORITHM):
                 print("The temperature is already very low, algorithm stopped early")
                 break
             # 记录每步状态
-            self.record()
+            self.record(i + 1)
             # 绘制迭代过程中每步状态
             self.plot(pause=True, n_iter=i + 1)
 
