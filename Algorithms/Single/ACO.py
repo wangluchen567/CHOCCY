@@ -1,5 +1,6 @@
 import numpy as np
-
+import networkx as nx
+import matplotlib.pyplot as plt
 from Algorithms.ALGORITHM import ALGORITHM
 
 
@@ -43,15 +44,6 @@ class ACO(ALGORITHM):
         # 蚁群路径(路径记录表, 记录已经访问过的节点)
         self.pop = np.zeros((self.num_pop, self.num_dec), dtype=int)
 
-    def get_best(self):
-        """覆写获取最优解，这里获取的是历史最优解"""
-        best, best_obj, best_con = self.get_best_(self.pop, self.objs, self.cons)
-        # 若满足约束则指定约束为0
-        best_con = best_con if best_con > 0 else 0
-        # 若解更满足约束或者目标值更好则更新解
-        if (best_con < self.best_con) or (best_con == self.best_con and best_obj < self.best_obj):
-            self.best, self.best_obj, self.best_con = best, best_obj, best_con
-
     def run(self):
         for i in self.iterator:
             # 清空路径记录表
@@ -91,3 +83,12 @@ class ACO(ALGORITHM):
             self.record(i + 1)
             # 绘制迭代过程中每步状态
             self.plot(pause=True, n_iter=i + 1)
+
+    def get_best(self):
+        """覆写获取最优解，这里获取的是历史最优解"""
+        best, best_obj, best_con = self.get_best_(self.pop, self.objs, self.cons)
+        # 若满足约束则指定约束为0
+        best_con = best_con if best_con > 0 else 0
+        # 若解更满足约束或者目标值更好则更新解
+        if (best_con < self.best_con) or (best_con == self.best_con and best_obj < self.best_obj):
+            self.best, self.best_obj, self.best_con = best, best_obj, best_con
