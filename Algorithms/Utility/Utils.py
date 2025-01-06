@@ -1,5 +1,8 @@
+import warnings
 import itertools
 import numpy as np
+# 设置警告过滤规则，只显示一次
+warnings.filterwarnings('once')
 
 
 def is_dom(p_objs, q_objs):
@@ -20,44 +23,137 @@ def is_dom(p_objs, q_objs):
     return condition1 and condition2
 
 
-def fast_nd_sort(objs):
-    """快速非支配排序"""
+def fast_nd_sort_(objs):
+    """快速非支配排序(非jit加速版)"""
     num_pop = len(objs)  # 获取种群数量
     objs = np.array(objs)  # 将目标转换为numpy数组
     fronts = []  # 初始化各前沿面列表
     ranks = np.zeros(num_pop, dtype=int)  # 每个个体所在的前沿数
-    n = np.zeros(num_pop, dtype=int)  # 每一个解被支配的次数初始化为0
-    S = [[] for _ in range(num_pop)]  # 每一个解所支配的解列表
+    num_dom = np.zeros(num_pop, dtype=int)  # 每一个解被支配的次数初始化为0
+    sol_dom = [[] for _ in range(num_pop)]  # 每一个解所支配的解列表
 
     # 创建比较矩阵以确定支配关系
     for i in range(num_pop):
         # 判断解 i 是否支配其他解
         dominates = np.all(objs[i] <= objs, axis=1) & np.any(objs[i] < objs, axis=1)
         # 记录被解 i 支配的解
-        S[i] = np.where(dominates)[0].tolist()
+        sol_dom[i] = np.where(dominates)[0].tolist()
         # 更新每一个解被支配的次数
-        n += dominates.astype(int)
+        num_dom += dominates.astype(int)
 
     # 找出第一前沿面
-    first_front = np.where(n == 0)[0].tolist()
-    ranks[n == 0] = 1  # 将第一前沿面的排序序号设置为1
+    first_front = np.where(num_dom == 0)[0].tolist()
+    ranks[num_dom == 0] = 1  # 将第一前沿面的排序序号设置为1
     fronts.append(first_front)  # 将第一前沿面添加到fronts列表中
 
     i = 0
     # 迭代处理每一个前沿面
     while i < len(fronts):
-        Q = []  # 初始化下一个前沿面
+        next_front = []  # 初始化下一个前沿面
         for p in fronts[i]:  # 遍历当前前沿面的每一个解
-            for q in S[p]:  # 遍历每一个被当前解支配的解
-                n[q] -= 1  # 被支配的次数减1
-                if n[q] == 0:  # 如果支配次数减为0，表示该解进入下一前沿面
+            for q in sol_dom[p]:  # 遍历每一个被当前解支配的解
+                num_dom[q] -= 1  # 被支配的次数减1
+                if num_dom[q] == 0:  # 如果支配次数减为0，表示该解进入下一前沿面
                     ranks[q] = i + 2  # 排序序号更新
-                    Q.append(q)  # 将解添加到下一前沿面
-        if Q:  # 如果下一个前沿面不为空
-            fronts.append(Q)  # 将下一个前沿面添加到fronts列表中
+                    next_front.append(q)  # 将解添加到下一前沿面
+        if next_front:  # 如果下一个前沿面不为空
+            fronts.append(next_front)  # 将下一个前沿面添加到fronts列表中
         i += 1  # 处理下一个前沿面
 
     return fronts, ranks
+
+
+try:
+    # 尝试导入numba
+    from numba import jit
+
+    @jit(nopython=True)
+    def dominates_loop(objs, i):
+        n = objs.shape[0]
+        m = objs.shape[1]
+        dominates = np.zeros(n, dtype=np.bool_)
+
+        for j in range(n):
+            all_less_equal = True
+            any_less = False
+
+            for k in range(m):
+                if objs[i, k] > objs[j, k]:
+                    all_less_equal = False
+                    break
+                elif objs[i, k] < objs[j, k]:
+                    any_less = True
+
+            dominates[j] = all_less_equal and any_less
+
+        return dominates
+
+
+    @jit(nopython=True)
+    def fast_nd_sort_jit(objs):
+        """快速非支配排序(jit加速版)"""
+        num_pop = objs.shape[0]  # 获取种群数量
+        fronts = np.zeros((num_pop, num_pop), dtype=np.int16)  # 初始化各前沿面的索引数组
+        fronts_trunc = np.zeros(num_pop, dtype=np.int16)  # 各前沿面的索引数组的索引截断
+        ranks = np.zeros(num_pop, dtype=np.int16)  # 每个个体所在的前沿数
+        num_dom = np.zeros(num_pop, dtype=np.int16)  # 每一个解被支配的次数初始化为0
+        sol_dom = np.zeros((num_pop, num_pop), dtype=np.int16)  # 每一个解所支配的解的索引数组
+        sol_trunc = np.zeros(num_pop, dtype=np.int16)  # 所支配解的索引截断
+
+        # 创建比较矩阵以确定支配关系
+        for i in range(num_pop):
+            # 判断解 i 是否支配其他解
+            dominates = dominates_loop(objs, i)
+            # 得到被解 i 支配的解的索引
+            indices = np.where(dominates)[0]
+            # 得到索引数组的截断
+            sol_trunc[i] = len(indices)
+            # 记录被解 i 支配的解的索引
+            sol_dom[i][:len(indices)] = indices
+            # 更新每一个解被支配的次数
+            num_dom += dominates.astype(np.int16)
+
+        # 找出第一前沿面
+        first_front = np.where(num_dom == 0)[0]
+        ranks[num_dom == 0] = 1  # 将第一前沿面的排序序号设置为1
+        fronts[0][:len(first_front)] = first_front  # 将第一前沿面添加到数组中
+        front_count = len(first_front)  # 第一前沿面的解数量
+        fronts_trunc[0] = front_count  # 记录截断数据
+
+        i = 0
+        # 迭代处理每一个前沿面
+        while True:
+            next_front = np.zeros(num_pop, dtype=np.int16)  # 初始化下一个前沿面
+            next_count = 0
+            for p in fronts[i][:front_count]:  # 遍历当前前沿面的每一个解
+                for q in sol_dom[p][:sol_trunc[p]]:  # 遍历每一个被当前解支配的解
+                    num_dom[q] -= 1  # 被支配的次数减1
+                    if num_dom[q] == 0:  # 如果支配次数减为0，表示该解进入下一前沿面
+                        ranks[q] = i + 2  # 排序序号更新
+                        next_front[next_count] = q  # 将解添加到下一前沿面
+                        next_count += 1
+            if next_count > 0:  # 如果下一个前沿面不为空
+                fronts[i + 1][:next_count] = next_front[:next_count]
+                front_count = next_count
+                fronts_trunc[i + 1] = front_count  # 记录截断数据
+                i += 1  # 处理下一个前沿面
+            else:  # 若下一个前沿面为空则返回
+                break
+
+        return fronts, fronts_trunc, ranks
+
+
+    def fast_nd_sort(objs):
+        fronts_mat, fronts_trunc, ranks = fast_nd_sort_jit(objs)
+        fronts_trunc = fronts_trunc[fronts_trunc > 0]
+        fronts = [fronts_mat[i][:fronts_trunc[i]].tolist() for i in range(len(fronts_trunc))]
+        return fronts, ranks
+
+
+except ImportError:
+    # 如果导入numba加速库失败，使用原始的快速排序函数
+    warnings.warn("Optimizing problems without using numba acceleration...")
+    fast_nd_sort = fast_nd_sort_
 
 
 def cal_crowd_dist(objs, fronts):
