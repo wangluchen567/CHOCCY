@@ -16,20 +16,17 @@ def cal_hv(objs, optimum=None):
     else:
         refer_array = np.array(optimum)
     # 根据参考点规范化目标值
-    # Normalize the population according to the reference point set
-    fmin = np.min(np.vstack((np.min(objs, axis=0), np.zeros([1, M]))), axis=0)
-    fmax = np.max(refer_array, axis=0)
-    objs_normalized = (objs - fmin) / np.tile((fmax - fmin) * 1.1, (N, 1))
+    f_min = np.min(np.vstack((np.min(objs, axis=0), np.zeros([1, M]))), axis=0)
+    f_max = np.max(refer_array, axis=0)
+    objs_normalized = (objs - f_min) / np.tile((f_max - f_min) * 1.1, (N, 1))
     objs_normalized = objs_normalized[np.all(objs_normalized <= 1, axis=1)]
     # 参考点设为(1, 1, ...)
-    #  The reference point is set to (1,1,...)
     ref_point = np.ones(M)
     # 如果目标值矩阵为空，超体积为0
     if objs_normalized.size == 0:
         score = 0
     elif M < 4:
         # 计算精确的HV值
-        # Calculate the exact HV value
         pl = np.unique(objs_normalized, axis=0)
         s = [[1, pl]]
         for k in range(M - 1):
@@ -46,7 +43,6 @@ def cal_hv(objs, optimum=None):
             score = score + s[i][0] * np.abs(p[-1] - ref_point[-1])
     else:
         # 通过蒙特卡罗方法估计HV值
-        # Estimate the HV value by Monte Carlo estimation
         sample_num = 1e6
         max_value = ref_point
         min_value = np.min(objs_normalized, axis=0)
