@@ -276,7 +276,7 @@ class ALGORITHM(object):
         best_con = cons_sat[min_index]
         return best, best_obj, best_con
 
-    def record(self, i):
+    def record(self, i=None):
         """记录种群个体及其目标值"""
         self.pop_history.append(self.pop.copy())
         self.objs_history.append(self.objs.copy())
