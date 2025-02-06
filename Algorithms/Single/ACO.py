@@ -1,4 +1,6 @@
 import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
 from Algorithms.ALGORITHM import ALGORITHM
 
 
@@ -42,6 +44,7 @@ class ACO(ALGORITHM):
         # 蚁群路径(路径记录表, 记录已经访问过的节点)
         self.pop = np.zeros((self.num_pop, self.num_dec), dtype=int)
 
+    @ALGORITHM.record_time
     def run(self):
         for i in self.iterator:
             # 清空路径记录表
@@ -74,8 +77,9 @@ class ACO(ALGORITHM):
             self.fitness = self.get_fitness(self.objs, self.cons)
             # 更新信息素矩阵
             delta_tau_mat = np.zeros((self.num_dec, self.num_dec))
-            delta_tau_mat[self.pop, np.roll(self.pop, shift=-1, axis=1)] \
-                += np.repeat((self.q_value / self.fitness)[:, np.newaxis], self.num_dec, axis=1)
+            # 使用add.at函数更新delta_tau_mat
+            np.add.at(delta_tau_mat, (self.pop.flatten(), np.roll(self.pop, shift=-1, axis=1).flatten()),
+                      np.repeat(self.q_value / self.fitness, self.num_dec))
             self.tau_mat = (1 - self.rho) * self.tau_mat + delta_tau_mat
             # 记录每步状态
             self.record(i + 1)
@@ -90,3 +94,45 @@ class ACO(ALGORITHM):
         # 若解更满足约束或者目标值更好则更新解
         if (best_con < self.best_con) or (best_con == self.best_con and best_obj < self.best_obj):
             self.best, self.best_obj, self.best_con = best, best_obj, best_con
+
+    def plot_(self, pause=False, n_iter=None, pause_time=0.1):
+        if not pause: plt.figure()
+        if not hasattr(self.problem, 'points'):
+            raise ValueError("The drawing must provide the location of the points!")
+        points = self.problem.points
+        num_points = len(points)
+        # 获取权重非零的行和列索引
+        rows, cols = np.nonzero(self.tau_mat)
+        tau_mat = self.tau_mat
+        # np.fill_diagonal(tau_mat, 0)
+        weights = tau_mat[rows, cols]
+
+        # 对权重归一化（透明度必须在[0,1]之间）
+        weights = (weights - np.min(weights)) / (np.max(weights) - np.min(weights))
+        plt.clf()
+        graph = nx.Graph()
+        # 添加节点信息
+        graph.add_nodes_from(np.arange(num_points))
+        edges_with_weights = list(zip(rows, cols, weights))
+        graph.add_weighted_edges_from(edges_with_weights)
+        # 点的位置
+        pos = dict(zip(range(num_points), points))
+        # 获取边的权重并设置透明度
+        edge_weights = nx.get_edge_attributes(graph, 'weight')
+        edge_alphas = list(edge_weights.values())  # 权重已经在0到1之间，可以直接用作透明度
+        # 控制点的大小
+        if num_points >= 100:
+            node_size = 50 / (num_points // 50)
+        else:
+            node_size = 100
+        # 画图
+        if pause and n_iter is not None:
+            plt.title("iter: " + str(n_iter))
+        # 绘制节点
+        nx.draw_networkx_nodes(graph, pos, node_size=node_size)
+        # 绘制边，并设置边的透明度
+        nx.draw_networkx_edges(graph, pos, edge_color='black', alpha=edge_alphas, width=2)
+        if pause:
+            plt.pause(pause_time)
+        else:
+            plt.show()

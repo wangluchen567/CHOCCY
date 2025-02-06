@@ -292,7 +292,7 @@ class ALGORITHM(object):
             self.get_best()
 
     def get_best_history(self):
-        """记录种群最优个体及其目标值"""
+        """获取种群历史最优个体及其目标值"""
         self.best_history = []
         self.best_obj_his = []
         self.best_con_his = []
@@ -316,8 +316,14 @@ class ALGORITHM(object):
             self.plot_decs_objs(pause, n_iter)
         elif self.show_mode == 4:
             self.problem.plot_(self.best_history[-1], pause, n_iter)
+        elif self.show_mode == 5:
+            self.plot_(pause, n_iter)
         else:
             raise ValueError("There is no such plotting mode")
+
+    def plot_(self, pause, n_iter):
+        """提供算法自定义绘图的接口"""
+        pass
 
     def plot_pop(self, pause=False, n_iter=None, pause_time=0.1):
         """绘制种群个体决策向量"""
@@ -337,12 +343,12 @@ class ALGORITHM(object):
 
     def get_scores(self):
         """获取历史所有种群的评价分数"""
-        self.get_best_history()
-        self.scores = np.zeros(len(self.best_obj_his))
         # 若是单目标问题则评价分数就是最优目标值
         if self.num_obj == 1:
             self.scores = self.best_obj_his
             return self.scores
+        self.get_best_history()
+        self.scores = np.zeros(len(self.best_obj_his))
         # 若是多目标问题则计算评价分数
         for i in range(len(self.best_obj_his)):
             self.scores[i] = cal_hv(self.best_obj_his[i], self.problem.optimums)

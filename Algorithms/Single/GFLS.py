@@ -44,6 +44,7 @@ class GFLS(ALGORITHM):
             self.bits[np.where(utils == utils_max)[0][0]] = 1
             self.bits[np.where(utils == utils_max)[0][1]] = 1
 
+    @ALGORITHM.record_time
     def run(self):
         self.guided_fast_local_search()
 

@@ -20,6 +20,7 @@ class SA(ALGORITHM):
         self.alpha = alpha
         self.init_algorithm()
 
+    @ALGORITHM.record_time
     def run(self):
         # 获取初始化温度
         temp = self.init_temp

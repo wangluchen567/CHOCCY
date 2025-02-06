@@ -15,6 +15,7 @@ class FI(ALGORITHM):
         super().__init__(problem, 1, len(self.dist_mat), None, None, show_mode=0)
         self.init_algorithm()
 
+    @ALGORITHM.record_time
     def run(self):
         num_points = len(self.dist_mat)
         mask = np.zeros(num_points, dtype=bool)
