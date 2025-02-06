@@ -96,6 +96,7 @@ class ACO(ALGORITHM):
             self.best, self.best_obj, self.best_con = best, best_obj, best_con
 
     def plot_(self, pause=False, n_iter=None, pause_time=0.1):
+        """绘制优化过程中信息素变化情况"""
         if not pause: plt.figure()
         if not hasattr(self.problem, 'points'):
             raise ValueError("The drawing must provide the location of the points!")
@@ -103,10 +104,7 @@ class ACO(ALGORITHM):
         num_points = len(points)
         # 获取权重非零的行和列索引
         rows, cols = np.nonzero(self.tau_mat)
-        tau_mat = self.tau_mat
-        # np.fill_diagonal(tau_mat, 0)
-        weights = tau_mat[rows, cols]
-
+        weights = self.tau_mat[rows, cols]
         # 对权重归一化（透明度必须在[0,1]之间）
         weights = (weights - np.min(weights)) / (np.max(weights) - np.min(weights))
         plt.clf()
