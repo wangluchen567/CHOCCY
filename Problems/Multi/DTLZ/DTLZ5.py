@@ -4,14 +4,14 @@ from Problems.PROBLEM import PROBLEM
 
 class DTLZ5(PROBLEM):
     def __init__(self, num_dec=None, num_obj=None, lower=0, upper=1):
-        problem_type = 0
+        problem_type = PROBLEM.REAL
         if num_obj is None:
             num_obj = 3
         if num_dec is None:
             num_dec = num_obj + 9
         super().__init__(problem_type, num_dec, num_obj, lower, upper)
 
-    def cal_objs(self, X):
+    def _cal_objs(self, X):
         M = self.num_obj
         g = np.sum((X[:, M - 1:] - 0.5) ** 2, axis=1)
         Temp = np.tile(g, (M - 2, 1)).T

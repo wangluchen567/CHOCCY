@@ -9,6 +9,13 @@ from Algorithms.Utility.Operators import operator_real, operator_binary, operato
 
 
 class ALGORITHM(object):
+    # 定义问题常量
+    REAL = 0  # 实数
+    INT = 1  # 整数
+    BIN = 2  # 二进制
+    PMU = 3  # 序列
+    FIX = 4  # 固定标签
+
     def __init__(self, problem, num_pop, num_iter, cross_prob=None, mutate_prob=None, show_mode=None):
         """
         算法父类
@@ -18,19 +25,18 @@ class ALGORITHM(object):
         :param num_iter: 迭代次数
         :param cross_prob: 交叉概率
         :param mutate_prob: 变异概率
-        :param show_mode: 绘图模式 (0:不绘制图像, 1:目标空间, 2:决策空间, 3:混合模式, 4:问题独有模式)
+        :param show_mode: 绘图模式 (0:不绘制图像, 1:目标空间, 2:决策空间, 3:混合模式, 4:问题提供, 5:算法提供)
         """
         self.problem = problem
-        self.num_dec = problem.num_dec
-        self.num_obj = problem.num_obj
+        self.num_dec = self.problem.num_dec
+        self.num_obj = self.problem.num_obj
         self.num_pop = num_pop
         self.num_iter = num_iter
-        self.problem_type = None
-        self.unique_type = None
-        self.type_indices = None
-        self.set_problem_type(problem.problem_type)
-        self.lower = problem.lower
-        self.upper = problem.upper
+        self.problem_type = self.problem.problem_type
+        self.unique_type = self.problem.unique_type
+        self.type_indices = self.problem.type_indices
+        self.lower = self.problem.lower
+        self.upper = self.problem.upper
         self.show_mode = show_mode
         # 初始化交叉和变异概率
         self.cross_prob = cross_prob
@@ -63,15 +69,6 @@ class ALGORITHM(object):
         if hasattr(problem, 'example_dec'):
             self.example_dec = problem.example_dec
 
-    def set_problem_type(self, problem_type):
-        """设置问题类型"""
-        self.problem_type = problem_type
-        self.unique_type = np.unique(self.problem_type)
-        # 确定每个问题类别对应的位置
-        self.type_indices = dict()
-        for t in self.unique_type:
-            self.type_indices[t] = np.where(self.problem_type == t)[0]
-
     def init_algorithm(self):
         """初始化算法"""
         # 初始化交叉和变异概率
@@ -89,29 +86,11 @@ class ALGORITHM(object):
 
     def cal_objs(self, X):
         """计算目标值"""
-        # 对参数进行浅拷贝，防止其被修改
-        X_ = X.copy()
-        # 保证二维形状方便并行操作
-        if X_.ndim == 1:
-            X_ = X_.reshape(1, -1)
-        objs = self.problem.cal_objs(X_)
-        if objs.ndim == 1:
-            return objs.reshape(-1, 1)
-        else:
-            return objs
+        return self.problem.cal_objs(X)
 
     def cal_cons(self, X):
         """计算约束值"""
-        # 对参数进行浅拷贝，防止其被修改
-        X_ = X.copy()
-        # 保证二维形状方便并行操作
-        if X_.ndim == 1:
-            X_ = X_.reshape(1, -1)
-        cons = self.problem.cal_cons(X_)
-        if cons.ndim == 1:
-            return cons.reshape(-1, 1)
-        else:
-            return cons
+        return self.problem.cal_cons(X)
 
     @staticmethod
     def cal_objs_based_cons(objs, cons):
@@ -144,13 +123,14 @@ class ALGORITHM(object):
 
     def init_pop(self):
         """初始化种群"""
-        init_dict = {0: self.init_pop_real,
-                     1: self.init_pop_binary,
-                     2: self.init_pop_permute,
-                     3: self.init_pop_fix_label}
+        init_dict = {ALGORITHM.REAL: self.init_pop_real,
+                     ALGORITHM.INT: self.init_pop_integer,
+                     ALGORITHM.BIN: self.init_pop_binary,
+                     ALGORITHM.PMU: self.init_pop_permute,
+                     ALGORITHM.FIX: self.init_pop_fix_label}
         pop = np.zeros((self.num_pop, self.num_dec))
-        # 若没有实数部分则初始化为整型
-        if np.all(self.unique_type > 0):
+        # 若没有实数或整数部分则直接初始化为整型
+        if np.all(self.unique_type > 1):
             pop = np.zeros((self.num_pop, self.num_dec), dtype=int)
         # 遍历所有问题类型
         for t in self.unique_type:
@@ -159,24 +139,33 @@ class ALGORITHM(object):
 
     def init_pop_real(self):
         """初始化求解实数或整数问题的种群"""
-        pop = np.random.uniform(self.lower[self.type_indices[0]], self.upper[self.type_indices[0]],
-                                size=(self.num_pop, len(self.type_indices[0])))
+        pop = np.random.uniform(self.lower[self.type_indices[ALGORITHM.REAL]],
+                                self.upper[self.type_indices[ALGORITHM.REAL]],
+                                size=(self.num_pop, len(self.type_indices[ALGORITHM.REAL])))
+        return pop
+
+    def init_pop_integer(self):
+        """初始化求解实数或整数问题的种群"""
+        pop = np.random.uniform(self.lower[self.type_indices[ALGORITHM.INT]],
+                                self.upper[self.type_indices[ALGORITHM.INT]],
+                                size=(self.num_pop, len(self.type_indices[ALGORITHM.INT])))
         return pop
 
     def init_pop_binary(self):
         """初始化求解二进制问题的种群"""
-        pop = np.random.randint(2, size=(self.num_pop, len(self.type_indices[1])))
+        pop = np.random.randint(2, size=(self.num_pop, len(self.type_indices[ALGORITHM.BIN])))
         return pop
 
     def init_pop_permute(self):
         """初始化求解序列问题的种群"""
-        pop = np.argsort(np.random.uniform(0, 1, size=(self.num_pop, len(self.type_indices[2]))), axis=1)
+        pop = np.argsort(np.random.uniform(0, 1,
+                                           size=(self.num_pop, len(self.type_indices[ALGORITHM.PMU]))), axis=1)
         return pop
 
     def init_pop_fix_label(self):
         """初始化求解固定标签问题的种群"""
         # 确保给定的示例和决策向量大小相等
-        if len(self.type_indices[3]) != len(self.example_dec):
+        if len(self.type_indices[ALGORITHM.FIX]) != len(self.example_dec):
             raise ValueError("The given example and decision vector are not of equal size")
         # 确定初始向量
         pop = self.example_dec.copy()
@@ -201,13 +190,15 @@ class ALGORITHM(object):
     @staticmethod
     def operator_(problem_type):
         """根据问题类型返回对应函数"""
-        if problem_type == 0:
+        if problem_type == ALGORITHM.REAL:
             return operator_real
-        elif problem_type == 1:
+        elif problem_type == ALGORITHM.INT:
+            return operator_real
+        elif problem_type == ALGORITHM.BIN:
             return operator_binary
-        elif problem_type == 2:
+        elif problem_type == ALGORITHM.PMU:
             return operator_permutation
-        elif problem_type == 3:
+        elif problem_type == ALGORITHM.FIX:
             return operator_fix_label
         else:
             raise ValueError("The problem type does not exist")

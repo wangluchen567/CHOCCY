@@ -25,7 +25,7 @@ class NNDREA(ALGORITHM):
         """
         super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, show_mode)
         # 问题必须为二进制问题
-        if all(self.problem_type != 1):
+        if np.sum(self.problem_type != ALGORITHM.BIN):
             raise ValueError("This method can only solve binary problems")
         # 问题必须提供实例数据集
         if not hasattr(problem, 'instance'):

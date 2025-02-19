@@ -23,8 +23,11 @@ class NNDREAS(ALGORITHM):
         :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, show_mode)
+        # 问题必须为单目标问题
+        if problem.num_obj > 1:
+            raise ValueError("This method can only solve single objective problems")
         # 问题必须为二进制问题
-        if all(self.problem_type != 1):
+        if np.sum(problem.problem_type != ALGORITHM.BIN):
             raise ValueError("This method can only solve binary problems")
         # 问题必须提供实例数据集
         if not hasattr(problem, 'instance'):

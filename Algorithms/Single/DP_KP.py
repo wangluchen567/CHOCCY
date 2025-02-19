@@ -11,7 +11,7 @@ class DP_KP(ALGORITHM):
         if problem.num_obj > 1:
             raise ValueError("This method can only solve single objective problems")
         # 问题必须为二进制问题
-        if all(problem.problem_type != 1):
+        if np.sum(problem.problem_type != ALGORITHM.BIN):
             raise ValueError("This method can only solve binary problems")
         # 问题必须为背包问题
         if hasattr(problem, 'weights') and hasattr(problem, 'values') and hasattr(problem, 'capacity'):

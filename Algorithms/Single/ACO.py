@@ -19,8 +19,11 @@ class ACO(ALGORITHM):
         :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, None, None, show_mode)
+        # 问题必须为单目标问题
+        if problem.num_obj > 1:
+            raise ValueError("This method can only solve single objective problems")
         # 问题必须为序列问题
-        if all(self.problem_type != 2):
+        if np.sum(self.problem_type != ALGORITHM.PMU):
             raise ValueError("This method can only solve sequence problems")
         # 问题必须提供距离矩阵
         if not hasattr(problem, 'dist_mat'):

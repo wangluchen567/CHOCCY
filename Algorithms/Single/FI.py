@@ -10,9 +10,18 @@ class FI(ALGORITHM):
         :param problem: 问题对象(TSP类型)
         :param show_mode: 绘图模式
         """
+        # 问题必须提供距离矩阵
+        if not hasattr(problem, 'dist_mat'):
+            raise ValueError("The problem must provide the distance matrix")
         # 获取问题的距离矩阵
         self.dist_mat = problem.dist_mat
         super().__init__(problem, 1, len(self.dist_mat), None, None, show_mode=0)
+        # 问题必须为单目标问题
+        if problem.num_obj > 1:
+            raise ValueError("This method can only solve single objective problems")
+        # 问题必须为序列问题
+        if np.sum(self.problem_type != ALGORITHM.PMU):
+            raise ValueError("This method can only solve sequence problems")
         self.init_algorithm()
 
     @ALGORITHM.record_time

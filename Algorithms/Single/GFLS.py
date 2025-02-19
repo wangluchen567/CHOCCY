@@ -14,6 +14,15 @@ class GFLS(ALGORITHM):
         :param show_mode: 绘图模式
         """
         super().__init__(problem, 1, num_iter, None, None, show_mode)
+        # 问题必须为单目标问题
+        if problem.num_obj > 1:
+            raise ValueError("This method can only solve single objective problems")
+        # 问题必须为序列问题
+        if np.sum(self.problem_type != ALGORITHM.PMU):
+            raise ValueError("This method can only solve sequence problems")
+        # 问题必须提供距离矩阵
+        if not hasattr(problem, 'dist_mat'):
+            raise ValueError("The problem must provide the distance matrix")
         # 初始化参数
         self.init_algorithm()
         self.alpha = alpha

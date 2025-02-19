@@ -5,7 +5,7 @@ from Problems.PROBLEM import PROBLEM
 
 class MOKP(PROBLEM):
     def __init__(self, num_dec=100, num_obj=2, weights=None, values=None, capacity=None):
-        problem_type = 1
+        problem_type = PROBLEM.BIN
         lower = 0
         upper = 1
         self.num_dec = num_dec
@@ -50,11 +50,11 @@ class MOKP(PROBLEM):
         # 调用父类初始化
         super().__init__(problem_type, num_dec, num_obj, lower, upper)
 
-    def cal_objs(self, X):
+    def _cal_objs(self, X):
         objs = np.sum(self.values, axis=0) - X.dot(self.values)
         return objs
 
-    def cal_cons(self, X):
+    def _cal_cons(self, X):
         cons = X.dot(self.weights) - self.capacity
         return cons
 

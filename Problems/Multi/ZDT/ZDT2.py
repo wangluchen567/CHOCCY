@@ -4,13 +4,13 @@ from Problems.PROBLEM import PROBLEM
 
 class ZDT2(PROBLEM):
     def __init__(self, num_dec=None, lower=0, upper=1):
-        problem_type = 0
+        problem_type = PROBLEM.REAL
         num_obj = 2
         if num_dec is None:
             num_dec = 30
         super().__init__(problem_type, num_dec, num_obj, lower, upper)
 
-    def cal_objs(self, X):
+    def _cal_objs(self, X):
         X = np.array(X)
         g = 1 + 9 * np.sum(X[:, 1:], axis=1) / (self.num_dec - 1)
         f1 = X[:, 0]

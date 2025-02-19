@@ -4,7 +4,7 @@ from Problems.PROBLEM import PROBLEM
 
 class ZDT4(PROBLEM):
     def __init__(self, num_dec=None):
-        problem_type = 0
+        problem_type = PROBLEM.REAL
         num_obj = 2
         if num_dec is None:
             num_dec = 10
@@ -14,7 +14,7 @@ class ZDT4(PROBLEM):
         upper[0] = 1
         super().__init__(problem_type, num_dec, num_obj, lower, upper)
 
-    def cal_objs(self, X):
+    def _cal_objs(self, X):
         X = np.array(X)
         g = np.sum(X[:, 1:] ** 2 - 10 * np.cos(4 * np.pi * X[:, 1:]), axis=1)
         g = g + 1 + 10 * (self.num_dec - 1)

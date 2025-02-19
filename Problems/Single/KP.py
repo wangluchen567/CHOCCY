@@ -5,7 +5,7 @@ from Problems.PROBLEM import PROBLEM
 
 class KP(PROBLEM):
     def __init__(self, num_dec=100, weights=None, values=None, capacity=None):
-        problem_type = 1
+        problem_type = PROBLEM.BIN
         num_obj = 1
         lower = 0
         upper = 1
@@ -51,10 +51,10 @@ class KP(PROBLEM):
         # 储存实例数据集以便 NNDREA 使用
         self.instance = np.hstack((self.weights, self.values))
 
-    def cal_objs(self, X):
+    def _cal_objs(self, X):
         objs = np.sum(self.values) - X.dot(self.values)
         return objs
 
-    def cal_cons(self, X):
+    def _cal_cons(self, X):
         cons = X.dot(self.weights) - self.capacity
         return cons

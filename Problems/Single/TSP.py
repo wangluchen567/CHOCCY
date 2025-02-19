@@ -8,7 +8,7 @@ from scipy.spatial import distance_matrix
 
 class TSP(PROBLEM):
     def __init__(self, num_dec=30, data=None, is_dist_mat=False):
-        problem_type = 2
+        problem_type = PROBLEM.PMU
         num_obj = 1
         lower = 0
         upper = num_dec
@@ -40,7 +40,7 @@ class TSP(PROBLEM):
             self.points = self.data
             self.dist_mat = distance_matrix(self.data, self.data)
 
-    def cal_objs(self, X):
+    def _cal_objs(self, X):
         objs = np.sum(self.dist_mat[X.astype(int), np.roll(X.astype(int), shift=-1, axis=1)], axis=1)
         return objs
 

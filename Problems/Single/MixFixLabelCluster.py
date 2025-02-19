@@ -12,7 +12,7 @@ class MixFixLabelCluster(PROBLEM):
         num_dec = self.num_points + (upper - lower) * 2
         # 决策变量由两部分组成，第一部分为固定标签类型，第二部分为实数类型
         problem_type = np.zeros(num_dec)
-        problem_type[:self.num_points] = 3
+        problem_type[:self.num_points] = PROBLEM.FIX
         # 给定固定标签类型的示例
         self.example_dec = np.repeat(np.arange(lower, upper), int(self.num_points / (upper - lower)))
         # 重新指定上下界
@@ -25,7 +25,7 @@ class MixFixLabelCluster(PROBLEM):
         self.points = np.random.uniform(real_lower, real_upper, size=(self.num_points, 2))
         self.weights = np.random.uniform(real_lower, real_upper, size=self.num_points)
 
-    def cal_objs(self, X):
+    def _cal_objs(self, X):
         num_sol = len(X)
         objs = np.zeros(num_sol)
         types = np.unique(X[0, :self.num_points])
