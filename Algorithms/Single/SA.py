@@ -82,13 +82,15 @@ class SA(ALGORITHM):
     @staticmethod
     def mutate_(problem_type, solutions, lower, upper, mutate_prob):
         """根据变量的不同类型对解进行扰动(变异)"""
-        if problem_type == 0:
+        if problem_type == ALGORITHM.REAL:
             return polynomial_mutation(solutions, lower, upper, mutate_prob)
-        elif problem_type == 1:
+        elif problem_type == ALGORITHM.INT:
+            return polynomial_mutation(solutions, lower, upper, mutate_prob)
+        elif problem_type == ALGORITHM.BIN:
             return bit_mutation(solutions, mutate_prob)
-        elif problem_type == 2:
+        elif problem_type == ALGORITHM.PMU:
             return exchange_mutation(solutions, mutate_prob)
-        elif problem_type == 3:
+        elif problem_type == ALGORITHM.FIX:
             return fix_label_mutation(solutions, mutate_prob)
         else:
             raise ValueError("The problem type does not exist")
