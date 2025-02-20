@@ -43,6 +43,8 @@ class PROBLEM(object):
             raise TypeError("Method 'cal_cons' cannot be overridden, please overwrite method '_cal_cons'")
         if type(self)._cal_objs == PROBLEM._cal_objs and type(self)._cal_obj == PROBLEM._cal_obj:
             raise TypeError("At least one of methods '_cal_objs' or '_cal_obj' must be overridden")
+        if type(self)._cal_cons == PROBLEM._cal_cons and type(self)._cal_con != PROBLEM._cal_con:
+            raise TypeError("Besides method '_cal_con', method '_cal_cons' must also be overridden")
 
     def format_range(self):
         """重整决策变量取值范围"""
