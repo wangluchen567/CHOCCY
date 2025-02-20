@@ -12,7 +12,6 @@ def Solve_Ackley():
     alg = GA(problem, num_pop=100, num_iter=100, show_mode=3)
     alg.run()
     print(alg.best_obj[0])
-    # alg.plot()
     alg.plot_scores()
 
 
@@ -21,7 +20,6 @@ def Solve_Square():
     alg = GA(problem, num_pop=100, num_iter=100, show_mode=3)
     alg.run()
     print(alg.best_obj[0])
-    # alg.plot()
     alg.plot_scores()
 
 
@@ -30,7 +28,6 @@ def Solve_KP():
     alg = GA(problem, num_pop=100, num_iter=100, show_mode=1)
     alg.run()
     print(alg.best_obj[0])
-    # alg.plot()
     alg.plot_scores()
 
 
@@ -39,7 +36,6 @@ def Solve_TSP():
     alg = GA(problem, num_pop=100, num_iter=100, show_mode=4)
     alg.run()
     print(alg.best_obj[0])
-    # alg.plot()
     alg.plot_scores()
 
 
@@ -48,9 +44,8 @@ def Solve_FixLabelCluster():
     alg = GA(problem, num_pop=100, num_iter=100, show_mode=4)
     alg.run()
     print(alg.best_obj[0])
-    # alg.plot()
     alg.plot_scores()
-    problem.plot_(alg.best)
+    alg.plot(show_mode=4)
 
 
 def Solve_MixFixLabelCluster():
@@ -58,9 +53,8 @@ def Solve_MixFixLabelCluster():
     alg = GA(problem, num_pop=100, num_iter=100, show_mode=4)
     alg.run()
     print(alg.best_obj[0])
-    # alg.plot()
     alg.plot_scores()
-    problem.plot_(alg.best)
+    alg.plot(show_mode=4)
 
 
 if __name__ == '__main__':

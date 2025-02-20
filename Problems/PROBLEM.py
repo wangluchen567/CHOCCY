@@ -1,6 +1,7 @@
 import numpy as np
 from typing import Union
 
+
 class PROBLEM(object):
     # 定义问题常量
     REAL = 0
@@ -10,7 +11,7 @@ class PROBLEM(object):
     FIX = 4
 
     def __init__(self,
-                 problem_type: int,
+                 problem_type: Union[int, np.ndarray],
                  num_dec: int,
                  num_obj: int,
                  lower: Union[float, np.ndarray],
@@ -21,8 +22,8 @@ class PROBLEM(object):
         :param problem_type: 问题类型 (0:实数, 1:整数, 2:二进制, 3:序列, 4:固定标签)(可混合)
         :param num_dec: 决策变量个数(维度)
         :param num_obj: 目标个数
-        :param lower: 变量下界(包含下界)
-        :param upper: 变量上界(包含上界)(整数问题不包含)
+        :param lower: 变量下界(包含下界)(可混合)
+        :param upper: 变量上界(包含上界)(整数问题不包含)(可混合)
         """
         self.problem_type = problem_type  # 问题类型
         self.num_dec = num_dec  # 决策变量个数(维度)
@@ -40,6 +41,8 @@ class PROBLEM(object):
             raise TypeError("Method 'cal_objs' cannot be overridden, please overwrite method '_cal_objs'")
         if type(self).cal_cons != PROBLEM.cal_cons:
             raise TypeError("Method 'cal_cons' cannot be overridden, please overwrite method '_cal_cons'")
+        if type(self)._cal_objs == PROBLEM._cal_objs and type(self)._cal_obj == PROBLEM._cal_obj:
+            raise TypeError("At least one of methods '_cal_objs' or '_cal_obj' must be overridden")
 
     def format_range(self):
         """重整决策变量取值范围"""
@@ -96,12 +99,24 @@ class PROBLEM(object):
             return cons
 
     def _cal_objs(self, X):
-        """计算目标值(必须覆写)"""
-        raise NotImplemented
+        """计算整个种群变量的目标值(建议覆写)"""
+        num_pop = len(X)
+        objs = np.zeros((num_pop, self.num_obj))
+        for i in range(num_pop):
+            objs[i] = self._cal_obj(X[i])
+        return objs
 
     def _cal_cons(self, X):
         """计算约束值(默认无约束)(可覆写)"""
         return -np.ones(len(X))
+
+    def _cal_obj(self, x):
+        """计算单个决策变量的目标值(可覆写)"""
+        pass
+
+    def _cal_con(self, x):
+        """计算单个决策变量的约束值(可覆写)"""
+        pass
 
     def get_optimum(self, *args, **kwargs):
         """获取理论最优目标值"""
@@ -111,6 +126,6 @@ class PROBLEM(object):
         """获取帕累托最优前沿"""
         pass
 
-    def plot_(self, *args, **kwargs):
+    def plot(self, *args, **kwargs):
         """问题提供的绘图函数"""
         pass

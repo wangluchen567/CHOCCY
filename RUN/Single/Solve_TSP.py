@@ -22,4 +22,4 @@ if __name__ == '__main__':
     alg.run()
     print('GFLS result:', alg.best_obj[0])
     print("Run time: ", alg.run_time)
-    problem.plot_(alg.best)
+    alg.plot(show_mode=4)

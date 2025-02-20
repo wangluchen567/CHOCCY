@@ -306,7 +306,9 @@ class ALGORITHM(object):
             self.best_con_his.append(best[2])
 
     def plot(self, show_mode=None, pause=False, n_iter=None):
-        """绘图函数，根据不同模式进行绘图"""
+        """绘图函数，根据不同模式进行绘图
+        (0:不绘制图像, 1:目标空间, 2:决策空间, 3:混合模式, 4:问题提供, 5:算法提供)
+        """
         if show_mode is not None:
             self.show_mode = show_mode
         if self.show_mode == 0:
@@ -318,7 +320,7 @@ class ALGORITHM(object):
         elif self.show_mode == 3:
             self.plot_decs_objs(pause, n_iter)
         elif self.show_mode == 4:
-            self.problem.plot_(self.best_history[-1], pause, n_iter)
+            self.problem.plot(self.best_history[-1], pause, n_iter)
         elif self.show_mode == 5:
             self.plot_(pause, n_iter)
         else:
