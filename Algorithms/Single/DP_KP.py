@@ -6,7 +6,7 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 class DP_KP(ALGORITHM):
     def __init__(self, problem):
-        super().__init__(problem, num_pop=None, num_iter=None, cross_prob=None, mutate_prob=None, show_mode=0)
+        super().__init__(problem, num_pop=1)
         # 问题必须为单目标问题
         if problem.num_obj > 1:
             raise ValueError("This method can only solve single objective problems")
@@ -44,6 +44,7 @@ class DP_KP(ALGORITHM):
         self.pop = np.array([selected[self.capacity]])
         self.objs = self.cal_objs(self.pop)
         self.cons = self.cal_cons(self.pop)
+        self.record()
 
     def get_best(self, **kwargs):
         return self.pop[0], self.objs[0], self.cons[0]

@@ -6,8 +6,8 @@ from Algorithms.Utility.Utils import fast_nd_sort, cal_crowd_dist, cal_fitness
 
 
 class NNDREA(ALGORITHM):
-    def __init__(self, problem, num_pop, num_iter, structure=None, search_range=None, delta=0.5, cross_prob=None,
-                 mutate_prob=None, show_mode=None):
+    def __init__(self, problem, num_pop=100, num_iter=100, structure=None, search_range=None, delta=0.5,
+                 cross_prob=None, mutate_prob=None, show_mode=None):
         """
         This code is based on the research presented in
         "Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimization With Millions of Variables"
@@ -31,13 +31,14 @@ class NNDREA(ALGORITHM):
         if not hasattr(problem, 'instance'):
             raise ValueError("The problem must provide an instance dataset")
         # 实例数据集的大小必须与问题大小相同
-        if problem.instance.shape[0] != problem.num_dec and problem.instance.shape[1] != problem.num_dec:
+        if (problem.instance.shape[0] != problem.num_dec and  # type: ignore
+                problem.instance.shape[1] != problem.num_dec):  # type: ignore
             raise ValueError("The size of the instance dataset must be the same as the size of the problem")
         # 若实例大小在第二维度则转置以方便矩阵运算
-        if problem.instance.shape[1] == problem.num_dec:
-            self.instance = problem.instance.T
+        if problem.instance.shape[1] == problem.num_dec:  # type: ignore
+            self.instance = problem.instance.T  # type: ignore
         else:
-            self.instance = problem.instance
+            self.instance = problem.instance  # type: ignore
         # 对实例中相同的数据进行扰动防止相同数据输出同一个值
         # self.instance += np.random.normal(0, 0.1, self.instance.shape)
         # 需要提供神经网络的结构信息(否则默认为[D, 4, 1])
@@ -84,24 +85,29 @@ class NNDREA(ALGORITHM):
         # 绘制初始状态图
         self.plot(pause=True, n_iter=0)
         for i in self.iterator:
-            if i <= self.delta:
-                # 获取交配池
-                mating_pool = self.mating_pool_selection()
-                # 交叉变异生成子代
-                offspring_weights = self.operator_weights(mating_pool)
-                # 进行环境选择
-                self.environmental_selection_weights(offspring_weights)
-            else:
-                # 获取交配池
-                mating_pool = self.mating_pool_selection()
-                # 交叉变异生成子代
-                offspring = self.operator_origin(mating_pool)
-                # 进行环境选择
-                self.environmental_selection(offspring)
-            # 记录每步状态
-            self.record(i + 1)
+            # 运行单步算法
+            self.run_step(i)
             # 绘制迭代过程中每步状态
             self.plot(pause=True, n_iter=i + 1)
+
+    def run_step(self, i):
+        """运行算法单步"""
+        if i <= self.delta:
+            # 获取交配池
+            mating_pool = self.mating_pool_selection()
+            # 交叉变异生成子代
+            offspring_weights = self.operator_weights(mating_pool)
+            # 进行环境选择
+            self.environmental_selection_weights(offspring_weights)
+        else:
+            # 获取交配池
+            mating_pool = self.mating_pool_selection()
+            # 交叉变异生成子代
+            offspring = self.operator_origin(mating_pool)
+            # 进行环境选择
+            self.environmental_selection(offspring)
+        # 记录每步状态
+        self.record(i + 1)
 
     def get_fitness(self, objs, cons):
         """根据给定目标值和约束值得到适应度值"""

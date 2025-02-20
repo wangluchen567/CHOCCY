@@ -33,8 +33,8 @@ class SA(ALGORITHM):
             new_objs = self.cal_objs(new_pop)
             new_cons = self.cal_cons(new_pop)
             new_fits = self.get_fitness(new_objs, new_cons)
-            # 使用Metrospolis接受准则接受解
-            accept = self.Metrospolis(self.fitness, new_fits, temp)
+            # 使用metrospolis接受准则接受解
+            accept = self.metrospolis(self.fitness, new_fits, temp)
             # 更新解集
             self.pop[accept] = new_pop[accept]
             self.objs[accept] = new_objs[accept]
@@ -52,9 +52,9 @@ class SA(ALGORITHM):
             self.plot(pause=True, n_iter=i + 1)
 
     @staticmethod
-    def Metrospolis(old, new, temp):
+    def metrospolis(old, new, temp):
         """
-        使用Metrospolis接受准则接受解
+        使用metrospolis接受准则接受解
         :param old: 扰动前旧的解(适应度值)
         :param new: 扰动得到的新解(适应度值)
         :param temp: 当前温度

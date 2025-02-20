@@ -3,7 +3,7 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 
 class GFLS(ALGORITHM):
-    def __init__(self, problem, num_iter, alpha=1 / 4, active_all=True, show_mode=None):
+    def __init__(self, problem, num_iter=1000, alpha=1 / 4, active_all=True, show_mode=None):
         """
         引导快速局部搜索(Guided Fast Local Search)
         *Code Author: Luchen Wang
@@ -28,7 +28,7 @@ class GFLS(ALGORITHM):
         self.alpha = alpha
         self.active_all = active_all
         # 获取问题的距离矩阵
-        self.dist_mat = problem.dist_mat
+        self.dist_mat = problem.dist_mat  # type: ignore
         # 初始化lambda值
         self.lamb = 0
         # 初始化惩罚矩阵
@@ -62,14 +62,14 @@ class GFLS(ALGORITHM):
         tour = self.pop[0].astype(int)
         for i in self.iterator:
             # 进行一次快速局部搜索
-            tour = FastLocalSearch(tour, self.dist_mat, self.bits, self.p_mat, self.lamb)
+            tour = fast_local_search(tour, self.dist_mat, self.bits, self.p_mat, self.lamb)
             tour_len = self.cal_objs(tour)[0][0]
             utils = np.zeros(self.dist_mat.shape)
             # 更新惩罚矩阵
-            U = self.dist_mat / (1 + self.p_mat)
+            u_mat = self.dist_mat / (1 + self.p_mat)
             tour_roll = np.concatenate((tour[-1:], tour[:-1]))
-            utils[tour_roll, tour] = U[tour_roll, tour]
-            utils[tour, tour_roll] = U[tour, tour_roll]
+            utils[tour_roll, tour] = u_mat[tour_roll, tour]
+            utils[tour, tour_roll] = u_mat[tour, tour_roll]
             utils_max = np.max(utils)
             self.p_mat[np.where(utils == utils_max)] += 1
             # 更新lambda值
@@ -87,7 +87,7 @@ class GFLS(ALGORITHM):
             self.plot(pause=True, n_iter=i + 1)
 
 
-def FastLocalSearch(tour, dist_mat, bits, p_mat, lamb):
+def fast_local_search(tour, dist_mat, bits, p_mat, lamb):
     """快速局部搜索"""
     while np.sum(bits) > 0:
         for i in range(len(tour)):

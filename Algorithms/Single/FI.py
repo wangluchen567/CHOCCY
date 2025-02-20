@@ -8,13 +8,12 @@ class FI(ALGORITHM):
         最远插入启发式算法(Farthest Insertion)
         *Code Author: Luchen Wang
         :param problem: 问题对象(TSP类型)
-        :param show_mode: 绘图模式
         """
         # 问题必须提供距离矩阵
         if not hasattr(problem, 'dist_mat'):
             raise ValueError("The problem must provide the distance matrix")
         # 获取问题的距离矩阵
-        self.dist_mat = problem.dist_mat
+        self.dist_mat = problem.dist_mat  # type: ignore
         super().__init__(problem, 1, len(self.dist_mat), None, None, show_mode=0)
         # 问题必须为单目标问题
         if problem.num_obj > 1:

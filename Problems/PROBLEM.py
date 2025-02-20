@@ -1,7 +1,7 @@
 import numpy as np
+from typing import Union
 
-
-class PROBLEM():
+class PROBLEM(object):
     # 定义问题常量
     REAL = 0
     INT = 1
@@ -9,7 +9,12 @@ class PROBLEM():
     PMU = 3
     FIX = 4
 
-    def __init__(self, problem_type, num_dec, num_obj, lower, upper):
+    def __init__(self,
+                 problem_type: int,
+                 num_dec: int,
+                 num_obj: int,
+                 lower: Union[float, np.ndarray],
+                 upper: Union[float, np.ndarray]):
         """
         问题父类
         *Code Author: LuChen Wang

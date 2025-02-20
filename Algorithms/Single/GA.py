@@ -2,7 +2,7 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 
 class GA(ALGORITHM):
-    def __init__(self, problem, num_pop, num_iter, cross_prob=None, mutate_prob=None, show_mode=None):
+    def __init__(self, problem, num_pop=100, num_iter=100, cross_prob=None, mutate_prob=None, show_mode=None):
         """
         遗传算法
         *Code Author: Luchen Wang
@@ -22,13 +22,18 @@ class GA(ALGORITHM):
         # 绘制初始状态图
         self.plot(pause=True, n_iter=0)
         for i in self.iterator:
-            # 获取交配池
-            mating_pool = self.mating_pool_selection()
-            # 交叉变异生成子代
-            offspring = self.operator(mating_pool)
-            # 进行环境选择
-            self.environmental_selection(offspring)
-            # 记录每步状态
-            self.record(i + 1)
+            # 运行单步算法
+            self.run_step(i)
             # 绘制迭代过程中每步状态
             self.plot(pause=True, n_iter=i + 1)
+
+    def run_step(self, i):
+        """运行算法单步"""
+        # 获取交配池
+        mating_pool = self.mating_pool_selection()
+        # 交叉变异生成子代
+        offspring = self.operator(mating_pool)
+        # 进行环境选择
+        self.environmental_selection(offspring)
+        # 记录每步状态
+        self.record(i + 1)

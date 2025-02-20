@@ -1,6 +1,8 @@
 import time
 import numpy as np
 from tqdm import tqdm
+from typing import Union
+from Problems.PROBLEM import PROBLEM
 from Metrics.Hypervolume import cal_hv
 from Algorithms.Utility.Selections import tournament_selection
 from Algorithms.Utility.Utils import fast_nd_sort, shuffle_matrix_in_row
@@ -10,13 +12,19 @@ from Algorithms.Utility.Operators import operator_real, operator_binary, operato
 
 class ALGORITHM(object):
     # 定义问题常量
-    REAL = 0  # 实数
-    INT = 1  # 整数
-    BIN = 2  # 二进制
-    PMU = 3  # 序列
-    FIX = 4  # 固定标签
+    REAL = PROBLEM.REAL  # 实数
+    INT = PROBLEM.INT  # 整数
+    BIN = PROBLEM.BIN  # 二进制
+    PMU = PROBLEM.PMU  # 序列
+    FIX = PROBLEM.FIX  # 固定标签
 
-    def __init__(self, problem, num_pop, num_iter, cross_prob=None, mutate_prob=None, show_mode=None):
+    def __init__(self,
+                 problem: PROBLEM,
+                 num_pop: int = 100,
+                 num_iter: int = 100,
+                 cross_prob: Union[float, None] = None,
+                 mutate_prob: Union[float, None] = None,
+                 show_mode: int = 0):
         """
         算法父类
         *Code Author: LuChen Wang
@@ -84,13 +92,13 @@ class ALGORITHM(object):
         # 构建迭代器
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
 
-    def cal_objs(self, X):
+    def cal_objs(self, decs):
         """计算目标值"""
-        return self.problem.cal_objs(X)
+        return self.problem.cal_objs(decs)
 
-    def cal_cons(self, X):
+    def cal_cons(self, decs):
         """计算约束值"""
-        return self.problem.cal_cons(X)
+        return self.problem.cal_cons(decs)
 
     @staticmethod
     def cal_objs_based_cons(objs, cons):
@@ -238,6 +246,10 @@ class ALGORITHM(object):
     def run(self):
         """运行算法(主函数)"""
         raise NotImplemented
+
+    def run_step(self, *args, **kwargs):
+        """运行算法单步"""
+        pass
 
     def get_best(self):
         """获取当前种群的最优解"""
