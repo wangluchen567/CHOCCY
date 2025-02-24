@@ -37,6 +37,7 @@ def Solve_TSP():
     alg.run()
     print(alg.best_obj[0])
     alg.plot_scores()
+    alg.plot(show_mode=4)
 
 
 def Solve_FixLabelCluster():

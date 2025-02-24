@@ -18,7 +18,7 @@ class GFLS(ALGORITHM):
         if problem.num_obj > 1:
             raise ValueError("This method can only solve single objective problems")
         # 问题必须为序列问题
-        if np.sum(self.problem_type != ALGORITHM.PMU):
+        if np.sum(self.problem_type != ALGORITHM.TSP):
             raise ValueError("This method can only solve sequence problems")
         # 问题必须提供距离矩阵
         if not hasattr(problem, 'dist_mat'):

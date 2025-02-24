@@ -88,7 +88,7 @@ class SA(ALGORITHM):
             return polynomial_mutation(solutions, lower, upper, mutate_prob)
         elif problem_type == ALGORITHM.BIN:
             return bit_mutation(solutions, mutate_prob)
-        elif problem_type == ALGORITHM.PMU:
+        elif problem_type == ALGORITHM.TSP:
             return exchange_mutation(solutions, mutate_prob)
         elif problem_type == ALGORITHM.FIX:
             return fix_label_mutation(solutions, mutate_prob)

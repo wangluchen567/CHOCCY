@@ -4,11 +4,12 @@ from typing import Union
 
 class PROBLEM(object):
     # 定义问题常量
-    REAL = 0
-    INT = 1
-    BIN = 2
-    PMU = 3
-    FIX = 4
+    REAL = 0  # 实数
+    INT = 1  # 整数
+    BIN = 2  # 二进制
+    TSP = 3  # 序列(TSP)
+    VRP = 4  # 序列(VRP)
+    FIX = 5  # 固定标签
 
     def __init__(self,
                  problem_type: Union[int, np.ndarray],

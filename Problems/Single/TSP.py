@@ -8,7 +8,7 @@ from scipy.spatial import distance_matrix
 
 class TSP(PROBLEM):
     def __init__(self, num_dec=30, data=None, is_dist_mat=False):
-        problem_type = PROBLEM.PMU
+        problem_type = PROBLEM.TSP
         num_obj = 1
         lower = 0
         upper = num_dec
