@@ -2,7 +2,7 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 
 class GA(ALGORITHM):
-    def __init__(self, problem, num_pop=100, num_iter=100, cross_prob=None, mutate_prob=None, show_mode=None):
+    def __init__(self, problem, num_pop=100, num_iter=100, cross_prob=None, mutate_prob=None, show_mode=0):
         """
         遗传算法
         *Code Author: Luchen Wang

@@ -19,7 +19,7 @@ class FI(ALGORITHM):
         if problem.num_obj > 1:
             raise ValueError("This method can only solve single objective problems")
         # 问题必须为序列问题
-        if np.sum(self.problem_type != ALGORITHM.TSP):
+        if np.sum(self.problem_type != ALGORITHM.PMU):
             raise ValueError("This method can only solve sequence problems")
         self.init_algorithm()
 

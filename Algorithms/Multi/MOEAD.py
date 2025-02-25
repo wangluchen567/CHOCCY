@@ -5,7 +5,7 @@ from Algorithms.Utility.Utils import get_uniform_vectors
 
 class MOEAD(ALGORITHM):
     def __init__(self, problem, num_pop=100, num_iter=100, func_type=1,
-                 cross_prob=None, mutate_prob=None, show_mode=None):
+                 cross_prob=None, mutate_prob=None, show_mode=0):
         """
         This code is based on the research presented in
         "MOEA/D: A multi-objective evolutionary algorithm based on decomposition"

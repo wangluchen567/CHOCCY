@@ -4,7 +4,7 @@ from Algorithms.Utility.Utils import fast_nd_sort, cal_crowd_dist, cal_fitness
 
 
 class NSGAII(ALGORITHM):
-    def __init__(self, problem, num_pop=100, num_iter=100, cross_prob=None, mutate_prob=None, show_mode=None):
+    def __init__(self, problem, num_pop=100, num_iter=100, cross_prob=None, mutate_prob=None, show_mode=0):
         """
         This code is based on the research presented in
         "A fast and elitist multi-objective genetic algorithm: NSGA-II"

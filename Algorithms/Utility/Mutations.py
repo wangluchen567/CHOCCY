@@ -63,6 +63,35 @@ def exchange_mutation(offspring, mutate_prob):
     return offspring
 
 
+def flip_mutation(offspring, mutate_prob):
+    """
+    翻转变异(序列问题)
+    :param offspring: 交叉得到的子代种群
+    :param mutate_prob: 变异概率
+    :return: 变异后的子代种群
+    """
+    N, D = offspring.shape
+    # 生成随机的起始和结束索引
+    starts = np.random.randint(0, D, size=N)
+    ends = np.random.randint(0, D, size=N)
+    # 确保start <= end
+    starts, ends = np.minimum(starts, ends), np.maximum(starts, ends)
+    # 生成列索引网格
+    cols = np.arange(D).reshape(1, -1)
+    # 计算需要倒置的区域掩码
+    mask = (cols >= starts.reshape(-1, 1)) & (cols <= ends.reshape(-1, 1))
+    # 计算倒置后的索引
+    reversed_indices = starts.reshape(-1, 1) + ends.reshape(-1, 1) - cols
+    # 组合索引：在掩码位置使用倒置索引，否则使用原索引
+    indices = np.where(mask, reversed_indices, cols)
+    # 得到部分片段倒置后的结果
+    offspring_ = offspring[np.arange(N).reshape(-1, 1), indices]
+    # 要满足变异概率才可变异
+    mask = np.random.rand(N) < mutate_prob
+    offspring[mask] = offspring_[mask]
+    return offspring
+
+
 def fix_label_mutation(offspring, mutate_prob):
     """
     固定类型数的标签的交换式变异(固定类型数的标签问题)
@@ -78,4 +107,3 @@ def fix_label_mutation(offspring, mutate_prob):
     offspring[need_mutate, points[need_mutate, 0]], offspring[need_mutate, points[need_mutate, 1]] = offspring[
         need_mutate, points[need_mutate, 1]], offspring[need_mutate, points[need_mutate, 0]]
     return offspring
-

@@ -15,7 +15,7 @@ class ALGORITHM(object):
     REAL = PROBLEM.REAL  # 实数
     INT = PROBLEM.INT  # 整数
     BIN = PROBLEM.BIN  # 二进制
-    TSP = PROBLEM.TSP  # 序列(TSP)
+    PMU = PROBLEM.PMU  # 序列
     FIX = PROBLEM.FIX  # 固定标签
 
     def __init__(self,
@@ -134,7 +134,7 @@ class ALGORITHM(object):
         init_dict = {ALGORITHM.REAL: self.init_pop_real,
                      ALGORITHM.INT: self.init_pop_integer,
                      ALGORITHM.BIN: self.init_pop_binary,
-                     ALGORITHM.TSP: self.init_pop_permute,
+                     ALGORITHM.PMU: self.init_pop_permute,
                      ALGORITHM.FIX: self.init_pop_fix_label}
         pop = np.zeros((self.num_pop, self.num_dec))
         # 若没有实数或整数部分则直接初始化为整型
@@ -167,7 +167,7 @@ class ALGORITHM(object):
     def init_pop_permute(self):
         """初始化求解序列问题的种群"""
         pop = np.argsort(np.random.uniform(0, 1,
-                                           size=(self.num_pop, len(self.type_indices[ALGORITHM.TSP]))), axis=1)
+                                           size=(self.num_pop, len(self.type_indices[ALGORITHM.PMU]))), axis=1)
         return pop
 
     def init_pop_fix_label(self):
@@ -191,8 +191,8 @@ class ALGORITHM(object):
         for t in self.unique_type:
             offspring[:, self.type_indices[t]] = self.operator_(t)(offspring[:, self.type_indices[t]],
                                                                    self.lower[self.type_indices[t]],
-                                                                   self.upper[self.type_indices[t]], self.cross_prob,
-                                                                   self.mutate_prob)
+                                                                   self.upper[self.type_indices[t]],
+                                                                   self.cross_prob, self.mutate_prob)
         return offspring
 
     @staticmethod
@@ -204,7 +204,7 @@ class ALGORITHM(object):
             return operator_real
         elif problem_type == ALGORITHM.BIN:
             return operator_binary
-        elif problem_type == ALGORITHM.TSP:
+        elif problem_type == ALGORITHM.PMU:
             return operator_permutation
         elif problem_type == ALGORITHM.FIX:
             return operator_fix_label

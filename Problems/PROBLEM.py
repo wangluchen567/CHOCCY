@@ -7,9 +7,8 @@ class PROBLEM(object):
     REAL = 0  # 实数
     INT = 1  # 整数
     BIN = 2  # 二进制
-    TSP = 3  # 序列(TSP)
-    VRP = 4  # 序列(VRP)
-    FIX = 5  # 固定标签
+    PMU = 3  # 序列
+    FIX = 4  # 固定标签
 
     def __init__(self,
                  problem_type: Union[int, np.ndarray],

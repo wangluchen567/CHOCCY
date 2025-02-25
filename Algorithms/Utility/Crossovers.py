@@ -12,10 +12,8 @@ def simulated_binary_crossover(parent1, parent2, lower, upper, cross_prob, eta=2
     :param eta: 超参数
     :return: 子代种群
     """
-    if parent1.shape[0] != parent2.shape[0]:
-        raise ValueError("The size of the two parent populations is not equal")
-    if parent1.shape[1] != parent2.shape[1]:
-        raise ValueError("The dim of the two parent populations is not equal")
+    if parent1.shape != parent2.shape:
+        raise ValueError("The shape of the two parent populations is not equal")
     N, D = parent1.shape
     beta = np.zeros((N, D))
     mu = np.random.random((N, D))
@@ -46,10 +44,8 @@ def binary_crossover(parent1, parent2, cross_prob):
     :param cross_prob: 交叉概率
     :return: 子代种群
     """
-    if parent1.shape[0] != parent2.shape[0]:
-        raise ValueError("The size of the two parent populations is not equal")
-    if parent1.shape[1] != parent2.shape[1]:
-        raise ValueError("The dim of the two parent populations is not equal")
+    if parent1.shape != parent2.shape:
+        raise ValueError("The shape of the two parent populations is not equal")
     N, D = parent1.shape
     # 维度方面均匀交叉，个数方面按照交叉概率交叉
     mask = (np.random.rand(N, D) < 0.5) & (np.random.rand(N, 1) < cross_prob)
@@ -68,10 +64,8 @@ def order_crossover(parent1, parent2, cross_prob):
     :param cross_prob: 交叉概率
     :return: 子代种群
     """
-    if parent1.shape[0] != parent2.shape[0]:
-        raise ValueError("The size of the two parent populations is not equal")
-    if parent1.shape[1] != parent2.shape[1]:
-        raise ValueError("The dim of the two parent populations is not equal")
+    if parent1.shape != parent2.shape:
+        raise ValueError("The shape of the two parent populations is not equal")
     N, D = parent1.shape
     offspring1 = parent1.copy()
     offspring2 = parent2.copy()
@@ -80,17 +74,12 @@ def order_crossover(parent1, parent2, cross_prob):
             parent1_ = parent1[i]
             parent2_ = parent2[i]
             # 选择交叉片段
-            point1 = np.random.randint(0, len(parent1_))
-            point2 = np.random.randint(point1 + 1, len(parent1_) + 1)
-            # 进行拼接
-            temp1 = list(np.concatenate((parent1_[point1:point2], parent2_)))
-            temp2 = list(np.concatenate((parent2_[point1:point2], parent1_)))
+            start = np.random.randint(0, D)
+            end = np.random.randint(start + 1, D + 1)
             # 去重后按原来元素重排
-            offspring1_ = list(set(temp1))
-            offspring1_.sort(key=temp1.index)
+            offspring1_ = list(dict.fromkeys(np.concatenate((parent1_[start:end], parent2[i]))))
             offspring1[i] = np.array(offspring1_)
-            offspring2_ = list(set(temp2))
-            offspring2_.sort(key=temp2.index)
+            offspring2_ = list(dict.fromkeys(np.concatenate((parent2_[start:end], parent1[i]))))
             offspring2[i] = np.array(offspring2_)
     offspring = np.vstack((offspring1, offspring2))
     return offspring
@@ -101,8 +90,6 @@ def fix_label_crossover(parent1, parent2, cross_prob):
     固定类型数的标签的均匀交叉(固定类型数标签问题)
     :param parent1: 父代种群1
     :param parent2: 父代种群2
-    :param lower: 标签取值范围的整型下界
-    :param upper: 标签取值范围的整型上界
     :param cross_prob: 交叉概率
     :return: 子代种群
     """

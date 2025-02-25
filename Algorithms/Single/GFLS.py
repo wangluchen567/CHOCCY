@@ -3,7 +3,7 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 
 class GFLS(ALGORITHM):
-    def __init__(self, problem, num_iter=1000, alpha=1 / 4, active_all=True, show_mode=None):
+    def __init__(self, problem, num_iter=1000, alpha=1 / 4, active_all=True, show_mode=0):
         """
         引导快速局部搜索(Guided Fast Local Search)
         *Code Author: Luchen Wang
@@ -18,7 +18,7 @@ class GFLS(ALGORITHM):
         if problem.num_obj > 1:
             raise ValueError("This method can only solve single objective problems")
         # 问题必须为序列问题
-        if np.sum(self.problem_type != ALGORITHM.TSP):
+        if np.sum(self.problem_type != ALGORITHM.PMU):
             raise ValueError("This method can only solve sequence problems")
         # 问题必须提供距离矩阵
         if not hasattr(problem, 'dist_mat'):

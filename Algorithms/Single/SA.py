@@ -3,7 +3,7 @@ from Algorithms.Utility.Mutations import *
 
 
 class SA(ALGORITHM):
-    def __init__(self, problem, num_pop, num_iter, init_temp=1000, alpha=0.95, perturb_prob=0.5, show_mode=None):
+    def __init__(self, problem, num_pop, num_iter, init_temp=1000, alpha=0.95, perturb_prob=0.5, show_mode=0):
         """
         模拟退火算法
         *Code Author: Luchen Wang
@@ -88,7 +88,7 @@ class SA(ALGORITHM):
             return polynomial_mutation(solutions, lower, upper, mutate_prob)
         elif problem_type == ALGORITHM.BIN:
             return bit_mutation(solutions, mutate_prob)
-        elif problem_type == ALGORITHM.TSP:
+        elif problem_type == ALGORITHM.PMU:
             return exchange_mutation(solutions, mutate_prob)
         elif problem_type == ALGORITHM.FIX:
             return fix_label_mutation(solutions, mutate_prob)

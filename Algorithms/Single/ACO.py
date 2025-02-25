@@ -5,7 +5,7 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 
 class ACO(ALGORITHM):
-    def __init__(self, problem, num_pop=50, num_iter=100, alpha=1, beta=4, rho=0.2, q_value=100, show_mode=None):
+    def __init__(self, problem, num_pop=50, num_iter=100, alpha=1, beta=4, rho=0.2, q_value=100, show_mode=0):
         """
         蚁群算法 (蚁周模型 Ant-Cycle)
         *Code Author: Luchen Wang
@@ -23,7 +23,7 @@ class ACO(ALGORITHM):
         if problem.num_obj > 1:
             raise ValueError("This method can only solve single objective problems")
         # 问题必须为序列问题
-        if np.sum(self.problem_type != ALGORITHM.TSP):
+        if np.sum(self.problem_type != ALGORITHM.PMU):
             raise ValueError("This method can only solve sequence problems")
         # 问题必须提供距离矩阵
         if not hasattr(problem, 'dist_mat'):
