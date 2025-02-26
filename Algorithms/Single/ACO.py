@@ -18,7 +18,7 @@ class ACO(ALGORITHM):
         :param q_value: 信息素常量，一般取值[10, 1000]
         :param show_mode: 绘图模式
         """
-        super().__init__(problem, num_pop, num_iter, None, None, show_mode)
+        super().__init__(problem, num_pop, num_iter, None, None, None, show_mode)
         # 问题必须为单目标问题
         if problem.num_obj > 1:
             raise ValueError("This method can only solve single objective problems")

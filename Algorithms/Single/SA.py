@@ -15,7 +15,7 @@ class SA(ALGORITHM):
         :param perturb_prob: 扰动概率(变异概率)
         :param show_mode: 绘图模式
         """
-        super().__init__(problem, num_pop, num_iter, None, perturb_prob, show_mode)
+        super().__init__(problem, num_pop, num_iter, None, perturb_prob, None, show_mode)
         self.init_temp = init_temp
         self.alpha = alpha
         self.init_algorithm()

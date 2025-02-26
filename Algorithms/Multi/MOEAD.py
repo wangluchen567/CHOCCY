@@ -30,7 +30,7 @@ class MOEAD(ALGORITHM):
         # 根据权重向量个数重新确定种群大小(必须匹配)
         num_pop = len(self.vectors)
         # 初始化相关参数(调用父类初始化)
-        super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, show_mode)
+        super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
         self.init_algorithm()
         # 初始化参考点
         self.ref = np.min(self.objs, axis=0)

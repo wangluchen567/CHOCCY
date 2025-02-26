@@ -1,6 +1,7 @@
 import warnings
 import itertools
 import numpy as np
+
 # 设置警告过滤规则，只显示一次
 warnings.filterwarnings('once')
 
@@ -63,9 +64,118 @@ def fast_nd_sort_(objs):
     return fronts, ranks
 
 
+def cal_crowd_dist(objs, fronts):
+    """求拥挤度距离"""
+    num_pop, num_dim = objs.shape
+    crowd_dist = np.zeros(num_pop)
+    for f in fronts:
+        # 获取当前前沿面中解的目标值
+        objs_f = objs[f, :]
+        # 求最大与最小值
+        FMax = np.max(objs_f, axis=0)
+        FMin = np.min(objs_f, axis=0)
+        # 求最大与最小的差，方便归一化
+        FRange = FMax - FMin
+        FRange[FRange == 0] = np.finfo(np.float32).tiny  # 避免除零
+
+        # 排序索引矩阵
+        sorted_indices = np.argsort(objs_f, axis=0)
+        f_sorted = np.array(f)[sorted_indices]
+        # 设置边界个体的距离为无穷大
+        crowd_dist[f_sorted[0, np.arange(num_dim)]] = float('inf')
+        crowd_dist[f_sorted[-1, np.arange(num_dim)]] = float('inf')
+        # 计算中间个体的拥挤度增量
+        dist_increments = (objs_f[sorted_indices[2:], np.arange(num_dim)] - objs_f[
+            sorted_indices[:-2], np.arange(num_dim)]) / FRange
+        # 累加增量到距离
+        np.add.at(crowd_dist, f_sorted[1:-1], dist_increments)
+
+    return crowd_dist
+
+
+def cal_fitness(ranks, crowd_dist):
+    """根据支配前沿数和拥挤度距离计算个体排名(适应度值)"""
+    # 初始化排序后的种群索引
+    indicator = np.hstack((ranks.reshape(-1, 1), -crowd_dist.reshape(-1, 1)))
+    # 使用 np.lexsort 对两列指标进行排序
+    indices = np.lexsort((indicator[:, 1], indicator[:, 0]))
+    # 排序后的数据
+    # sorted_data = indicator[indices]
+    # 获取排序下标
+    fitness = np.argsort(indices)
+    return fitness
+
+
+def get_uniform_vectors(N, M):
+    """
+    获取分解后的均匀分布的权重向量
+    :param N: 个体数
+    :param M: 维度数
+    :return: 权重向量
+    """
+    H1 = 1
+    while len(list(itertools.combinations(range(H1 + M), M - 1))) <= N:
+        H1 = H1 + 1
+    W = np.array(list(itertools.combinations(range(H1 + M - 1), M - 1)))
+    W = W - np.repeat(np.array([range(M - 1)]), len(W), axis=0)
+    W = (np.hstack((W, np.zeros((len(W), 1)) + H1)) - np.hstack((np.zeros((len(W), 1)), W))) / H1
+    return W
+
+
+def shuffle_matrix_in_row(matrix):
+    """使用Knuth-Durstenfeld Shuffle算法对矩阵按行进行打乱"""
+    N, D = matrix.shape
+    for i in reversed(np.arange(1, D)):
+        i_vec = np.zeros((N), dtype=int) + i
+        j_vec = np.array(np.random.random(N) * (i + 1), dtype=int)
+        matrix[np.arange(N), i_vec], matrix[np.arange(N), j_vec] = matrix[np.arange(N), j_vec], matrix[
+            np.arange(N), i_vec]
+
+
+def shuffle(x):
+    """x, random=random.random -> shuffle list x in place; return None.
+    Optional arg random is a 0-argument function returning a random
+    float in [0.0, 1.0); by default, the standard random.random.
+    """
+    for i in reversed(np.arange(1, len(x))):
+        # pick an element in x[:i+1] with which to exchange x[i]
+        j = int(np.random.random() * (i + 1))
+        x[i], x[j] = x[j], x[i]
+
+
+def cost_change(dist_mat, n1, n2, n3, n4):
+    """计算2-opt的"""
+    return dist_mat[n1, n3] + dist_mat[n2, n4] - dist_mat[n1, n2] - dist_mat[n3, n4]
+
+
+def two_opt_i(tour, dist_mat, i):
+    """搜索第i个城市的邻域"""
+    improved = False
+    idx = np.where(np.array(tour) == i)[0][0]
+    tour = np.concatenate((tour[idx:], tour[:idx]))
+    for j in range(3, len(tour)):
+        n1, n2, n3, n4 = tour[0], tour[1], tour[j - 1], tour[j]
+        if cost_change(dist_mat, n1, n2, n3, n4) < -1e-9:
+            tour[1:j] = tour[j - 1:0:-1]
+            improved = True
+            return tour, improved
+    return tour, improved
+
+
+def two_opt_(tour, dist_mat):
+    """进行2-opt搜索"""
+    improved = False
+    for i in range(len(tour)):
+        tour, improved = two_opt_i(tour, dist_mat, i)
+        if improved:
+            return tour, improved
+    return tour, improved
+
+
 try:
     # 尝试导入numba
     from numba import jit
+
 
     @jit(nopython=True)
     def dominates_loop(objs, i):
@@ -150,86 +260,43 @@ try:
         return fronts, ranks
 
 
+    @jit(nopython=True)
+    def cost_change_jit(dist_mat, n1, n2, n3, n4):
+        """计算2-opt的"""
+        return dist_mat[n1, n3] + dist_mat[n2, n4] - dist_mat[n1, n2] - dist_mat[n3, n4]
+
+
+    @jit(nopython=True)
+    def two_opt_i_jit(tour, dist_mat, i):
+        """搜索第i个城市的邻域"""
+        improved = False
+        idx = np.where(tour == i)[0][0]
+        tour = np.concatenate((tour[idx:], tour[:idx]))
+        for j in range(3, len(tour)):
+            n1, n2, n3, n4 = tour[0], tour[1], tour[j - 1], tour[j]
+            if cost_change_jit(dist_mat, n1, n2, n3, n4) < -1e-9:
+                tour[1:j] = tour[j - 1:0:-1]
+                improved = True
+                return tour, improved
+        return tour, improved
+
+
+    @jit(nopython=True)
+    def two_opt_jit(tour, dist_mat):
+        """进行2-opt搜索"""
+        improved = False
+        for i in range(len(tour)):
+            tour, improved = two_opt_i_jit(tour, dist_mat, i)
+            if improved:
+                return tour, improved
+        return tour, improved
+
+
+    def two_opt(tour, dist_mat):
+        return two_opt_jit(tour, dist_mat)
+
 except ImportError:
     # 如果导入numba加速库失败，使用原始的快速排序函数
     warnings.warn("Optimizing problems without using numba acceleration...")
     fast_nd_sort = fast_nd_sort_
-
-
-def cal_crowd_dist(objs, fronts):
-    """求拥挤度距离"""
-    num_pop, num_dim = objs.shape
-    crowd_dist = np.zeros(num_pop)
-    for f in fronts:
-        # 获取当前前沿面中解的目标值
-        objs_f = objs[f, :]
-        # 求最大与最小值
-        FMax = np.max(objs_f, axis=0)
-        FMin = np.min(objs_f, axis=0)
-        # 求最大与最小的差，方便归一化
-        FRange = FMax - FMin
-        FRange[FRange == 0] = np.finfo(np.float32).tiny  # 避免除零
-
-        # 排序索引矩阵
-        sorted_indices = np.argsort(objs_f, axis=0)
-        f_sorted = np.array(f)[sorted_indices]
-        # 设置边界个体的距离为无穷大
-        crowd_dist[f_sorted[0, np.arange(num_dim)]] = float('inf')
-        crowd_dist[f_sorted[-1, np.arange(num_dim)]] = float('inf')
-        # 计算中间个体的拥挤度增量
-        dist_increments = (objs_f[sorted_indices[2:], np.arange(num_dim)] - objs_f[
-            sorted_indices[:-2], np.arange(num_dim)]) / FRange
-        # 累加增量到距离
-        np.add.at(crowd_dist, f_sorted[1:-1], dist_increments)
-
-    return crowd_dist
-
-
-def cal_fitness(ranks, crowd_dist):
-    """根据支配前沿数和拥挤度距离计算个体排名(适应度值)"""
-    # 初始化排序后的种群索引
-    indicator = np.hstack((ranks.reshape(-1, 1), -crowd_dist.reshape(-1, 1)))
-    # 使用 np.lexsort 对两列指标进行排序
-    indices = np.lexsort((indicator[:, 1], indicator[:, 0]))
-    # 排序后的数据
-    # sorted_data = indicator[indices]
-    # 获取排序下标
-    fitness = np.argsort(indices)
-    return fitness
-
-
-def get_uniform_vectors(N, M):
-    """
-    获取分解后的均匀分布的权重向量
-    :param N: 个体数
-    :param M: 维度数
-    :return: 权重向量
-    """
-    H1 = 1
-    while len(list(itertools.combinations(range(H1 + M), M - 1))) <= N:
-        H1 = H1 + 1
-    W = np.array(list(itertools.combinations(range(H1 + M - 1), M - 1)))
-    W = W - np.repeat(np.array([range(M - 1)]), len(W), axis=0)
-    W = (np.hstack((W, np.zeros((len(W), 1)) + H1)) - np.hstack((np.zeros((len(W), 1)), W))) / H1
-    return W
-
-
-def shuffle_matrix_in_row(matrix):
-    """使用Knuth-Durstenfeld Shuffle算法对矩阵按行进行打乱"""
-    N, D = matrix.shape
-    for i in reversed(np.arange(1, D)):
-        i_vec = np.zeros((N), dtype=int) + i
-        j_vec = np.array(np.random.random(N) * (i + 1), dtype=int)
-        matrix[np.arange(N), i_vec], matrix[np.arange(N), j_vec] = matrix[np.arange(N), j_vec], matrix[
-            np.arange(N), i_vec]
-
-
-def shuffle(x):
-    """x, random=random.random -> shuffle list x in place; return None.
-    Optional arg random is a 0-argument function returning a random
-    float in [0.0, 1.0); by default, the standard random.random.
-    """
-    for i in reversed(np.arange(1, len(x))):
-        # pick an element in x[:i+1] with which to exchange x[i]
-        j = int(np.random.random() * (i + 1))
-        x[i], x[j] = x[j], x[i]
+    two_opt = two_opt_

@@ -13,7 +13,7 @@ class GFLS(ALGORITHM):
         :param active_all: 是否激活全部子邻域
         :param show_mode: 绘图模式
         """
-        super().__init__(problem, 1, num_iter, None, None, show_mode)
+        super().__init__(problem, 1, num_iter, None, None, None, show_mode)
         # 问题必须为单目标问题
         if problem.num_obj > 1:
             raise ValueError("This method can only solve single objective problems")

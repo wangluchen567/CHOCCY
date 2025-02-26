@@ -23,7 +23,7 @@ class NNDREA(ALGORITHM):
         :param mutate_prob: 变异概率
         :param show_mode: 绘图模式
         """
-        super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, show_mode)
+        super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
         # 问题必须为二进制问题
         if np.sum(self.problem_type != ALGORITHM.BIN):
             raise ValueError("This method can only solve binary problems")

@@ -17,7 +17,7 @@ class NSGAII(ALGORITHM):
         :param mutate_prob: 变异概率
         :param show_mode: 绘图模式
         """
-        super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, show_mode)
+        super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
         self.init_algorithm()
 
     @ALGORITHM.record_time

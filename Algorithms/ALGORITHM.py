@@ -24,6 +24,7 @@ class ALGORITHM(object):
                  num_iter: int = 100,
                  cross_prob: Union[float, None] = None,
                  mutate_prob: Union[float, None] = None,
+                 educate_prob: Union[float, None] = None,
                  show_mode: int = 0):
         """
         算法父类
@@ -33,6 +34,7 @@ class ALGORITHM(object):
         :param num_iter: 迭代次数
         :param cross_prob: 交叉概率
         :param mutate_prob: 变异概率
+        :param educate_prob: 教育概率
         :param show_mode: 绘图模式 (0:不绘制图像, 1:目标空间, 2:决策空间, 3:混合模式, 4:问题提供, 5:算法提供)
         """
         self.problem = problem
@@ -46,9 +48,10 @@ class ALGORITHM(object):
         self.lower = self.problem.lower
         self.upper = self.problem.upper
         self.show_mode = show_mode
-        # 初始化交叉和变异概率
+        # 初始化交叉、变异和教育概率
         self.cross_prob = cross_prob
         self.mutate_prob = mutate_prob
+        self.educate_prob = educate_prob
         # 初始化种群
         self.pop = None
         self.objs = None
@@ -79,9 +82,10 @@ class ALGORITHM(object):
 
     def init_algorithm(self):
         """初始化算法"""
-        # 初始化交叉和变异概率
+        # 初始化交叉、变异和教育概率
         self.cross_prob = 1.0 if self.cross_prob is None else self.cross_prob
         self.mutate_prob = 1 / self.num_dec if self.mutate_prob is None else self.mutate_prob
+        self.educate_prob = 0.5 if self.educate_prob is None else self.educate_prob
         # 初始化种群，计算目标值和约束值以及适应度值
         self.pop = self.init_pop()
         self.objs = self.cal_objs(self.pop)
@@ -210,6 +214,10 @@ class ALGORITHM(object):
             return operator_fix_label
         else:
             raise ValueError("The problem type does not exist")
+
+    def educate(self, *args, **kwargs):
+        """对子代进行教育"""
+        pass
 
     def get_fitness(self, objs, cons):
         """根据给定目标值和约束值得到适应度值(默认是单目标情况)"""
