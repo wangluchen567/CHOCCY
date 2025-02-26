@@ -86,7 +86,9 @@ def operator_permutation(pop, lower, upper, cross_prob=None, mutate_prob=None):
     # 顺序交叉
     offspring = order_crossover(parents1, parents2, cross_prob)
     # 交换式变异
-    offspring = exchange_mutation(offspring, mutate_prob)
+    # offspring = exchange_mutation(offspring, mutate_prob)
+    # 翻转式变异
+    offspring = flip_mutation(offspring, mutate_prob)
     return offspring
 
 

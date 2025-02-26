@@ -69,18 +69,21 @@ def order_crossover(parent1, parent2, cross_prob):
     N, D = parent1.shape
     offspring1 = parent1.copy()
     offspring2 = parent2.copy()
+    # 生成所有需要的随机数
+    crossover_mask = np.random.random(N) < cross_prob
+    starts1 = np.random.randint(0, D, size=N)
+    ends1 = np.random.randint(starts1 + 1, D + 1, size=N)
+    starts2 = np.random.randint(0, D, size=N)
+    ends2 = np.random.randint(starts2 + 1, D + 1, size=N)
     for i in range(N):
-        if np.random.random() < cross_prob:
-            parent1_ = parent1[i]
-            parent2_ = parent2[i]
-            # 选择交叉片段
-            start = np.random.randint(0, D)
-            end = np.random.randint(start + 1, D + 1)
-            # 去重后按原来元素重排
-            offspring1_ = list(dict.fromkeys(np.concatenate((parent1_[start:end], parent2[i]))))
-            offspring1[i] = np.array(offspring1_)
-            offspring2_ = list(dict.fromkeys(np.concatenate((parent2_[start:end], parent1[i]))))
-            offspring2[i] = np.array(offspring2_)
+        if crossover_mask[i]:
+            # 进行顺序交叉
+            offspring1_ = list(dict.fromkeys(np.concatenate((parent1[i][starts1[i]:ends1[i]],
+                                                             np.roll(parent2[i], -starts2[i])))))
+            offspring1[i] = np.roll(np.array(offspring1_), starts1[i])
+            offspring2_ = list(dict.fromkeys(np.concatenate((parent2[i][starts2[i]:ends2[i]],
+                                                             np.roll(parent1[i], -starts1[i])))))
+            offspring2[i] = np.roll(np.array(offspring2_), starts2[i])
     offspring = np.vstack((offspring1, offspring2))
     return offspring
 
