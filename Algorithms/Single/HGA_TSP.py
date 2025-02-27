@@ -36,8 +36,12 @@ class HGA_TSP(ALGORITHM):
         # 交叉变异生成子代
         offspring = self.operator(mating_pool)
         # 对子代进行教育
-        offspring_ = educate_tsp(self.problem, offspring)
+        offspring_ = self.educate(offspring)
         # 进行环境选择
         self.environmental_selection(offspring_)
         # 记录每步状态
         self.record(i + 1)
+
+    def educate(self, offspring):
+        """对子代进行教育"""
+        return educate_tsp(self.problem, offspring)
