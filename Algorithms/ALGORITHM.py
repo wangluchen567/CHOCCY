@@ -4,9 +4,9 @@ from tqdm import tqdm
 from typing import Union
 from Problems.PROBLEM import PROBLEM
 from Metrics.Hypervolume import cal_hv
-from Algorithms.Utility.Selections import tournament_selection
 from Algorithms.Utility.Utils import fast_nd_sort, shuffle_matrix_in_row
 from Algorithms.Utility.Plots import plot_scores, plot_data, plot_objs, plot_decs_objs
+from Algorithms.Utility.Selections import elitist_selection, tournament_selection, roulette_selection
 from Algorithms.Utility.Operators import operator_real, operator_binary, operator_permutation, operator_fix_label
 
 
@@ -229,8 +229,12 @@ class ALGORITHM(object):
 
     def mating_pool_selection(self, k=2):
         """交配池选择"""
-        # 使用锦标赛选择获取交配池
-        return tournament_selection(self.objs, k)
+        if k >= 2:
+            # 使用锦标赛选择获取交配池
+            return tournament_selection(self.objs, k=k)
+        else:
+            # 使用轮盘赌选择获取交配池
+            return roulette_selection(self.objs)
 
     def environmental_selection(self, offspring):
         """进行环境选择"""
@@ -243,13 +247,12 @@ class ALGORITHM(object):
         new_cons = np.vstack((self.cons, off_cons))
         # 重新计算合并种群的的等价适应度值
         fitness = self.get_fitness(new_objs, new_cons)
-        # 根据适应度值对种群中的个体进行排序
-        index_sort = np.argsort(fitness)
-        # 取目标值最优的个体组成新的种群
-        self.pop = new_pop[index_sort][:self.num_pop]
-        self.objs = new_objs[index_sort][:self.num_pop]
-        self.cons = new_cons[index_sort][:self.num_pop]
-        self.fitness = fitness[index_sort][:self.num_pop]
+        # 使用选择策略(默认精英选择)选择进入下一代新种群的个体
+        best_indices = elitist_selection(fitness, self.num_pop)
+        self.pop = new_pop[best_indices]
+        self.objs = new_objs[best_indices]
+        self.cons = new_cons[best_indices]
+        self.fitness = fitness[best_indices]
 
     def run(self):
         """运行算法(主函数)"""

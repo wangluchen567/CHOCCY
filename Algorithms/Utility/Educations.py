@@ -1,5 +1,5 @@
 """
-教育算子(用于混合算法)
+教育操作(用于混合算法)
 Educations Operator
 """
 from Algorithms.Utility.Utils import two_opt
