@@ -8,6 +8,8 @@ def cal_hv(objs, optimum=None):
     :param optimum: 理论最优目标值
     :return: HV值
     """
+    if objs.ndim == 1:
+        objs = objs.reshape(1, -1)
     # 获取目标值维度信息
     N, M = objs.shape
     # 如果未提供理论最优目标值，则参考向量全置1

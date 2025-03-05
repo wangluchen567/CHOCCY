@@ -277,7 +277,11 @@ class ALGORITHM(object):
         cons_sat = cons[feas]
         if len(pop_sat) == 0:
             # 若没有满足约束的解则返回约束最小的解
-            min_index = np.argmin(cons_sat)
+            min_index = np.argmin(cons)
+            best = pop[min_index]
+            best_obj = objs[min_index]
+            best_con = cons[min_index]
+            return best, best_obj, best_con
         elif num_obj == 1:
             # 若目标个数为1，则只选择一个最优解返回
             min_index = np.argmin(objs_sat)
