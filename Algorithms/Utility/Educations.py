@@ -4,6 +4,7 @@ Educations Operator
 """
 from Algorithms.Utility.Utils import two_opt
 
+
 def educate_tsp(problem, offspring):
     """
     根据指定问题(tsp)对子代进行教育

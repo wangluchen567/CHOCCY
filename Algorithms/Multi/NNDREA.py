@@ -1,6 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 from Algorithms.ALGORITHM import ALGORITHM
+from Algorithms.Utility.Selections import elitist_selection
 from Algorithms.Utility.Operators import operator_real, operator_binary
 from Algorithms.Utility.Utils import fast_nd_sort, cal_crowd_dist, cal_fitness
 
@@ -144,14 +145,14 @@ class NNDREA(ALGORITHM):
         new_pop_weights = np.vstack((self.pop_weights, offspring_weights))
         # 重新计算合并种群的的等价适应度值
         fitness = self.get_fitness(new_objs, new_cons)
-        # 根据适应度值对种群中的个体进行排序
-        index_sort = np.argsort(fitness)
+        # 使用选择策略(默认精英选择)选择进入下一代新种群的个体
+        best_indices = elitist_selection(fitness, self.num_pop)
         # 取目标值最优的个体组成新的种群
-        self.pop = new_pop[index_sort][:self.num_pop]
-        self.objs = new_objs[index_sort][:self.num_pop]
-        self.cons = new_cons[index_sort][:self.num_pop]
-        self.fitness = fitness[index_sort][:self.num_pop]
-        self.pop_weights = new_pop_weights[index_sort][:self.num_pop]
+        self.pop = new_pop[best_indices]
+        self.objs = new_objs[best_indices]
+        self.cons = new_cons[best_indices]
+        self.fitness = fitness[best_indices]
+        self.pop_weights = new_pop_weights[best_indices]
 
     def model_forward(self, weights):
         """神经网络映射函数"""

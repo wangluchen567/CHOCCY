@@ -1,6 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 from Algorithms.ALGORITHM import ALGORITHM
+from Algorithms.Utility.Selections import elitist_selection
 from Algorithms.Utility.Operators import operator_real, operator_binary
 
 
@@ -79,9 +80,6 @@ class NNDREAS(ALGORITHM):
 
     def init_pop_weights(self):
         pop_weights = np.random.uniform(self.upper, self.lower, size=(self.num_pop, self.num_dec))
-        # np.fill_diagonal(pop_weights[:self.num_dec], self.lower[0])
-        # np.fill_diagonal(pop_weights[self.num_dec: 2*self.num_dec], self.upper[0])
-        # np.random.shuffle(pop_weights)
         return pop_weights
 
     @ALGORITHM.record_time
@@ -105,9 +103,6 @@ class NNDREAS(ALGORITHM):
             # 进行环境选择
             self.environmental_selection_weights(offspring_weights)
         else:
-            # if self.delta < i <= self.delta + 1:
-            #     # 对种群去重并添加新个体
-            #     self.unique_pop()
             # 获取交配池
             mating_pool = self.mating_pool_selection()
             # 交叉变异生成子代
@@ -116,16 +111,6 @@ class NNDREAS(ALGORITHM):
             self.environmental_selection(offspring)
         # 记录每步状态
         self.record(i + 1)
-
-    def unique_pop(self):
-        """对种群去重并添加新个体防止陷入局部最优"""
-        uniques = np.unique(self.pop, axis=0)
-        new_pop = np.random.randint(2, size=(self.num_pop, self.problem.num_dec))
-        new_pop[:len(uniques)] = uniques
-        np.random.shuffle(new_pop)
-        self.pop = new_pop
-        self.objs = self.cal_objs(self.pop)
-        self.cons = self.cal_cons(self.pop)
 
     def operator_weights(self, mating_pool):
         # 进行交叉变异生成子代
@@ -148,14 +133,14 @@ class NNDREAS(ALGORITHM):
         new_pop_weights = np.vstack((self.pop_weights, offspring_weights))
         # 重新计算合并种群的的等价适应度值
         fitness = self.get_fitness(new_objs, new_cons)
-        # 根据适应度值对种群中的个体进行排序
-        index_sort = np.argsort(fitness)
+        # 使用选择策略(默认精英选择)选择进入下一代新种群的个体
+        best_indices = elitist_selection(fitness, self.num_pop)
         # 取目标值最优的个体组成新的种群
-        self.pop = new_pop[index_sort][:self.num_pop]
-        self.objs = new_objs[index_sort][:self.num_pop]
-        self.cons = new_cons[index_sort][:self.num_pop]
-        self.fitness = fitness[index_sort][:self.num_pop]
-        self.pop_weights = new_pop_weights[index_sort][:self.num_pop]
+        self.pop = new_pop[best_indices]
+        self.objs = new_objs[best_indices]
+        self.cons = new_cons[best_indices]
+        self.fitness = fitness[best_indices]
+        self.pop_weights = new_pop_weights[best_indices]
 
     def model_forward(self, weights):
         """神经网络映射函数"""
