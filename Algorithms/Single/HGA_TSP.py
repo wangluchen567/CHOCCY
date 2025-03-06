@@ -1,6 +1,7 @@
 from Algorithms.ALGORITHM import ALGORITHM
 from Algorithms.Utility.Educations import educate_tsp
 
+
 class HGA_TSP(ALGORITHM):
     def __init__(self, problem, num_pop=100, num_iter=100,
                  cross_prob=None, mutate_prob=None, educate_prob=None, show_mode=0):
@@ -44,4 +45,4 @@ class HGA_TSP(ALGORITHM):
 
     def educate(self, offspring):
         """对子代进行教育"""
-        return educate_tsp(self.problem, offspring)
+        return educate_tsp(self.problem, offspring, self.educate_prob)
