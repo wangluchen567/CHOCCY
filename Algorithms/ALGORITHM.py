@@ -227,14 +227,16 @@ class ALGORITHM(object):
         else:
             return self.cal_objs_based_cons(objs, cons).flatten()
 
-    def mating_pool_selection(self, k=2):
+    def mating_pool_selection(self, num_next=None, k=2):
         """交配池选择"""
+        if num_next is None:
+            num_next = self.num_pop
         if k >= 2:
             # 使用锦标赛选择获取交配池
-            return tournament_selection(self.objs, k=k)
+            return tournament_selection(self.objs, num_next, k)
         else:
             # 使用轮盘赌选择获取交配池
-            return roulette_selection(self.objs)
+            return roulette_selection(self.objs, num_next)
 
     def environmental_selection(self, offspring):
         """进行环境选择"""

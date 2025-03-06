@@ -149,3 +149,21 @@ def fix_label_crossover(parent1, parent2, cross_prob):
                 last_labels2[k2] -= 1
     offspring = np.vstack((offspring1, offspring2))
     return offspring
+
+
+def de_rand_1(offspring, parent1, parent2, cross_prob, factor):
+    """
+    差分进化算法随机算子1 (DE/rand/1)
+    :param offspring: 要进行交叉的种群
+    :param parent1: 差分的父代1
+    :param parent2: 差分的父代2
+    :param cross_prob: 交叉概率
+    :param factor: 缩放因子
+    :return: 子代种群
+    """
+    if not (offspring.shape == parent1.shape == parent2.shape):
+        raise ValueError("The shape of the two parent populations is not equal")
+    N, D = offspring.shape
+    site = np.random.random((N, D)) < cross_prob
+    offspring[site] = offspring[site] + factor * (parent1[site] - parent2[site])
+    return offspring

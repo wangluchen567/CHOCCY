@@ -122,3 +122,34 @@ def operator_fix_label(pop, lower, upper, cross_prob=None, mutate_prob=None):
     # 固定类型数的标签的交换式变异
     offspring = fix_label_mutation(offspring, mutate_prob)
     return offspring
+
+
+def operator_de_1(pop, parents, lower, upper, cross_prob=None, mutate_prob=None, factor=None):
+    """
+    差分进化算子（一对差分）
+    :param pop: 要交叉变异的种群
+    :param lower: 取值范围的下界
+    :param upper: 取值范围的上界
+    :param cross_prob: 交叉概率
+    :param mutate_prob: 变异概率
+    :return: 交叉变异得到的子代
+    """
+    num_pop = len(pop)
+    offspring = pop.copy()  # 防止影响原数据
+    # if len(parents) % 2 == 1:
+    #     # 种群中个体数量必须是偶数
+    #     raise ValueError("The number of individuals in the population must be even")
+    if cross_prob is None:
+        cross_prob = 0.9
+    if mutate_prob is None:
+        mutate_prob = 1 / offspring.shape[1]
+    if factor is None:
+        factor = 0.5
+    # 将种群均分为两个父代种群
+    parents1 = parents[:num_pop]
+    parents2 = parents[num_pop:]
+    # 进行模拟二进制交叉
+    offspring = de_rand_1(offspring, parents1, parents2, cross_prob, factor)
+    # 进行多项式变异
+    offspring = polynomial_mutation(offspring, lower, upper, mutate_prob)
+    return offspring
