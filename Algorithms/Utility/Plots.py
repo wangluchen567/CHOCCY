@@ -69,7 +69,13 @@ def plot_objs(objs, pause=False, n_iter=None, pause_time=0.1, pareto_front=None)
     plt.clf()
     if obj_dim == 1:
         plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
-        plt.plot(np.arange(len(objs)), objs, marker=".", c="blue")
+        x = np.arange(len(objs))
+        objs_ = np.concatenate(objs, axis=1).T
+        objs_min = np.min(objs_, axis=1)
+        objs_max = np.max(objs_, axis=1)
+        # 填充最小值和最大值之间的区域
+        plt.fill_between(x, objs_min, objs_max, color='lightblue', alpha=0.5, label='Range')
+        plt.plot(x, objs_min, marker=".", c="blue")
         plt.xlabel('n_iter')
         plt.ylabel('fitness')
     elif obj_dim == 2:

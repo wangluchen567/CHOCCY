@@ -352,8 +352,8 @@ class ALGORITHM(object):
     def plot_objs(self, pause=False, n_iter=None, pause_time=0.1):
         """绘制种群目标值"""
         if self.num_obj == 1:
-            # 若是单目标问题，绘制目标值无意义，这里绘制最优目标值记录
-            plot_objs(self.best_obj_his, pause, n_iter, pause_time)
+            # 若是单目标问题，绘制目标值范围情况
+            plot_objs(self.objs_history, pause, n_iter, pause_time)
         else:
             plot_objs(self.objs, pause, n_iter, pause_time, self.problem.pareto_front)
 
