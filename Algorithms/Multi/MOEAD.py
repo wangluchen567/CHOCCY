@@ -4,7 +4,11 @@ from Algorithms.Utility.Utils import get_uniform_vectors
 
 
 class MOEAD(ALGORITHM):
-    def __init__(self, problem, num_pop=100, num_iter=100, func_type=1,
+    PBI = 1  # 基于惩罚边界的聚合方法
+    TCH = 2  # 切比雪夫聚合方法
+    LAG = 3  # 线性聚合方法
+
+    def __init__(self, problem, num_pop=100, num_iter=100, func_type=PBI,
                  cross_prob=None, mutate_prob=None, show_mode=0):
         """
         This code is based on the research presented in
@@ -19,25 +23,36 @@ class MOEAD(ALGORITHM):
         :param mutate_prob: 变异概率
         :param show_mode: 绘图模式
         """
+        # 初始化相关参数(调用父类初始化)
+        super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
         # 聚合函数类型
         self.func_type = func_type
+        self.num_near = None
+        self.vectors = None
+        self.indexes = None
+        self.ref = None
+
+    def init_algorithm(self):
+        """初始化算法"""
+        # 重新设置种群大小
         # 选择的最近邻居的数量
-        self.num_near = int(np.ceil(num_pop / 10))
+        self.num_near = int(np.ceil(self.num_pop / 10))
         # 均匀生成权重向量
-        self.vectors = get_uniform_vectors(num_pop, problem.num_obj)
+        self.vectors = get_uniform_vectors(self.num_pop, self.problem.num_obj)
         # 获取每个权重向量的前T个邻居向量的下标
         self.indexes = self.get_neighbor_index(self.vectors, self.num_near)
         # 根据权重向量个数重新确定种群大小(必须匹配)
-        num_pop = len(self.vectors)
-        # 初始化相关参数(调用父类初始化)
-        super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
-        self.init_algorithm()
+        self.num_pop = len(self.vectors)
+        # 调用父类的初始化函数
+        super().init_algorithm()
         # 初始化参考点
         self.ref = np.min(self.objs, axis=0)
 
     @ALGORITHM.record_time
     def run(self):
         """运行算法(主函数)"""
+        # 初始化算法
+        self.init_algorithm()
         # 绘制初始状态图
         self.plot(pause=True, n_iter=0)
         for i in self.iterator:
@@ -95,7 +110,7 @@ class MOEAD(ALGORITHM):
         # 改变形状方便矩阵运算
         if objs.ndim == 1:
             objs = objs.reshape(1, -1)
-        if self.func_type == 1:
+        if self.func_type == self.PBI:
             # 基于惩罚边界的聚合方法
             theta = 5  # 设置超参数
             if len(objs) == 1:
@@ -107,10 +122,10 @@ class MOEAD(ALGORITHM):
                 d1 = np.abs(np.diag(np.dot(objs - self.ref, vectors.T))) / np.linalg.norm(vectors, axis=1)
                 d2 = np.linalg.norm(objs - (self.ref + d1.reshape(-1, 1) * vectors), axis=1)
             return d1 + theta * d2
-        elif self.func_type == 2:
+        elif self.func_type == self.TCH:
             # 切比雪夫聚合方法
             return np.max(vectors * np.abs(objs - self.ref), axis=1)
-        elif self.func_type == 3:
+        elif self.func_type == self.LAG:
             # 线性聚合方法
             if len(objs) == 1:
                 # 若是单个个体则直接求点积

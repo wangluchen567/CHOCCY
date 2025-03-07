@@ -2,7 +2,7 @@ from Algorithms.ALGORITHM import ALGORITHM
 from Algorithms.Utility.Educations import educate_tsp
 
 
-class HGA_TSP(ALGORITHM):
+class HGATSP(ALGORITHM):
     def __init__(self, problem, num_pop=100, num_iter=100,
                  cross_prob=None, mutate_prob=None, educate_prob=None, show_mode=0):
         """
@@ -17,11 +17,12 @@ class HGA_TSP(ALGORITHM):
         :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, educate_prob, show_mode)
-        self.init_algorithm()
 
     @ALGORITHM.record_time
     def run(self):
         """运行算法(主函数)"""
+        # 初始化算法
+        self.init_algorithm()
         # 绘制初始状态图
         self.plot(pause=True, n_iter=0)
         for i in self.iterator:

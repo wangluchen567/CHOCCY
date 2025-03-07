@@ -8,8 +8,8 @@ from Problems.Single.MixFixLabelCluster import MixFixLabelCluster
 
 
 def Solve_Ackley():
-    problem = Ackley(num_dec=1)
-    alg = GA(problem, num_pop=100, num_iter=100, show_mode=GA.OAD)
+    problem = Ackley(num_dec=2)
+    alg = GA(problem, num_pop=100, num_iter=100, show_mode=GA.OAD3)
     alg.run()
     print(alg.best_obj[0])
     alg.plot_scores()
@@ -17,7 +17,7 @@ def Solve_Ackley():
 
 def Solve_Square():
     problem = Square(num_dec=2)
-    alg = GA(problem, num_pop=100, num_iter=100, show_mode=GA.OAD)
+    alg = GA(problem, num_pop=100, num_iter=100, show_mode=GA.OAD2)
     alg.run()
     print(alg.best_obj[0])
     alg.plot_scores()
@@ -37,7 +37,7 @@ def Solve_TSP():
     alg.run()
     print(alg.best_obj[0])
     alg.plot_scores()
-    alg.plot(show_mode=4)
+    alg.plot(show_mode=GA.PRB)
 
 
 def Solve_FixLabelCluster():
@@ -46,7 +46,7 @@ def Solve_FixLabelCluster():
     alg.run()
     print(alg.best_obj[0])
     alg.plot_scores()
-    alg.plot(show_mode=4)
+    alg.plot(show_mode=GA.PRB)
 
 
 def Solve_MixFixLabelCluster():
@@ -55,13 +55,13 @@ def Solve_MixFixLabelCluster():
     alg.run()
     print(alg.best_obj[0])
     alg.plot_scores()
-    alg.plot(show_mode=4)
+    alg.plot(show_mode=GA.PRB)
 
 
 if __name__ == '__main__':
-    # Solve_Ackley()
+    Solve_Ackley()
     # Solve_Square()
     # Solve_KP()
     # Solve_TSP()
     # Solve_FixLabelCluster()
-    Solve_MixFixLabelCluster()
+    # Solve_MixFixLabelCluster()

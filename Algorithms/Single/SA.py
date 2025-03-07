@@ -19,10 +19,12 @@ class SA(ALGORITHM):
         self.init_temp = init_temp
         self.temp = self.init_temp
         self.alpha = alpha
-        self.init_algorithm()
 
     @ALGORITHM.record_time
     def run(self):
+        """运行算法(主函数)"""
+        # 初始化算法
+        self.init_algorithm()
         # 绘制初始状态图
         self.plot(pause=True, n_iter=0)
         for i in self.iterator:

@@ -41,7 +41,7 @@ def Solve_TSP():
     print(alg.best_obj[0])
     # alg.plot()
     alg.plot_scores()
-    alg.plot(show_mode=4)
+    alg.plot(show_mode=SA.PRB)
 
 
 def Solve_FixLabelCluster():
@@ -51,17 +51,17 @@ def Solve_FixLabelCluster():
     print(alg.best_obj[0])
     # alg.plot()
     alg.plot_scores()
-    alg.plot(show_mode=4)
+    alg.plot(show_mode=SA.PRB)
 
 
 def Solve_MixFixLabelCluster():
     problem = MixFixLabelCluster(90)
-    alg = SA(problem, num_pop=10, num_iter=1000, show_mode=0)
+    alg = SA(problem, num_pop=10, num_iter=1000, show_mode=1)
     alg.run()
     print(alg.best_obj[0])
     # alg.plot()
     alg.plot_scores()
-    alg.plot(show_mode=4)
+    alg.plot(show_mode=SA.PRB)
 
 
 if __name__ == '__main__':

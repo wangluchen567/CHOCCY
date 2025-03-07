@@ -2,13 +2,13 @@ import numpy as np
 import seaborn as sns
 from Problems.Single.KP import KP
 from Algorithms.Single.GA import GA
-from Algorithms.Single.DP_KP import DP_KP
-from Algorithms.Single.Greedy_KP import Greedy_KP
+from Algorithms.Single.DP_KP import DPKP
+from Algorithms.Single.Greedy_KP import GreedyKP
 from Algorithms.Single.NNDREAS import NNDREAS
 
 
 def DP_Solve_KP(problem):
-    alg = DP_KP(problem)
+    alg = DPKP(problem)
     alg.run()
     print("DP Solve KP")
     print("Run time: ", alg.run_time)
@@ -16,7 +16,7 @@ def DP_Solve_KP(problem):
 
 
 def Greedy_Solve_KP(problem):
-    alg = Greedy_KP(problem)
+    alg = GreedyKP(problem)
     alg.run()
     print("Greedy Solve KP")
     print("Run time: ", alg.run_time)
@@ -39,7 +39,6 @@ def NNDREA_Solve_KP(problem, num_pop=100, num_iter=100):
     print("Run time: ", alg.run_time)
     print("best value: ", alg.best_obj[0])
     print(np.min(alg.pop_weights), np.max(alg.pop_weights))
-
     sns.heatmap(alg.pop_weights, cmap="YlGnBu")
     alg.plot_scores()
 

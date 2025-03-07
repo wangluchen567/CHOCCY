@@ -2,7 +2,7 @@ from Problems.Single.TSP import TSP
 from Algorithms.Single.GA import GA
 from Algorithms.Single.SA import SA
 from Algorithms.Single.ACO import ACO
-from Algorithms.Single.HGA_TSP import HGA_TSP
+from Algorithms.Single.HGA_TSP import HGATSP
 from Algorithms.Single.FI import FI
 from Algorithms.Single.GFLS import GFLS
 
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     alg.run()
     print('ACO result:', alg.best_obj[0])
     print("Run time: ", alg.run_time)
-    alg = HGA_TSP(problem, num_pop=100, num_iter=1000, show_mode=0)
+    alg = HGATSP(problem, num_pop=100, num_iter=1000, show_mode=0)
     alg.run()
     print('HGA_TSP result:', alg.best_obj[0])
     print("Run time: ", alg.run_time)
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     alg.run()
     print('FI result:', alg.best_obj[0])
     print("Run time: ", alg.run_time)
-    alg = GFLS(problem, num_iter=1000, show_mode=0)
+    alg = GFLS(problem, num_iter=1000, show_mode=1)
     alg.run()
     print('GFLS result:', alg.best_obj[0])
     print("Run time: ", alg.run_time)

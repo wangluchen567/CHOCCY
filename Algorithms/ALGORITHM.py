@@ -22,9 +22,10 @@ class ALGORITHM(object):
     BAR = 0  # 绘制进度条
     OBJ = 1  # 绘制目标空间
     DEC = 2  # 绘制决策空间
-    OAD = 3  # 绘制目标空间和决策空间混合
-    PRB = 4  # 问题提供绘图方法
-    ALG = 5  # 算法提供绘图方法
+    OAD2 = 3  # 绘制目标空间和决策空间混合(等高线)
+    OAD3 = 4  # 绘制目标空间和决策空间混合(三维空间)
+    PRB = 5  # 问题提供绘图方法
+    ALG = 6  # 算法提供绘图方法
 
     def __init__(self,
                  problem: PROBLEM,
@@ -342,13 +343,14 @@ class ALGORITHM(object):
             self.plot_objs(pause, n_iter)
         elif self.show_mode == self.DEC:
             self.plot_pop(pause, n_iter)
-        elif self.show_mode == self.OAD:
+        elif self.show_mode == self.OAD2:
             self.plot_decs_objs(pause, n_iter)
+        elif self.show_mode == self.OAD3:
+            self.plot_decs_objs(pause, n_iter, contour=False)
         elif self.show_mode == self.PRB:
             self.problem.plot(self.best_history[-1], pause, n_iter)
         elif self.show_mode == self.ALG:
             self.plot_(pause, n_iter)
-
         else:
             raise ValueError("There is no such plotting mode")
 

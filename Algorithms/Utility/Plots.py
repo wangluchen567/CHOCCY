@@ -83,7 +83,7 @@ def plot_objs(objs, pause=False, n_iter=None, pause_time=0.1, pareto_front=None)
         plt.scatter(objs[:, 0], objs[:, 1], marker="o", c="blue")
         # 绘制最优前沿面
         if pareto_front is not None:
-            plt.plot(pareto_front[:, 0], pareto_front[:, 1], marker="", c="red")
+            plt.plot(pareto_front[:, 0], pareto_front[:, 1], marker="", c="gray")
         plt.xlabel('obj1')
         plt.ylabel('obj2')
     elif obj_dim == 3:
@@ -103,7 +103,7 @@ def plot_objs(objs, pause=False, n_iter=None, pause_time=0.1, pareto_front=None)
             xi, yi = np.meshgrid(xi, yi)
             # 使用 griddata 进行插值
             zi = griddata((x, y), z, (xi, yi), method='linear')
-            ax.plot_wireframe(xi, yi, zi, color='red', linewidth=0.3)
+            ax.plot_wireframe(xi, yi, zi, color='gray', linewidth=0.3)
         # 设置三维图像角度(仰角方位角)
         ax.view_init(elev=30, azim=30)
         ax.set_xlabel('obj1')

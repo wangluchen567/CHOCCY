@@ -14,11 +14,12 @@ class GA(ALGORITHM):
         :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
-        self.init_algorithm()
 
     @ALGORITHM.record_time
     def run(self):
         """运行算法(主函数)"""
+        # 初始化算法
+        self.init_algorithm()
         # 绘制初始状态图
         self.plot(pause=True, n_iter=0)
         for i in self.iterator:

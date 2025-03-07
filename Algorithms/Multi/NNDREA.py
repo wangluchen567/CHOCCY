@@ -24,28 +24,39 @@ class NNDREA(ALGORITHM):
         :param mutate_prob: 变异概率
         :param show_mode: 绘图模式
         """
+        # 初始化相关参数(调用父类初始化)
         super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
+        self.structure = structure
+        self.search_range = search_range
+        self.delta = delta
+        # 初始化参数
+        self.instance = None
+        self.slist = None
+        self.pop_weights = None
+        self.delta_iter = None
+
+    def init_algorithm(self):
+        """初始化算法"""
         # 问题必须为二进制问题
         if np.sum(self.problem_type != ALGORITHM.BIN):
             raise ValueError("This method can only solve binary problems")
         # 问题必须提供实例数据集
-        if not hasattr(problem, 'instance'):
+        if not hasattr(self.problem, 'instance'):
             raise ValueError("The problem must provide an instance dataset")
         # 实例数据集的大小必须与问题大小相同
-        if (problem.instance.shape[0] != problem.num_dec and  # type: ignore
-                problem.instance.shape[1] != problem.num_dec):  # type: ignore
+        if (self.problem.instance.shape[0] != self.problem.num_dec and  # type: ignore
+                self.problem.instance.shape[1] != self.problem.num_dec):  # type: ignore
             raise ValueError("The size of the instance dataset must be the same as the size of the problem")
         # 若实例大小在第二维度则转置以方便矩阵运算
-        if problem.instance.shape[1] == problem.num_dec:  # type: ignore
-            self.instance = problem.instance.T  # type: ignore
+        if self.problem.instance.shape[1] == self.problem.num_dec:  # type: ignore
+            self.instance = self.problem.instance.T  # type: ignore
         else:
-            self.instance = problem.instance  # type: ignore
+            self.instance = self.problem.instance  # type: ignore
         # 对实例中相同的数据进行扰动防止相同数据输出同一个值
         # self.instance += np.random.normal(0, 0.1, self.instance.shape)
         # 需要提供神经网络的结构信息(否则默认为[D, 4, 1])
-        if structure is None:
-            structure = [self.instance.shape[1], 4, 1]
-        self.structure = structure
+        if self.structure is None:
+            self.structure = [self.instance.shape[1], 4, 1]
         # 根据结构信息得到结构列表和权重数量以方便计算
         self.slist = []
         self.num_dec = 0
@@ -55,10 +66,10 @@ class NNDREA(ALGORITHM):
             self.num_dec += self.structure[i] * self.structure[i + 1]
             self.num_dec += self.structure[i + 1]
         # 由于问题转换为了实数问题，所以需要重新初始化算法相关参数
-        if search_range is None:
-            search_range = np.array([-1, 1])
-        self.lower = search_range[0] + np.zeros(self.num_dec)
-        self.upper = search_range[1] + np.zeros(self.num_dec)
+        if self.search_range is None:
+            self.search_range = np.array([-1, 1])
+        self.lower = self.search_range[0] + np.zeros(self.num_dec)
+        self.upper = self.search_range[1] + np.zeros(self.num_dec)
         # 初始化交叉和变异概率
         self.cross_prob = 1.0
         self.mutate_prob = 1 / self.num_dec
@@ -74,7 +85,7 @@ class NNDREA(ALGORITHM):
         # 构建迭代器
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
         # 按照delta占比分为两个阶段
-        self.delta = delta * self.num_iter
+        self.delta_iter = self.delta * self.num_iter
 
     def init_pop_weights(self):
         pop_weights = np.random.uniform(self.upper, self.lower, size=(self.num_pop, self.num_dec))
@@ -83,6 +94,8 @@ class NNDREA(ALGORITHM):
     @ALGORITHM.record_time
     def run(self):
         """运行算法(主函数)"""
+        # 初始化算法
+        self.init_algorithm()
         # 绘制初始状态图
         self.plot(pause=True, n_iter=0)
         for i in self.iterator:
@@ -93,7 +106,7 @@ class NNDREA(ALGORITHM):
 
     def run_step(self, i):
         """运行算法单步"""
-        if i <= self.delta:
+        if i <= self.delta_iter:
             # 获取交配池
             mating_pool = self.mating_pool_selection()
             # 交叉变异生成子代

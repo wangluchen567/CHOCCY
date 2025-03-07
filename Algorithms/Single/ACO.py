@@ -19,23 +19,28 @@ class ACO(ALGORITHM):
         :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, None, None, None, show_mode)
+        self.alpha = alpha
+        self.beta = beta
+        self.rho = rho
+        self.q_value = q_value
+        self.dist_mat = None
+        self.eta_mat = None
+        self.tau_mat = None
+
+    def init_algorithm(self):
         # 问题必须为单目标问题
-        if problem.num_obj > 1:
+        if self.problem.num_obj > 1:
             raise ValueError("This method can only solve single objective problems")
         # 问题必须为序列问题
         if np.sum(self.problem_type != ALGORITHM.PMU):
             raise ValueError("This method can only solve sequence problems")
         # 问题必须提供距离矩阵
-        if not hasattr(problem, 'dist_mat'):
+        if not hasattr(self.problem, 'dist_mat'):
             raise ValueError("The problem must provide the distance matrix")
         # 初始化参数
-        self.init_algorithm()
-        self.alpha = alpha
-        self.beta = beta
-        self.rho = rho
-        self.q_value = q_value
+        super().init_algorithm()
         # 获取问题的距离矩阵
-        self.dist_mat = problem.dist_mat  # type: ignore
+        self.dist_mat = self.problem.dist_mat  # type: ignore
         # 调整距离矩阵的对角线元素值
         np.fill_diagonal(self.dist_mat, 1e-6)
         # 启发式信息，一般取距离的倒数
@@ -50,8 +55,10 @@ class ACO(ALGORITHM):
     @ALGORITHM.record_time
     def run(self):
         """运行算法(主函数)"""
+        # 初始化算法
+        self.init_algorithm()
         # 绘制初始状态图
-        # self.plot(pause=True, n_iter=0)
+        self.plot(pause=True, n_iter=0)
         for i in self.iterator:
             # 运行单步算法
             self.run_step(i)
@@ -107,7 +114,10 @@ class ACO(ALGORITHM):
 
     def plot_(self, pause=False, n_iter=None, pause_time=0.1):
         """绘制优化过程中信息素变化情况"""
-        if not pause: plt.figure()
+        if n_iter == 0:
+            return
+        if not pause:
+            plt.figure()
         if not hasattr(self.problem, 'points'):
             raise ValueError("The drawing must provide the location of the points!")
         points = self.problem.points  # type: ignore
