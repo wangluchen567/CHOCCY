@@ -67,12 +67,12 @@ class GFLS(ALGORITHM):
         # 初始化算法
         self.init_algorithm()
         # 绘制初始状态图
-        self.plot(pause=True, n_iter=0)
+        self.plot(n_iter=0, pause=True)
         for i in self.iterator:
             # 运行单步算法
             self.run_step(i)
             # 绘制迭代过程中每步状态
-            self.plot(pause=True, n_iter=i + 1)
+            self.plot(n_iter=i + 1, pause=True)
 
     def run_step(self, i):
         # 进行一次快速局部搜索
