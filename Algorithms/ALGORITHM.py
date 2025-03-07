@@ -350,7 +350,7 @@ class ALGORITHM(object):
         elif self.show_mode == self.OAD3:
             self.plot_decs_objs(n_iter, pause, contour=False)
         elif self.show_mode == self.PRB:
-            self.problem.plot(self.best_history[-1], n_iter, pause)
+            self.plot_by_problem(n_iter, pause)
         elif self.show_mode == self.ALG:
             self.plot_(n_iter, pause)
         else:
@@ -362,7 +362,10 @@ class ALGORITHM(object):
 
     def plot_pop(self, n_iter=None, pause=False, pause_time=0.1):
         """绘制种群个体决策向量"""
-        plot_data(self.pop, n_iter, pause, pause_time)
+        if pause or n_iter is None:
+            plot_data(self.pop, n_iter, pause, pause_time)
+        else:
+            plot_data(self.pop_history[n_iter], n_iter, pause, pause_time)
 
     def plot_objs(self, n_iter=None, pause=False, pause_time=0.1):
         """绘制种群目标值"""
@@ -372,9 +375,22 @@ class ALGORITHM(object):
         else:
             plot_objs(self.objs, n_iter, pause, pause_time, self.problem.pareto_front)
 
+
     def plot_decs_objs(self, n_iter=None, pause=False, pause_time=0.1, contour=True, sym=True):
         """在特定条件下可同时绘制决策向量与目标值"""
-        plot_decs_objs(self.problem, self.pop, self.objs, n_iter, pause, pause_time, contour=contour, sym=sym)
+        if pause or n_iter is None:
+            plot_decs_objs(self.problem, self.pop, self.objs,
+                           n_iter, pause, pause_time, contour=contour, sym=sym)
+        else:
+            plot_decs_objs(self.problem, self.pop_history[n_iter], self.objs_history[n_iter],
+                           n_iter, pause, pause_time, contour=contour, sym=sym)
+
+    def plot_by_problem(self, n_iter=None, pause=False):
+        """使用问题给定的绘图函数绘图"""
+        if pause or n_iter is None:
+            self.problem.plot(self.best_history[-1], n_iter, pause)
+        else:
+            self.problem.plot(self.best_history[n_iter], n_iter, pause)
 
     def get_scores(self):
         """获取历史所有种群的评价分数"""
