@@ -331,48 +331,50 @@ class ALGORITHM(object):
             self.best_obj_his.append(best[1])
             self.best_con_his.append(best[2])
 
-    def plot(self, show_mode=None, pause=False, n_iter=None):
-        """绘图函数，根据不同模式进行绘图
-        (-1:不绘制, 0:进度条, 1:目标空间, 2:决策空间, 3:混合模式, 4:问题提供, 5:算法提供)
+    def plot(self, show_mode=None, n_iter=None, pause=False):
+        """
+        绘图函数，根据不同模式进行绘图
+        (-1:不绘制, 0:进度条, 1:目标空间, 2:决策空间, 3:混合模式(等高线),
+        4:混合模式(三维空间), 5:问题提供, 6:算法提供)
         """
         if show_mode is not None:
             self.show_mode = show_mode
         if self.show_mode == self.NULL or self.show_mode == self.BAR:
             pass
         elif self.show_mode == self.OBJ:
-            self.plot_objs(pause, n_iter)
+            self.plot_objs(n_iter, pause)
         elif self.show_mode == self.DEC:
-            self.plot_pop(pause, n_iter)
+            self.plot_pop(n_iter, pause)
         elif self.show_mode == self.OAD2:
-            self.plot_decs_objs(pause, n_iter)
+            self.plot_decs_objs(n_iter, pause)
         elif self.show_mode == self.OAD3:
-            self.plot_decs_objs(pause, n_iter, contour=False)
+            self.plot_decs_objs(n_iter, pause, contour=False)
         elif self.show_mode == self.PRB:
-            self.problem.plot(self.best_history[-1], pause, n_iter)
+            self.problem.plot(self.best_history[-1], n_iter, pause)
         elif self.show_mode == self.ALG:
-            self.plot_(pause, n_iter)
+            self.plot_(n_iter, pause)
         else:
             raise ValueError("There is no such plotting mode")
 
-    def plot_(self, pause, n_iter):
+    def plot_(self, n_iter, pause):
         """提供算法自定义绘图的接口"""
         pass
 
-    def plot_pop(self, pause=False, n_iter=None, pause_time=0.1):
+    def plot_pop(self, n_iter=None, pause=False, pause_time=0.1):
         """绘制种群个体决策向量"""
-        plot_data(self.pop, pause, n_iter, pause_time)
+        plot_data(self.pop, n_iter, pause, pause_time)
 
-    def plot_objs(self, pause=False, n_iter=None, pause_time=0.1):
+    def plot_objs(self, n_iter=None, pause=False, pause_time=0.1):
         """绘制种群目标值"""
         if self.num_obj == 1:
             # 若是单目标问题，绘制目标值范围情况
-            plot_objs(self.objs_history, pause, n_iter, pause_time)
+            plot_objs(self.objs_history, n_iter, pause, pause_time)
         else:
-            plot_objs(self.objs, pause, n_iter, pause_time, self.problem.pareto_front)
+            plot_objs(self.objs, n_iter, pause, pause_time, self.problem.pareto_front)
 
-    def plot_decs_objs(self, pause=False, n_iter=None, pause_time=0.1, contour=True, sym=True):
+    def plot_decs_objs(self, n_iter=None, pause=False, pause_time=0.1, contour=True, sym=True):
         """在特定条件下可同时绘制决策向量与目标值"""
-        plot_decs_objs(self.problem, self.pop, self.objs, pause, n_iter, pause_time, contour=contour, sym=sym)
+        plot_decs_objs(self.problem, self.pop, self.objs, n_iter, pause, pause_time, contour=contour, sym=sym)
 
     def get_scores(self):
         """获取历史所有种群的评价分数"""

@@ -28,7 +28,7 @@ class FixLabelCluster(PROBLEM):
             objs += np.sum(distances, axis=1)
         return objs
 
-    def plot(self, best, pause=False, n_iter=None, pause_time=0.1):
+    def plot(self, best, n_iter=None, pause=False, pause_time=0.1):
         if not pause: plt.figure()
         plt.clf()
         plt.scatter(self.points[:, 0], self.points[:, 1], c=best, cmap='rainbow')

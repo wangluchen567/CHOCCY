@@ -14,7 +14,7 @@ def plot_scores(scores, score_type=None):
     plt.show()
 
 
-def plot_data(X, pause=False, n_iter=None, pause_time=0.1):
+def plot_data(X, n_iter=None, pause=False, pause_time=0.1):
     """对任意维度数据进行绘图"""
     if not pause: plt.figure()
     plt.clf()
@@ -58,7 +58,7 @@ def plot_data(X, pause=False, n_iter=None, pause_time=0.1):
         plt.show()
 
 
-def plot_objs(objs, pause=False, n_iter=None, pause_time=0.1, pareto_front=None):
+def plot_objs(objs, n_iter=None, pause=False, pause_time=0.1, pareto_front=None):
     """将最优目标值列表绘折线图"""
     # 先确定目标值维度
     if isinstance(objs, list):
@@ -125,7 +125,7 @@ def plot_objs(objs, pause=False, n_iter=None, pause_time=0.1, pareto_front=None)
         plt.show()
 
 
-def plot_decs_objs(problem, decs, objs, pause=False, n_iter=None, pause_time=0.1, contour=True, sym=True):
+def plot_decs_objs(problem, decs, objs, n_iter=None, pause=False, pause_time=0.1, contour=True, sym=True):
     """绘制混合图像方便展示"""
     decs_dim = decs.shape[1]
     if objs.ndim == 1:

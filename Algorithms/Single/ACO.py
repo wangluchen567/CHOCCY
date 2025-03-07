@@ -112,7 +112,7 @@ class ACO(ALGORITHM):
         if (best_con < self.best_con) or (best_con == self.best_con and best_obj < self.best_obj):
             self.best, self.best_obj, self.best_con = best, best_obj, best_con
 
-    def plot_(self, pause=False, n_iter=None, pause_time=0.1):
+    def plot_(self, n_iter=None, pause=False, pause_time=0.1):
         """绘制优化过程中信息素变化情况"""
         if n_iter == 0:
             return
