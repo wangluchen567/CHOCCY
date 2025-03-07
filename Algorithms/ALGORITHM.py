@@ -17,6 +17,14 @@ class ALGORITHM(object):
     BIN = PROBLEM.BIN  # 二进制
     PMU = PROBLEM.PMU  # 序列
     FIX = PROBLEM.FIX  # 固定标签
+    # 定义绘图常量
+    NULL = -1  # 不绘制
+    BAR = 0  # 绘制进度条
+    OBJ = 1  # 绘制目标空间
+    DEC = 2  # 绘制决策空间
+    OAD = 3  # 绘制目标空间和决策空间混合
+    PRB = 4  # 问题提供绘图方法
+    ALG = 5  # 算法提供绘图方法
 
     def __init__(self,
                  problem: PROBLEM,
@@ -25,7 +33,7 @@ class ALGORITHM(object):
                  cross_prob: Union[float, None] = None,
                  mutate_prob: Union[float, None] = None,
                  educate_prob: Union[float, None] = None,
-                 show_mode: int = 0):
+                 show_mode: int = BAR):
         """
         算法父类
         *Code Author: LuChen Wang
@@ -35,7 +43,7 @@ class ALGORITHM(object):
         :param cross_prob: 交叉概率
         :param mutate_prob: 变异概率
         :param educate_prob: 教育概率
-        :param show_mode: 绘图模式 (0:不绘制图像, 1:目标空间, 2:决策空间, 3:混合模式, 4:问题提供, 5:算法提供)
+        :param show_mode: 绘图模式
         """
         self.problem = problem
         self.num_dec = self.problem.num_dec
@@ -324,22 +332,23 @@ class ALGORITHM(object):
 
     def plot(self, show_mode=None, pause=False, n_iter=None):
         """绘图函数，根据不同模式进行绘图
-        (0:不绘制图像, 1:目标空间, 2:决策空间, 3:混合模式, 4:问题提供, 5:算法提供)
+        (-1:不绘制, 0:进度条, 1:目标空间, 2:决策空间, 3:混合模式, 4:问题提供, 5:算法提供)
         """
         if show_mode is not None:
             self.show_mode = show_mode
-        if self.show_mode == 0:
+        if self.show_mode == self.NULL or self.show_mode == self.BAR:
             pass
-        elif self.show_mode == 1:
+        elif self.show_mode == self.OBJ:
             self.plot_objs(pause, n_iter)
-        elif self.show_mode == 2:
+        elif self.show_mode == self.DEC:
             self.plot_pop(pause, n_iter)
-        elif self.show_mode == 3:
+        elif self.show_mode == self.OAD:
             self.plot_decs_objs(pause, n_iter)
-        elif self.show_mode == 4:
+        elif self.show_mode == self.PRB:
             self.problem.plot(self.best_history[-1], pause, n_iter)
-        elif self.show_mode == 5:
+        elif self.show_mode == self.ALG:
             self.plot_(pause, n_iter)
+
         else:
             raise ValueError("There is no such plotting mode")
 

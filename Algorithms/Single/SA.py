@@ -17,16 +17,24 @@ class SA(ALGORITHM):
         """
         super().__init__(problem, num_pop, num_iter, None, perturb_prob, None, show_mode)
         self.init_temp = init_temp
+        self.temp = self.init_temp
         self.alpha = alpha
         self.init_algorithm()
 
     @ALGORITHM.record_time
     def run(self):
-        # 获取初始化温度
-        temp = self.init_temp
         # 绘制初始状态图
         self.plot(pause=True, n_iter=0)
         for i in self.iterator:
+            self.run_step(i)
+            # 绘制迭代过程中每步状态
+            self.plot(pause=True, n_iter=i + 1)
+
+    def run_step(self, i):
+        # 检查温度是否已经很小，则不再更新
+        if self.temp == 0:
+            print("The temperature is already very low, algorithm stopped early")
+        else:
             # 对解进行扰动
             new_pop = self.perturb(self.pop)
             # 得到扰动解的目标值与约束值
@@ -34,22 +42,16 @@ class SA(ALGORITHM):
             new_cons = self.cal_cons(new_pop)
             new_fits = self.get_fitness(new_objs, new_cons)
             # 使用metrospolis接受准则接受解
-            accept = self.metrospolis(self.fitness, new_fits, temp)
+            accept = self.metrospolis(self.fitness, new_fits, self.temp)
             # 更新解集
             self.pop[accept] = new_pop[accept]
             self.objs[accept] = new_objs[accept]
             self.cons[accept] = new_cons[accept]
             self.fitness[accept] = new_fits[accept]
             # 更新温度
-            temp = self.alpha * temp
-            # 检查温度是否已经很小
-            if temp == 0:
-                print("The temperature is already very low, algorithm stopped early")
-                break
-            # 记录每步状态
-            self.record(i + 1)
-            # 绘制迭代过程中每步状态
-            self.plot(pause=True, n_iter=i + 1)
+            self.temp = self.alpha * self.temp
+        # 记录每步状态
+        self.record(i + 1)
 
     @staticmethod
     def metrospolis(old, new, temp):
