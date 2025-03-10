@@ -141,7 +141,7 @@ def Add(list_: list, s: list) -> list:
     n = len(s)
     m = 0
     for k in range(n):
-        if np.all(list_[0][1] == s[k][1]) and len(list_[0][1]) == len(s[k][1]):
+        if np.array_equal(list_[0][1], s[k][1]) and len(list_[0][1]) == len(s[k][1]):
             s[k][0] = s[k][0] + list_[0][0]
             m = 1
             break

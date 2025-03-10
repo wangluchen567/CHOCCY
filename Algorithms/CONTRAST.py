@@ -7,6 +7,7 @@ import matplotlib.colors as mcolors
 from tqdm import tqdm
 from Problems.PROBLEM import PROBLEM
 from scipy.interpolate import griddata
+from Metrics.Hypervolume import cal_hv
 from mpl_toolkits.mplot3d import Axes3D
 
 
@@ -59,6 +60,56 @@ class CONTRAST(object):
                     alg.record(i)
             # 绘制迭代过程中每步状态
             self.plot(n_iter=i + 1, pause=True)
+        self.print_results()
+
+    def print_results(self, dec=6, show_con=False):
+        """格式化打印多个算法的对比结果"""
+        if self.problem.num_obj == 1:
+            self.print_single(dec, show_con)
+        else:
+            self.print_multi(dec)
+
+    def print_single(self, dec=6, show_cons=False):
+        """格式化打印多个算法的对比结果(单目标)"""
+        problem_name = type(self.problem).__name__
+        titles = ["problem"]
+        objs = [problem_name]
+        cons = [" "]
+        col_widths = [max(len("problem"), len(problem_name)) + 3]
+        if show_cons:
+            titles.append("type")
+            objs.append("obj_value")
+            cons.append("con_value")
+            col_widths.append(len(objs[-1]) + 3)
+        for (name, alg) in self.algorithms.items():
+            titles.append(name)
+            objs.append(f"{alg.best_obj[0]:.{dec}e}")
+            if show_cons:
+                cons.append(f"{alg.best_con[0]:.{dec}e}")
+            col_widths.append(max(len(titles[-1]), len(objs[-1])) + 3)
+        titles_format = " ".join(f"{t:<{w}}" for t, w in zip(titles, col_widths))
+        objs_format = " ".join(f"{v:<{w}}" for v, w in zip(objs, col_widths))
+        print(titles_format)
+        print(objs_format)
+        if show_cons:
+            cons_format = " ".join(f"{c:<{w}}" for c, w in zip(cons, col_widths))
+            print(cons_format)
+
+    def print_multi(self, dec=6):
+        """格式化打印多个算法的对比结果(多目标)"""
+        problem_name = type(self.problem).__name__
+        titles = ["problem"]
+        values = [problem_name]
+        col_widths = [max(len("problem"), len(problem_name)) + 3]
+        for (name, alg) in self.algorithms.items():
+            titles.append(name)
+            metric_value = cal_hv(alg.best_obj, self.problem.optimums)
+            values.append(f"{metric_value:.{dec}e}")
+            col_widths.append(max(len(titles[-1]), len(values[-1])) + 3)
+        titles_format = " ".join(f"{t:<{w}}" for t, w in zip(titles, col_widths))
+        values_format = " ".join(f"{v:<{w}}" for v, w in zip(values, col_widths))
+        print(titles_format)
+        print(values_format)
 
     def plot(self, show_mode=None, n_iter=None, pause=False):
         """

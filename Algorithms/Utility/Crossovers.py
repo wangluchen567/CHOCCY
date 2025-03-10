@@ -167,3 +167,65 @@ def de_rand_1(offspring, parent1, parent2, cross_prob, factor):
     site = np.random.random((N, D)) < cross_prob
     offspring[site] = offspring[site] + factor * (parent1[site] - parent2[site])
     return offspring
+
+
+def de_rand_2(offspring, parent1, parent2, parent3, parent4, cross_prob, factor):
+    """
+    差分进化算法随机算子2 (DE/rand/2)
+    :param offspring: 要进行交叉的种群
+    :param parent1: 差分的父代1
+    :param parent2: 差分的父代2
+    :param parent3: 差分的父代3
+    :param parent4: 差分的父代4
+    :param cross_prob: 交叉概率
+    :param factor: 缩放因子
+    :return: 子代种群
+    """
+    if not (offspring.shape == parent1.shape == parent2.shape == parent3.shape == parent4.shape):
+        raise ValueError("The shape of the two parent populations is not equal")
+    N, D = offspring.shape
+    site = np.random.random((N, D)) < cross_prob
+    offspring[site] = (offspring[site] + factor * (parent1[site] - parent2[site]) +
+                       factor * (parent3[site] - parent4[site]))
+    return offspring
+
+
+def de_best_1(best, parent1, parent2, cross_prob, factor):
+    """
+    差分进化算法最优个体算子1 (DE/best/1)
+    :param best: 父代中最优个体
+    :param parent1: 差分的父代1
+    :param parent2: 差分的父代2
+    :param cross_prob: 交叉概率
+    :param factor: 缩放因子
+    :return: 子代种群
+    """
+    if not (parent1.shape == parent2.shape):
+        raise ValueError("The shape of the two parent populations is not equal")
+    N, D = parent1.shape
+    site = np.random.random((N, D)) < cross_prob
+    offspring = np.repeat(best[np.newaxis, :], N, axis=0)
+    offspring[site] = offspring[site] + factor * (parent1[site] - parent2[site])
+    return offspring
+
+
+def de_best_2(best, parent1, parent2, parent3, parent4, cross_prob, factor):
+    """
+    差分进化算法最优个体算子2 (DE/best/2)
+    :param best: 父代中最优个体
+    :param parent1: 差分的父代1
+    :param parent2: 差分的父代2
+    :param parent3: 差分的父代3
+    :param parent4: 差分的父代4
+    :param cross_prob: 交叉概率
+    :param factor: 缩放因子
+    :return: 子代种群
+    """
+    if not (parent1.shape == parent2.shape):
+        raise ValueError("The shape of the two parent populations is not equal")
+    N, D = parent1.shape
+    site = np.random.random((N, D)) < cross_prob
+    offspring = np.repeat(best[np.newaxis, :], N, axis=0)
+    offspring[site] = (offspring[site] + factor * (parent1[site] - parent2[site]) +
+                       factor * (parent3[site] - parent4[site]))
+    return offspring

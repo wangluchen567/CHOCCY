@@ -124,32 +124,66 @@ def operator_fix_label(pop, lower, upper, cross_prob=None, mutate_prob=None):
     return offspring
 
 
-def operator_de_1(pop, parents, lower, upper, cross_prob=None, mutate_prob=None, factor=None):
+def operator_rand_de(parents, lower, upper, cross_prob=None, mutate_prob=None, factor=None):
     """
-    差分进化算子（一对差分）
-    :param pop: 要交叉变异的种群
+    差分进化算子（随机差分）
+    :param parents: 要差分的父代
     :param lower: 取值范围的下界
     :param upper: 取值范围的上界
     :param cross_prob: 交叉概率
     :param mutate_prob: 变异概率
+    :param factor: 缩放因子
     :return: 交叉变异得到的子代
     """
-    num_pop = len(pop)
-    offspring = pop.copy()  # 防止影响原数据
-    # if len(parents) % 2 == 1:
-    #     # 种群中个体数量必须是偶数
-    #     raise ValueError("The number of individuals in the population must be even")
+    base_parent = parents[0].copy()  # 防止影响原数据
     if cross_prob is None:
         cross_prob = 0.9
     if mutate_prob is None:
-        mutate_prob = 1 / offspring.shape[1]
+        mutate_prob = 1 / base_parent.shape[1]
     if factor is None:
         factor = 0.5
-    # 将种群均分为两个父代种群
-    parents1 = parents[:num_pop]
-    parents2 = parents[num_pop:]
-    # 进行模拟二进制交叉
-    offspring = de_rand_1(offspring, parents1, parents2, cross_prob, factor)
+    # 进行差分进化交叉
+    if len(parents) == 3:
+        # 一个基向量加一对差分向量
+        offspring = de_rand_1(base_parent, parents[1], parents[2], cross_prob, factor)
+    elif len(parents) == 5:
+        # 一个基向量加两对差分向量
+        offspring = de_rand_2(base_parent, parents[1], parents[2], parents[3], parents[4], cross_prob, factor)
+    else:
+        raise ValueError("The number of parents is incorrect")
+    # 进行多项式变异
+    offspring = polynomial_mutation(offspring, lower, upper, mutate_prob)
+    return offspring
+
+
+def operator_best_de(parents, best, lower, upper, cross_prob=None, mutate_prob=None, factor=None):
+    """
+    差分进化算子（最优个体差分）
+    :param parents: 要差分的父代
+    :param best: 父代中最优个体
+    :param lower: 取值范围的下界
+    :param upper: 取值范围的上界
+    :param cross_prob: 交叉概率
+    :param mutate_prob: 变异概率
+    :param factor: 缩放因子
+    :return: 交叉变异得到的子代
+    """
+    best_ = best.copy()  # 防止影响原数据
+    if cross_prob is None:
+        cross_prob = 0.9
+    if mutate_prob is None:
+        mutate_prob = 1 / best_.shape[1]
+    if factor is None:
+        factor = 0.5
+    # 进行差分进化交叉
+    if len(parents) == 2:
+        # 最优个体加一对差分向量
+        offspring = de_best_1(best_, parents[0], parents[1], cross_prob, factor)
+    elif len(parents) == 4:
+        # 最优个体加两对差分向量
+        offspring = de_best_2(best_, parents[0], parents[1], parents[2], parents[3], cross_prob, factor)
+    else:
+        raise ValueError("The number of parents is incorrect")
     # 进行多项式变异
     offspring = polynomial_mutation(offspring, lower, upper, mutate_prob)
     return offspring

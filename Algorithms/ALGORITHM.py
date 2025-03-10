@@ -222,7 +222,7 @@ class ALGORITHM(object):
         elif problem_type == ALGORITHM.FIX:
             return operator_fix_label
         else:
-            raise ValueError("The problem type does not exist")
+            raise ValueError(f"The problem type {problem_type} does not exist")
 
     def educate(self, *args, **kwargs):
         """对子代进行教育"""
@@ -242,10 +242,10 @@ class ALGORITHM(object):
             num_next = self.num_pop
         if k >= 2:
             # 使用锦标赛选择获取交配池
-            return tournament_selection(self.objs, num_next, k)
+            return tournament_selection(self.fitness, num_next, k)
         else:
             # 使用轮盘赌选择获取交配池
-            return roulette_selection(self.objs, num_next)
+            return roulette_selection(self.fitness, num_next)
 
     def environmental_selection(self, offspring):
         """进行环境选择"""
