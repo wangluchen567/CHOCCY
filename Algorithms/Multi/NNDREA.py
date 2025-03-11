@@ -35,6 +35,7 @@ class NNDREA(ALGORITHM):
         self.pop_weights = None
         self.delta_iter = None
 
+
     def init_algorithm(self):
         """初始化算法"""
         # 问题必须为二进制问题
@@ -91,7 +92,6 @@ class NNDREA(ALGORITHM):
         pop_weights = np.random.uniform(self.upper, self.lower, size=(self.num_pop, self.num_dec))
         return pop_weights
 
-    @ALGORITHM.record_time
     def run(self):
         """运行算法(主函数)"""
         # 初始化算法
@@ -104,6 +104,7 @@ class NNDREA(ALGORITHM):
             # 绘制迭代过程中每步状态
             self.plot(n_iter=i + 1, pause=True)
 
+    @ALGORITHM.record_time
     def run_step(self, i):
         """运行算法单步"""
         if i <= self.delta_iter:

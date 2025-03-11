@@ -48,7 +48,24 @@ class MOEAD(ALGORITHM):
         # 初始化参考点
         self.ref = np.min(self.objs, axis=0)
 
-    @ALGORITHM.record_time
+    def init_algorithm_with(self, pop=None):
+        """通过给定种群进行初始化"""
+        if pop is None:
+            raise ValueError("Due to the need to adjust the population size "
+                             "during initialization of MOEA/D, "
+                             "it does not support a None Population")
+        # 重新设置种群大小
+        # 选择的最近邻居的数量
+        self.num_near = int(np.ceil(self.num_pop / 10))
+        # 均匀生成权重向量
+        self.vectors = get_uniform_vectors(self.num_pop, self.problem.num_obj)
+        # 获取每个权重向量的前T个邻居向量的下标
+        self.indexes = self.get_neighbor_index(self.vectors, self.num_near)
+        # 根据权重向量个数重新确定种群大小(必须匹配)
+        self.num_pop = len(self.vectors)
+        # 从指定种群中随机选择num_pop个个体
+        super().init_algorithm_with(pop[:self.num_pop])
+
     def run(self):
         """运行算法(主函数)"""
         # 初始化算法
@@ -61,6 +78,7 @@ class MOEAD(ALGORITHM):
             # 绘制迭代过程中每步状态
             self.plot(n_iter=i + 1, pause=True)
 
+    @ALGORITHM.record_time
     def run_step(self, i):
         """运行算法单步"""
         for j in range(self.num_pop):

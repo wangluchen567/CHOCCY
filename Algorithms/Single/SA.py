@@ -1,9 +1,11 @@
+import numpy as np
+
 from Algorithms.ALGORITHM import ALGORITHM
 from Algorithms.Utility.Mutations import *
 
 
 class SA(ALGORITHM):
-    def __init__(self, problem, num_pop, num_iter, init_temp=1000, alpha=0.95, perturb_prob=0.5, show_mode=0):
+    def __init__(self, problem, num_pop, num_iter, init_temp=1e4, alpha=0.99, perturb_prob=0.5, show_mode=0):
         """
         模拟退火算法
         *Code Author: Luchen Wang
@@ -19,8 +21,25 @@ class SA(ALGORITHM):
         self.init_temp = init_temp
         self.temp = self.init_temp
         self.alpha = alpha
+        self.p = None
+        self.obj = None
+        self.con = None
+        self.fit = None
 
-    @ALGORITHM.record_time
+    def init_algorithm(self):
+        super().init_algorithm()
+        self.p = self.pop[0].reshape(1, -1)
+        self.obj = self.cal_objs(self.p)
+        self.con = self.cal_cons(self.p)
+        self.fit = self.get_fitness(self.obj, self.con)
+
+    def init_algorithm_with(self, pop=None):
+        super().init_algorithm_with(pop)
+        self.p = self.pop[0].reshape(1, -1)
+        self.obj = self.cal_objs(self.p)
+        self.con = self.cal_cons(self.p)
+        self.fit = self.get_fitness(self.obj, self.con)
+
     def run(self):
         """运行算法(主函数)"""
         # 初始化算法
@@ -32,33 +51,63 @@ class SA(ALGORITHM):
             # 绘制迭代过程中每步状态
             self.plot(n_iter=i + 1, pause=True)
 
+    @ALGORITHM.record_time
     def run_step(self, i):
-        # 检查温度是否已经很小，则不再更新
-        if self.temp == 0:
-            print("The temperature is already very low, algorithm stopped early")
+        if self.temp < 1e-100:
+            # 若温度已经很小，则不再更新
+            pass
         else:
-            # 对解进行扰动
-            new_pop = self.perturb(self.pop)
-            # 得到扰动解的目标值与约束值
-            new_objs = self.cal_objs(new_pop)
-            new_cons = self.cal_cons(new_pop)
-            new_fits = self.get_fitness(new_objs, new_cons)
-            # 使用metrospolis接受准则接受解
-            accept = self.metrospolis(self.fitness, new_fits, self.temp)
-            # 更新解集
-            self.pop[accept] = new_pop[accept]
-            self.objs[accept] = new_objs[accept]
-            self.cons[accept] = new_cons[accept]
-            self.fitness[accept] = new_fits[accept]
-            # 更新温度
-            self.temp = self.alpha * self.temp
+            for i in range(len(self.pop)):
+                self.run_one()
+                self.pop[i], self.objs[i], self.cons[i], self.fitness[i] \
+                    = self.p, self.obj, self.con, self.fit
         # 记录每步状态
         self.record()
+
+    def run_one(self):
+        """对单个个体进行扰动和优化"""
+        # 对个体解进行扰动
+        new_p = self.perturb(self.p)
+        # 得到扰动解的目标值与约束值
+        # 得到扰动解的目标值与约束值
+        new_obj = self.cal_objs(new_p)
+        new_con = self.cal_cons(new_p)
+        new_fit = self.get_fitness(new_obj, new_con)
+        # 使用metrospolis接受准则接受解
+        if self.metrospolis(self.fit[0], new_fit[0], self.temp):
+            # 更新解集
+            self.p = new_p
+            self.obj = new_obj
+            self.con = new_con
+            self.fit = new_fit
+        # 更新温度
+        self.temp = self.alpha * self.temp
 
     @staticmethod
     def metrospolis(old, new, temp):
         """
         使用metrospolis接受准则接受解
+        :param old: 扰动前旧的解(适应度值)
+        :param new: 扰动得到的新解(适应度值)
+        :param temp: 当前温度
+        :return: 是否接受新解
+        """
+        # 计算能量差
+        delta_e = new - old
+        if delta_e < 0:
+            # 若新解比旧解更好则直接接受新解
+            return True
+        elif temp < 1e-100:
+            # 温度太低之后直接不接受新解
+            return False
+        else:
+            # 若新解比旧解更差则以一定概率接受新解
+            return np.random.rand() < np.exp(-delta_e / temp)
+
+    @staticmethod
+    def metrospolis_multi(old, new, temp):
+        """
+        使用metrospolis接受准则接受解(多个解)
         :param old: 扰动前旧的解(适应度值)
         :param new: 扰动得到的新解(适应度值)
         :param temp: 当前温度

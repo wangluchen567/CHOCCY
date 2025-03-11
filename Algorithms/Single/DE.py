@@ -28,7 +28,6 @@ class DE(ALGORITHM):
         self.num_parents = operator_type  # trick
         self.cross_prob = 0.9 if cross_prob is None else cross_prob
 
-    @ALGORITHM.record_time
     def run(self):
         """运行算法(主函数)"""
         # 初始化算法
@@ -41,6 +40,7 @@ class DE(ALGORITHM):
             # 绘制迭代过程中每步状态
             self.plot(n_iter=i + 1, pause=True)
 
+    @ALGORITHM.record_time
     def run_step(self, i):
         """运行算法单步"""
         # 获取交配池

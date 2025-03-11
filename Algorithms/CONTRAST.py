@@ -1,3 +1,4 @@
+import warnings
 import matplotlib
 import numpy as np
 from typing import Union
@@ -9,10 +10,10 @@ from Problems.PROBLEM import PROBLEM
 from scipy.interpolate import griddata
 from Metrics.Hypervolume import cal_hv
 from mpl_toolkits.mplot3d import Axes3D
+from Algorithms.ALGORITHM import ALGORITHM
 
 
 class CONTRAST(object):
-    """对比类(用于对比多个算法效果)"""
     # 定义绘图常量
     NULL = -1  # 不绘制
     BAR = 0  # 绘制进度条
@@ -26,11 +27,22 @@ class CONTRAST(object):
                  problem: PROBLEM,
                  algorithms: dict,
                  num_iter: Union[int, None] = None,
+                 num_run: int = 1,
                  same_init: bool = False,
                  show_mode: int = 0):
+        """
+        对比类(用于对比多个算法效果)
+        :param problem: 问题对象
+        :param algorithms: 需要对比的算法字典
+        :param num_iter: 最大迭代次数
+        :param num_run: 重复运行次数
+        :param same_init: 是否初始化相同
+        :param show_mode: 绘图模式
+        """
         self.problem = problem
         self.algorithms = algorithms
         self.num_iter = num_iter
+        self.num_run = num_run
         self.same_init = same_init
         self.show_mode = show_mode
         self.colors = self.get_colors()
@@ -48,27 +60,37 @@ class CONTRAST(object):
             # 初始化算法
             if self.same_init:
                 # 若使用相同初始化
-                alg.init_params()
-                alg.init_and_eval(pop)
+                alg.init_algorithm_with(pop)
                 pop = alg.pop.copy()
-                alg.iterator = range(alg.num_iter)
             else:
                 alg.init_algorithm()
+            if self.show_mode == self.SCORE:
+                # 若展示指标值则需每步计算指标值
+                alg.record_score()
+            # 如果算法没有覆写单独运行一步，则全部运行
+            if 'run_step' not in type(alg).__dict__:
+                alg.run()
         # 迭代次数若为空则根据给定算法最大迭代次数
         self.num_iter = max_iter if self.num_iter is None else self.num_iter
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
 
     def run_contrast(self):
-        """运行多个算法的比较"""
+        """运行多个算法的实时比较"""
+        # 初始化所有算法
         self.init_algorithms()
         # 绘制初始状态图
         self.plot(n_iter=0, pause=True)
         for i in self.iterator:
             for alg in self.algorithms.values():
                 if i < alg.num_iter:
+                    # 若算法未结束迭代
                     alg.run_step(i)
                 else:
+                    # 若算法已结束迭代
                     alg.record()
+                if self.show_mode == self.SCORE:
+                    # 若展示指标值则需每步计算指标值
+                    alg.record_score()
             # 绘制迭代过程中每步状态
             self.plot(n_iter=i + 1, pause=True)
         self.print_results()
@@ -86,6 +108,7 @@ class CONTRAST(object):
         titles = ["problem"]
         objs = [problem_name]
         cons = [" "]
+        times = ["time(s)"]
         col_widths = [max(len("problem"), len(problem_name)) + 3]
         if show_cons:
             titles.append("type")
@@ -95,32 +118,40 @@ class CONTRAST(object):
         for (name, alg) in self.algorithms.items():
             titles.append(name)
             objs.append(f"{alg.best_obj[0]:.{dec}e}")
+            times.append(f"{alg.run_time:.{dec}e}")
             if show_cons:
                 cons.append(f"{alg.best_con[0]:.{dec}e}")
             col_widths.append(max(len(titles[-1]), len(objs[-1])) + 3)
         titles_format = " ".join(f"{t:<{w}}" for t, w in zip(titles, col_widths))
         objs_format = " ".join(f"{v:<{w}}" for v, w in zip(objs, col_widths))
-        print(titles_format)
-        print(objs_format)
+        cons_format = ""
         if show_cons:
             cons_format = " ".join(f"{c:<{w}}" for c, w in zip(cons, col_widths))
-            print(cons_format)
+        times_format = " ".join(f"{t:<{w}}" for t, w in zip(times, col_widths))
+        print(titles_format)
+        print(objs_format)
+        print(times_format)
+        print(cons_format)
 
     def print_multi(self, dec=6):
         """格式化打印多个算法的对比结果(多目标)"""
         problem_name = type(self.problem).__name__
         titles = ["problem"]
-        values = [problem_name]
+        scores = [problem_name]
+        times = ["time(s)"]
         col_widths = [max(len("problem"), len(problem_name)) + 3]
         for (name, alg) in self.algorithms.items():
             titles.append(name)
             metric_value = cal_hv(alg.best_obj, self.problem.optimums)
-            values.append(f"{metric_value:.{dec}e}")
-            col_widths.append(max(len(titles[-1]), len(values[-1])) + 3)
+            scores.append(f"{metric_value:.{dec}e}")
+            times.append(f"{alg.run_time:.{dec}e}")
+            col_widths.append(max(len(titles[-1]), len(scores[-1])) + 3)
         titles_format = " ".join(f"{t:<{w}}" for t, w in zip(titles, col_widths))
-        values_format = " ".join(f"{v:<{w}}" for v, w in zip(values, col_widths))
+        scores_format = " ".join(f"{s:<{w}}" for s, w in zip(scores, col_widths))
+        times_format = " ".join(f"{t:<{w}}" for t, w in zip(times, col_widths))
         print(titles_format)
-        print(values_format)
+        print(scores_format)
+        print(times_format)
 
     def plot(self, show_mode=None, n_iter=None, pause=False):
         """
@@ -140,6 +171,8 @@ class CONTRAST(object):
             self.plot_decs_objs(n_iter, pause)
         elif self.show_mode == self.OAD3:
             self.plot_decs_objs(n_iter, pause, contour=False)
+        elif self.show_mode == self.SCORE:
+            self.plot_scores(n_iter, pause)
         else:
             raise ValueError("There is no such plotting mode")
 
@@ -148,7 +181,7 @@ class CONTRAST(object):
         num_colors = len(self.algorithms)
         if num_colors <= 10:
             # 若数量少则直接指定颜色
-            colors = ['blue', 'red', 'green', 'orange', 'purple', 'sandybrown',
+            colors = ['blue', 'red', 'green', 'purple', 'steelblue', 'darkorange',
                       'tomato', 'deepskyblue', 'hotpink', 'springgreen']
             return colors
         # 否则从彩虹色图中采样颜色
@@ -346,6 +379,25 @@ class CONTRAST(object):
                 ax.set_zlabel('obj')
         else:
             raise ValueError("The decision vector dimension must be less than 3 dimensions")
+        plt.grid()
+        plt.legend()
+        if pause:
+            if n_iter is not None:
+                plt.title("iter: " + str(n_iter))
+            plt.pause(pause_time)
+        else:
+            plt.show()
+
+    def plot_scores(self, n_iter=None, pause=False, pause_time=0.1):
+        """绘制种群目标值"""
+        if not pause: plt.figure()
+        plt.clf()
+        plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
+        for idx, (name, alg) in enumerate(self.algorithms.items()):
+            plt.plot(np.arange(len(alg.scores)), alg.scores,
+                     marker=".", c=self.colors[idx], label=name, alpha=0.6)
+        plt.xlabel('n_iter')
+        plt.ylabel('score')
         plt.grid()
         plt.legend()
         if pause:

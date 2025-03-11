@@ -61,7 +61,6 @@ class GFLS(ALGORITHM):
             self.bits[np.where(utils == utils_max)[0][0]] = 1
             self.bits[np.where(utils == utils_max)[0][1]] = 1
 
-    @ALGORITHM.record_time
     def run(self):
         """运行算法(主函数)"""
         # 初始化算法
@@ -74,6 +73,7 @@ class GFLS(ALGORITHM):
             # 绘制迭代过程中每步状态
             self.plot(n_iter=i + 1, pause=True)
 
+    @ALGORITHM.record_time
     def run_step(self, i):
         # 进行一次快速局部搜索
         self.tour = fast_local_search(self.tour, self.dist_mat, self.bits, self.p_mat, self.lamb)

@@ -19,7 +19,7 @@ class NSGAII(ALGORITHM):
         """
         super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
 
-    @ALGORITHM.record_time
+
     def run(self):
         """运行算法(主函数)"""
         # 初始化算法
@@ -32,6 +32,7 @@ class NSGAII(ALGORITHM):
             # 绘制迭代过程中每步状态
             self.plot(n_iter=i + 1, pause=True)
 
+    @ALGORITHM.record_time
     def run_step(self, i):
         """运行算法单步"""
         # 获取交配池

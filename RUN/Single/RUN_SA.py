@@ -9,7 +9,7 @@ from Problems.Single.MixFixLabelCluster import MixFixLabelCluster
 
 def Solve_Ackley():
     problem = Ackley(num_dec=2)
-    alg = SA(problem, num_pop=10, num_iter=1000, show_mode=1)
+    alg = SA(problem, num_pop=1, num_iter=10000, show_mode=0)
     alg.run()
     print(alg.best_obj[0])
     # alg.plot()
@@ -18,7 +18,7 @@ def Solve_Ackley():
 
 def Solve_Square():
     problem = Square(num_dec=2)
-    alg = SA(problem, num_pop=10, num_iter=1000, show_mode=1)
+    alg = SA(problem, num_pop=1, num_iter=10000, show_mode=0)
     alg.run()
     print(alg.best_obj[0])
     # alg.plot()
@@ -27,7 +27,7 @@ def Solve_Square():
 
 def Solve_KP():
     problem = KP(num_dec=100)
-    alg = SA(problem, num_pop=10, num_iter=1000, perturb_prob=1 / 100, show_mode=1)
+    alg = SA(problem, num_pop=1, num_iter=10000, perturb_prob=1 / 100, show_mode=0)
     alg.run()
     print(alg.best_obj[0])
     # alg.plot()
@@ -36,7 +36,7 @@ def Solve_KP():
 
 def Solve_TSP():
     problem = TSP(20)
-    alg = SA(problem, num_pop=10, num_iter=1000, perturb_prob=1.0, show_mode=1)
+    alg = SA(problem, num_pop=1, num_iter=10000, perturb_prob=1.0, show_mode=0)
     alg.run()
     print(alg.best_obj[0])
     # alg.plot()
@@ -46,7 +46,7 @@ def Solve_TSP():
 
 def Solve_FixLabelCluster():
     problem = FixLabelCluster()
-    alg = SA(problem, num_pop=10, num_iter=1000, show_mode=1)
+    alg = SA(problem, num_pop=1, num_iter=10000, show_mode=0)
     alg.run()
     print(alg.best_obj[0])
     # alg.plot()
@@ -56,7 +56,7 @@ def Solve_FixLabelCluster():
 
 def Solve_MixFixLabelCluster():
     problem = MixFixLabelCluster(90)
-    alg = SA(problem, num_pop=10, num_iter=1000, show_mode=1)
+    alg = SA(problem, num_pop=1, num_iter=10000, show_mode=0)
     alg.run()
     print(alg.best_obj[0])
     # alg.plot()
@@ -65,10 +65,10 @@ def Solve_MixFixLabelCluster():
 
 
 if __name__ == '__main__':
-    Solve_Ackley()
+    # Solve_Ackley()
     # Solve_Square()
     # Solve_KP()
     # Solve_TSP()
     # Solve_FixLabelCluster()
-    # Solve_MixFixLabelCluster()
+    Solve_MixFixLabelCluster()
 

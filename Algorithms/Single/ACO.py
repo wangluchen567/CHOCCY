@@ -52,7 +52,6 @@ class ACO(ALGORITHM):
         # 蚁群路径(路径记录表, 记录已经访问过的节点)
         self.pop = np.zeros((self.num_pop, self.num_dec), dtype=int)
 
-    @ALGORITHM.record_time
     def run(self):
         """运行算法(主函数)"""
         # 初始化算法
@@ -65,6 +64,7 @@ class ACO(ALGORITHM):
             # 绘制迭代过程中每步状态
             self.plot(n_iter=i + 1, pause=True)
 
+    @ALGORITHM.record_time
     def run_step(self, i):
         # 清空路径记录表
         self.pop = np.zeros((self.num_pop, self.num_dec), dtype=int)

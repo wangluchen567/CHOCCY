@@ -81,9 +81,10 @@ class ALGORITHM(object):
         # 初始化迭代器
         self.iterator = None
         # 记录评价指标
-        self.scores = None
+        self.scores = np.empty(0)
         # 记录运行时间
-        self.run_time = None
+        self.run_time = 0.0
+        self.record_t = []
         # 决策变量示例(固定标签问题)
         self.example_dec = None
         if hasattr(problem, 'example_dec'):
@@ -95,6 +96,15 @@ class ALGORITHM(object):
         self.init_params()
         # 初始化种群，计算目标值和约束值以及适应度值
         self.init_and_eval()
+        # 构建迭代器
+        self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
+
+    def init_algorithm_with(self, pop=None):
+        """通过给定种群进行初始化"""
+        # 初始化参数(各个概率参数)
+        self.init_params()
+        # 初始化种群，计算目标值和约束值以及适应度值
+        self.init_and_eval(pop)
         # 构建迭代器
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
 
@@ -145,7 +155,8 @@ class ALGORITHM(object):
             start_time = time.time()
             result = method(*args, **kwargs)
             end_time = time.time()
-            self.run_time = end_time - start_time
+            self.run_time += end_time - start_time
+            self.record_t.append(end_time - start_time)
             return result
 
         return timed
@@ -279,7 +290,7 @@ class ALGORITHM(object):
 
     def run_step(self, *args, **kwargs):
         """运行算法单步"""
-        pass
+        self.record()
 
     def get_best(self):
         """获取当前种群的最优解"""
@@ -324,6 +335,14 @@ class ALGORITHM(object):
         self.best_history.append(self.best)
         self.best_obj_his.append(self.best_obj)
         self.best_con_his.append(self.best_con)
+
+    def record_score(self):
+        """记录分数值"""
+        if self.num_obj == 1:
+            self.scores = self.best_obj_his
+        else:
+            hv_value = cal_hv(self.best_obj, self.problem.optimums)
+            self.scores = np.append(self.scores, hv_value)
 
     def plot(self, show_mode=None, n_iter=None, pause=False):
         """
@@ -404,6 +423,6 @@ class ALGORITHM(object):
                 score_type = "Fitness"
             else:
                 score_type = "HV"
-        if self.scores is None:
+        if self.scores is None or len(self.scores) == 0:
             self.get_scores()
         plot_scores(self.scores, score_type)
