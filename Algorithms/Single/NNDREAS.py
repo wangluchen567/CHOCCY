@@ -80,8 +80,8 @@ class NNDREAS(ALGORITHM):
         self.objs = self.cal_objs(self.pop)
         self.cons = self.cal_cons(self.pop)
         self.fitness = self.get_fitness(self.objs, self.cons)
-        # 记录最优个体
-        self.record(0)
+        # 记录当前种群信息
+        self.record()
         # 构建迭代器
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
         # 按照delta占比分为两个阶段
@@ -121,7 +121,7 @@ class NNDREAS(ALGORITHM):
             # 进行环境选择
             self.environmental_selection(offspring)
         # 记录每步状态
-        self.record(i + 1)
+        self.record()
 
     def operator_weights(self, mating_pool):
         # 进行交叉变异生成子代

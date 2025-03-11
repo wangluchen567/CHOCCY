@@ -91,19 +91,27 @@ class ALGORITHM(object):
 
     def init_algorithm(self):
         """初始化算法"""
-        # 初始化交叉、变异和教育概率
+        # 初始化参数(各个概率参数)
+        self.init_params()
+        # 初始化种群，计算目标值和约束值以及适应度值
+        self.init_and_eval()
+        # 构建迭代器
+        self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
+
+    def init_params(self):
+        """初始化参数(交叉、变异和教育概率)"""
         self.cross_prob = 1.0 if self.cross_prob is None else self.cross_prob
         self.mutate_prob = 1 / self.num_dec if self.mutate_prob is None else self.mutate_prob
         self.educate_prob = 0.5 if self.educate_prob is None else self.educate_prob
-        # 初始化种群，计算目标值和约束值以及适应度值
-        self.pop = self.init_pop()
+
+    def init_and_eval(self, pop=None):
+        """初始化种群并计算其目标值约束值以及适应度值"""
+        self.pop = self.init_pop() if pop is None else pop
         self.objs = self.cal_objs(self.pop)
         self.cons = self.cal_cons(self.pop)
         self.fitness = self.get_fitness(self.objs, self.cons)
-        # 记录最优个体
-        self.record(0)
-        # 构建迭代器
-        self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
+        # 记录当前种群信息
+        self.record()
 
     def cal_objs(self, decs):
         """计算目标值"""
@@ -305,31 +313,17 @@ class ALGORITHM(object):
         best_con = cons_sat[min_index]
         return best, best_obj, best_con
 
-    def record(self, i=None):
-        """记录种群个体及其目标值"""
+    def record(self):
+        """记录当前种群的信息"""
+        # 记录种群个体及其目标值
         self.pop_history.append(self.pop.copy())
         self.objs_history.append(self.objs.copy())
         self.cons_history.append(self.cons.copy())
-        # 若是单目标问题则直接记录最优个体及其目标(复杂度低)
-        if self.num_obj == 1:
-            self.get_best()
-            self.best_history.append(self.best)
-            self.best_obj_his.append(self.best_obj)
-            self.best_con_his.append(self.best_con)
-        # 若是多目标问题则只记录最后一步的最优个体及其目标
-        if i == self.num_iter:
-            self.get_best()
-
-    def get_best_history(self):
-        """获取种群历史最优个体及其目标值"""
-        self.best_history = []
-        self.best_obj_his = []
-        self.best_con_his = []
-        for i in range(len(self.pop_history)):
-            best = self.get_best_(self.pop_history[i], self.objs_history[i], self.cons_history[i])
-            self.best_history.append(best[0])
-            self.best_obj_his.append(best[1])
-            self.best_con_his.append(best[2])
+        # 记录种群最优个体及其目标和约束值
+        self.get_best()
+        self.best_history.append(self.best)
+        self.best_obj_his.append(self.best_obj)
+        self.best_con_his.append(self.best_con)
 
     def plot(self, show_mode=None, n_iter=None, pause=False):
         """
@@ -375,7 +369,6 @@ class ALGORITHM(object):
         else:
             plot_objs(self.objs, n_iter, pause, pause_time, self.problem.pareto_front)
 
-
     def plot_decs_objs(self, n_iter=None, pause=False, pause_time=0.1, contour=True, sym=True):
         """在特定条件下可同时绘制决策向量与目标值"""
         if pause or n_iter is None:
@@ -398,9 +391,8 @@ class ALGORITHM(object):
         if self.num_obj == 1:
             self.scores = self.best_obj_his
             return self.scores
-        self.get_best_history()
-        self.scores = np.zeros(len(self.best_obj_his))
         # 若是多目标问题则计算评价分数
+        self.scores = np.zeros(len(self.best_obj_his))
         for i in range(len(self.best_obj_his)):
             self.scores[i] = cal_hv(self.best_obj_his[i], self.problem.optimums)
         return self.scores

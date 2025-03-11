@@ -71,7 +71,7 @@ class MOEAD(ALGORITHM):
             # 进行环境选择更新种群
             self.environmental_selection_single(offspring, j)
         # 记录每步状态
-        self.record(i + 1)
+        self.record()
 
     def selection_single(self, j):
         return np.random.choice(self.indexes[j], size=2, replace=False)

@@ -42,7 +42,7 @@ class HGATSP(ALGORITHM):
         # 进行环境选择
         self.environmental_selection(offspring_)
         # 记录每步状态
-        self.record(i + 1)
+        self.record()
 
     def educate(self, offspring):
         """对子代进行教育"""

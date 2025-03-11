@@ -20,15 +20,18 @@ class CONTRAST(object):
     DEC = 2  # 绘制决策空间
     OAD2 = 3  # 绘制目标空间和决策空间混合(等高线)
     OAD3 = 4  # 绘制目标空间和决策空间混合(三维空间)
+    SCORE = 5  # 绘制分数情况(单目标为目标值,多目标为评价指标)
 
     def __init__(self,
                  problem: PROBLEM,
                  algorithms: dict,
                  num_iter: Union[int, None] = None,
+                 same_init: bool = False,
                  show_mode: int = 0):
         self.problem = problem
         self.algorithms = algorithms
         self.num_iter = num_iter
+        self.same_init = same_init
         self.show_mode = show_mode
         self.colors = self.get_colors()
         self.iterator = None
@@ -36,13 +39,21 @@ class CONTRAST(object):
     def init_algorithms(self):
         """初始化所有算法"""
         max_iter = 0
+        pop = None
         for alg in self.algorithms.values():
             # 对比算法时各个算法的进度条关闭
             alg.show_mode = -1
             # 得到最大迭代次数
             max_iter = max(max_iter, alg.num_iter)
             # 初始化算法
-            alg.init_algorithm()
+            if self.same_init:
+                # 若使用相同初始化
+                alg.init_params()
+                alg.init_and_eval(pop)
+                pop = alg.pop.copy()
+                alg.iterator = range(alg.num_iter)
+            else:
+                alg.init_algorithm()
         # 迭代次数若为空则根据给定算法最大迭代次数
         self.num_iter = max_iter if self.num_iter is None else self.num_iter
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
@@ -57,7 +68,7 @@ class CONTRAST(object):
                 if i < alg.num_iter:
                     alg.run_step(i)
                 else:
-                    alg.record(i)
+                    alg.record()
             # 绘制迭代过程中每步状态
             self.plot(n_iter=i + 1, pause=True)
         self.print_results()
@@ -137,8 +148,8 @@ class CONTRAST(object):
         num_colors = len(self.algorithms)
         if num_colors <= 10:
             # 若数量少则直接指定颜色
-            colors = ['blue', 'red', 'green', 'orange', 'purple', 'yellow',
-                      'sandybrown', 'deepskyblue', 'hotpink', 'springgreen']
+            colors = ['blue', 'red', 'green', 'orange', 'purple', 'sandybrown',
+                      'tomato', 'deepskyblue', 'hotpink', 'springgreen']
             return colors
         # 否则从彩虹色图中采样颜色
         # 检查 Matplotlib 版本

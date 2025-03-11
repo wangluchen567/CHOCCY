@@ -96,7 +96,7 @@ class GFLS(ALGORITHM):
             self.pop[0] = self.tour.copy()
             self.objs[0] = self.tour_cost
         # 记录每步状态
-        self.record(i + 1)
+        self.record()
 
 
 def fast_local_search(tour, dist_mat, bits, p_mat, lamb):

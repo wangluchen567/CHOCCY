@@ -101,7 +101,7 @@ class ACO(ALGORITHM):
                   np.repeat(self.q_value / self.fitness, self.num_dec))
         self.tau_mat = (1 - self.rho) * self.tau_mat + delta_tau_mat
         # 记录每步状态
-        self.record(i + 1)
+        self.record()
 
     def get_best(self):
         """覆写获取最优解，这里获取的是历史最优解"""

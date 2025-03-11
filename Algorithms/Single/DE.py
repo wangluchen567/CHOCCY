@@ -26,6 +26,7 @@ class DE(ALGORITHM):
         self.factor = factor
         self.operator_type = operator_type
         self.num_parents = operator_type  # trick
+        self.cross_prob = 0.9 if cross_prob is None else cross_prob
 
     @ALGORITHM.record_time
     def run(self):
@@ -49,7 +50,7 @@ class DE(ALGORITHM):
         # 进行环境选择
         self.environmental_selection(offspring)
         # 记录每步状态
-        self.record(i + 1)
+        self.record()
 
     def operator(self, mating_pools):
         """重写算子为差分进化算子"""

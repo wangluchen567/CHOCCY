@@ -37,4 +37,4 @@ class GA(ALGORITHM):
         # 进行环境选择
         self.environmental_selection(offspring)
         # 记录每步状态
-        self.record(i + 1)
+        self.record()

@@ -53,7 +53,7 @@ class SA(ALGORITHM):
             # 更新温度
             self.temp = self.alpha * self.temp
         # 记录每步状态
-        self.record(i + 1)
+        self.record()
 
     @staticmethod
     def metrospolis(old, new, temp):

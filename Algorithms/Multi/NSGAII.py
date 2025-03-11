@@ -41,7 +41,7 @@ class NSGAII(ALGORITHM):
         # 进行环境选择
         self.environmental_selection(offspring)
         # 记录每步状态
-        self.record(i + 1)
+        self.record()
 
     def get_fitness(self, objs, cons):
         """根据给定目标值和约束值得到适应度值"""
