@@ -106,11 +106,11 @@ class CONTRAST(object):
     def print_single(self, dec=6, show_cons=False):
         """格式化打印多个算法的对比结果(单目标)"""
         problem_name = type(self.problem).__name__
-        titles = ["algorithm"]
+        titles = ["Algorithm"]
         objs = [problem_name]
         cons = [" "]
         times = ["time(s)"]
-        col_widths = [max(len("problem"), len(problem_name)) + 3]
+        col_widths = [max(len("Algorithm"), len(problem_name)) + 3]
         if show_cons:
             titles.append("type")
             objs.append("obj_value")
@@ -137,10 +137,10 @@ class CONTRAST(object):
     def print_multi(self, dec=6):
         """格式化打印多个算法的对比结果(多目标)"""
         problem_name = type(self.problem).__name__
-        titles = ["algorithm"]
+        titles = ["Algorithm"]
         scores = [problem_name]
         times = ["time(s)"]
-        col_widths = [max(len("problem"), len(problem_name)) + 3]
+        col_widths = [max(len("Algorithm"), len(problem_name)) + 3]
         for (name, alg) in self.algorithms.items():
             titles.append(name)
             metric_value = cal_hv(alg.best_obj, self.problem.optimums)
