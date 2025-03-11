@@ -335,6 +335,9 @@ class ALGORITHM(object):
         self.best_history.append(self.best)
         self.best_obj_his.append(self.best_obj)
         self.best_con_his.append(self.best_con)
+        if self.num_obj == 1:
+            # 若是单目标问题则直接记录分数(低复杂度)
+            self.record_score()
 
     def record_score(self):
         """记录分数值"""

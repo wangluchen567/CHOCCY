@@ -56,7 +56,7 @@ class DPKP(ALGORITHM):
                     # 更新选择状态
                     selected[j] = selected[j - self.weights[i]].copy()
                     selected[j][i] = 1
-        self.pop = np.array([selected[self.capacity]])
+        self.pop = np.repeat(np.array([selected[self.capacity]]), len(self.pop), axis=0)
         self.objs = self.cal_objs(self.pop)
         self.cons = self.cal_cons(self.pop)
         self.record()

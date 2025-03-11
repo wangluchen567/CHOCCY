@@ -69,6 +69,7 @@ class CONTRAST(object):
                 alg.record_score()
             # 如果算法没有覆写单独运行一步，则全部运行
             if 'run_step' not in type(alg).__dict__:
+                alg.show_mode = 0  # 若全部运行则展示bar
                 alg.run()
         # 迭代次数若为空则根据给定算法最大迭代次数
         self.num_iter = max_iter if self.num_iter is None else self.num_iter
@@ -105,7 +106,7 @@ class CONTRAST(object):
     def print_single(self, dec=6, show_cons=False):
         """格式化打印多个算法的对比结果(单目标)"""
         problem_name = type(self.problem).__name__
-        titles = ["problem"]
+        titles = ["algorithm"]
         objs = [problem_name]
         cons = [" "]
         times = ["time(s)"]
@@ -136,7 +137,7 @@ class CONTRAST(object):
     def print_multi(self, dec=6):
         """格式化打印多个算法的对比结果(多目标)"""
         problem_name = type(self.problem).__name__
-        titles = ["problem"]
+        titles = ["algorithm"]
         scores = [problem_name]
         times = ["time(s)"]
         col_widths = [max(len("problem"), len(problem_name)) + 3]

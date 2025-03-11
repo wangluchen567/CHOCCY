@@ -1,51 +1,23 @@
 import numpy as np
 import seaborn as sns
 from Problems.Single.KP import KP
+from Algorithms.Single.SA import SA
 from Algorithms.Single.GA import GA
 from Algorithms.Single.DP_KP import DPKP
-from Algorithms.Single.Greedy_KP import GreedyKP
 from Algorithms.Single.NNDREAS import NNDREAS
-
-
-def DP_Solve_KP(problem):
-    alg = DPKP(problem)
-    alg.run()
-    print("DP Solve KP")
-    print("Run time: ", alg.run_time)
-    print("best value: ", alg.best_obj[0])
-
-
-def Greedy_Solve_KP(problem):
-    alg = GreedyKP(problem)
-    alg.run()
-    print("Greedy Solve KP")
-    print("Run time: ", alg.run_time)
-    print("best value: ", alg.best_obj[0])
-
-
-def GA_Solve_KP(problem, num_pop=100, num_iter=100):
-    alg = GA(problem, num_pop=num_pop, num_iter=num_iter, show_mode=0)
-    alg.run()
-    print("GA Solve KP")
-    print("Run time: ", alg.run_time)
-    print("best value: ", alg.best_obj[0])
-    # alg.plot_scores()
-
-
-def NNDREA_Solve_KP(problem, num_pop=100, num_iter=100):
-    alg = NNDREAS(problem, num_pop=num_pop, num_iter=num_iter, show_mode=0)
-    alg.run()
-    print("NNDREA Solve KP")
-    print("Run time: ", alg.run_time)
-    print("best value: ", alg.best_obj[0])
-    print(np.min(alg.pop_weights), np.max(alg.pop_weights))
-    sns.heatmap(alg.pop_weights, cmap="YlGnBu")
-    alg.plot_scores()
-
+from Algorithms.Single.Greedy_KP import GreedyKP
+from Algorithms.CONTRAST import CONTRAST
 
 if __name__ == '__main__':
-    problem = KP(num_dec=1000)
-    # DP_Solve_KP(problem)
-    Greedy_Solve_KP(problem)
-    GA_Solve_KP(problem)
-    NNDREA_Solve_KP(problem)
+    problem = KP(num_dec=10000)
+    algorithms = dict()
+    algorithms['GA'] = GA(problem, num_pop=100, num_iter=100)
+    algorithms['SA'] = SA(problem, num_pop=100, num_iter=100)
+    # algorithms['DP'] = DPKP(problem)
+    algorithms['Greedy'] = GreedyKP(problem)
+    algorithms['NNDREA'] = NNDREAS(problem, num_pop=100, num_iter=100)
+    contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.BAR, same_init=True)
+    contrast.run_contrast()
+    contrast.plot(show_mode=CONTRAST.SCORE)
+    print(np.min(algorithms['NNDREA'].pop_weights), np.max(algorithms['NNDREA'].pop_weights))
+    sns.heatmap(algorithms['NNDREA'].pop_weights, cmap="YlGnBu")

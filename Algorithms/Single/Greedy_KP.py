@@ -43,7 +43,7 @@ class GreedyKP(ALGORITHM):
             sum_weight += self.weights[cost_sort[i]]
         solution = np.zeros(len(self.weights), dtype=int)
         solution[chosen] = 1
-        self.pop = np.array([solution])
+        self.pop = np.repeat(np.array([solution]), len(self.pop), axis=0)
         self.objs = self.cal_objs(self.pop)
         self.cons = self.cal_cons(self.pop)
         self.record()
