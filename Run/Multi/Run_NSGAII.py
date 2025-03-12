@@ -20,4 +20,3 @@ if __name__ == '__main__':
     alg.plot(show_mode=1)
     print("Final score: ", alg.get_scores()[-1])
     alg.plot_scores()
-
