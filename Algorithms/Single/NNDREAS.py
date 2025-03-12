@@ -80,7 +80,7 @@ class NNDREAS(ALGORITHM):
         self.pop = self.model_forward(self.pop_weights).astype(int)
         self.objs = self.cal_objs(self.pop)
         self.cons = self.cal_cons(self.pop)
-        self.fitness = self.get_fitness(self.objs, self.cons)
+        self.fitness = self.cal_fitness(self.objs, self.cons)
         # 记录当前种群信息
         self.record()
         # 构建迭代器
@@ -149,7 +149,7 @@ class NNDREAS(ALGORITHM):
         new_cons = np.vstack((self.cons, off_cons))
         new_pop_weights = np.vstack((self.pop_weights, offspring_weights))
         # 重新计算合并种群的的等价适应度值
-        fitness = self.get_fitness(new_objs, new_cons)
+        fitness = self.cal_fitness(new_objs, new_cons)
         # 使用选择策略(默认精英选择)选择进入下一代新种群的个体
         best_indices = elitist_selection(fitness, self.num_pop)
         # 取目标值最优的个体组成新的种群

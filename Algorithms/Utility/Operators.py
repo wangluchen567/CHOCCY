@@ -145,10 +145,11 @@ def operator_rand_de(parents, lower, upper, cross_prob=None, mutate_prob=None, f
     # 进行差分进化交叉
     if len(parents) == 3:
         # 一个基向量加一对差分向量
-        offspring = de_rand_1(base_parent, parents[1], parents[2], cross_prob, factor)
+        offspring = de_rand_1(base_parent, parents[1], parents[2], lower, upper, cross_prob, factor)
     elif len(parents) == 5:
         # 一个基向量加两对差分向量
-        offspring = de_rand_2(base_parent, parents[1], parents[2], parents[3], parents[4], cross_prob, factor)
+        offspring = de_rand_2(base_parent, parents[1], parents[2], parents[3], parents[4],
+                              lower, upper, cross_prob, factor)
     else:
         raise ValueError("The number of parents is incorrect")
     # 进行多项式变异
@@ -178,10 +179,10 @@ def operator_best_de(parents, best, lower, upper, cross_prob=None, mutate_prob=N
     # 进行差分进化交叉
     if len(parents) == 2:
         # 最优个体加一对差分向量
-        offspring = de_best_1(best_, parents[0], parents[1], cross_prob, factor)
+        offspring = de_best_1(best_, parents[0], parents[1], lower, upper, cross_prob, factor)
     elif len(parents) == 4:
         # 最优个体加两对差分向量
-        offspring = de_best_2(best_, parents[0], parents[1], parents[2], parents[3], cross_prob, factor)
+        offspring = de_best_2(best_, parents[0], parents[1], parents[2], parents[3], lower, upper, cross_prob, factor)
     else:
         raise ValueError("The number of parents is incorrect")
     # 进行多项式变异

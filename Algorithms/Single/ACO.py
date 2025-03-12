@@ -27,6 +27,7 @@ class ACO(ALGORITHM):
         self.eta_mat = None
         self.tau_mat = None
 
+    @ALGORITHM.record_time
     def init_algorithm(self):
         # 问题必须为单目标问题
         if self.problem.num_obj > 1:
@@ -93,7 +94,7 @@ class ACO(ALGORITHM):
         self.objs = self.cal_objs(self.pop)
         self.cons = self.cal_cons(self.pop)
         # 重新计算等价适应度值
-        self.fitness = self.get_fitness(self.objs, self.cons)
+        self.fitness = self.cal_fitness(self.objs, self.cons)
         # 更新信息素矩阵
         delta_tau_mat = np.zeros((self.num_dec, self.num_dec))
         # 使用add.at函数更新delta_tau_mat

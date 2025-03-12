@@ -13,6 +13,7 @@ class FI(ALGORITHM):
         super().__init__(problem, num_pop=1, show_mode=show_mode)
         self.dist_mat = None
 
+    @ALGORITHM.record_time
     def init_algorithm(self):
         # 问题必须提供距离矩阵
         if not hasattr(self.problem, 'dist_mat'):

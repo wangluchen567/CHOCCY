@@ -1,9 +1,24 @@
+import time
 import warnings
 import itertools
 import numpy as np
 
 # 设置警告过滤规则，只显示一次
 warnings.filterwarnings('once')
+
+
+def record_time(method):
+    """统计运行时间"""
+
+    def timed(*args, **kwargs):
+        self = args[0]
+        start_time = time.time()
+        result = method(*args, **kwargs)
+        end_time = time.time()
+        self.run_time += end_time - start_time
+        return result
+
+    return timed
 
 
 def is_dom(p_objs, q_objs):

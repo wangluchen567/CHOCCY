@@ -1,5 +1,3 @@
-import numpy as np
-
 from Algorithms.ALGORITHM import ALGORITHM
 from Algorithms.Utility.Mutations import *
 
@@ -31,14 +29,14 @@ class SA(ALGORITHM):
         self.p = self.pop[0].reshape(1, -1)
         self.obj = self.cal_objs(self.p)
         self.con = self.cal_cons(self.p)
-        self.fit = self.get_fitness(self.obj, self.con)
+        self.fit = self.cal_fitness(self.obj, self.con)
 
     def init_algorithm_with(self, pop=None):
         super().init_algorithm_with(pop)
         self.p = self.pop[0].reshape(1, -1)
         self.obj = self.cal_objs(self.p)
         self.con = self.cal_cons(self.p)
-        self.fit = self.get_fitness(self.obj, self.con)
+        self.fit = self.cal_fitness(self.obj, self.con)
 
     def run(self):
         """运行算法(主函数)"""
@@ -72,7 +70,7 @@ class SA(ALGORITHM):
         # 得到扰动解的目标值与约束值
         new_obj = self.cal_objs(new_p)
         new_con = self.cal_cons(new_p)
-        new_fit = self.get_fitness(new_obj, new_con)
+        new_fit = self.cal_fitness(new_obj, new_con)
         # 使用metrospolis接受准则接受解
         if self.metrospolis(self.fit[0], new_fit[0], self.temp):
             # 更新解集

@@ -44,7 +44,7 @@ class NSGAII(ALGORITHM):
         # 记录每步状态
         self.record()
 
-    def get_fitness(self, objs, cons):
+    def cal_fitness(self, objs, cons):
         """根据给定目标值和约束值得到适应度值"""
         # 检查是否均满足约束，若均满足约束则无需考虑约束
         if np.all(cons <= 0):

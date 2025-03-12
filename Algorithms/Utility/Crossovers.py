@@ -151,12 +151,14 @@ def fix_label_crossover(parent1, parent2, cross_prob):
     return offspring
 
 
-def de_rand_1(offspring, parent1, parent2, cross_prob, factor):
+def de_rand_1(offspring, parent1, parent2, lower, upper, cross_prob, factor):
     """
     差分进化算法随机算子1 (DE/rand/1)
     :param offspring: 要进行交叉的种群
     :param parent1: 差分的父代1
     :param parent2: 差分的父代2
+    :param lower: 取值范围的下界
+    :param upper: 取值范围的上界
     :param cross_prob: 交叉概率
     :param factor: 缩放因子
     :return: 子代种群
@@ -166,10 +168,19 @@ def de_rand_1(offspring, parent1, parent2, cross_prob, factor):
     N, D = offspring.shape
     site = np.random.random((N, D)) < cross_prob
     offspring[site] = offspring[site] + factor * (parent1[site] - parent2[site])
+    # 上下界裁剪
+    if isinstance(lower, int) or isinstance(lower, float):
+        Lower = np.ones((N, D)) * lower
+        Upper = np.ones((N, D)) * upper
+    else:
+        Lower = lower.reshape(1, -1).repeat(N, 0)
+        Upper = upper.reshape(1, -1).repeat(N, 0)
+    offspring[offspring < Lower] = Lower[offspring < Lower]
+    offspring[offspring > Upper] = Upper[offspring > Upper]
     return offspring
 
 
-def de_rand_2(offspring, parent1, parent2, parent3, parent4, cross_prob, factor):
+def de_rand_2(offspring, parent1, parent2, parent3, parent4, lower, upper, cross_prob, factor):
     """
     差分进化算法随机算子2 (DE/rand/2)
     :param offspring: 要进行交叉的种群
@@ -177,6 +188,8 @@ def de_rand_2(offspring, parent1, parent2, parent3, parent4, cross_prob, factor)
     :param parent2: 差分的父代2
     :param parent3: 差分的父代3
     :param parent4: 差分的父代4
+    :param lower: 取值范围的下界
+    :param upper: 取值范围的上界
     :param cross_prob: 交叉概率
     :param factor: 缩放因子
     :return: 子代种群
@@ -187,15 +200,26 @@ def de_rand_2(offspring, parent1, parent2, parent3, parent4, cross_prob, factor)
     site = np.random.random((N, D)) < cross_prob
     offspring[site] = (offspring[site] + factor * (parent1[site] - parent2[site]) +
                        factor * (parent3[site] - parent4[site]))
+    # 上下界裁剪
+    if isinstance(lower, int) or isinstance(lower, float):
+        Lower = np.ones((N, D)) * lower
+        Upper = np.ones((N, D)) * upper
+    else:
+        Lower = lower.reshape(1, -1).repeat(N, 0)
+        Upper = upper.reshape(1, -1).repeat(N, 0)
+    offspring[offspring < Lower] = Lower[offspring < Lower]
+    offspring[offspring > Upper] = Upper[offspring > Upper]
     return offspring
 
 
-def de_best_1(best, parent1, parent2, cross_prob, factor):
+def de_best_1(best, parent1, parent2, lower, upper, cross_prob, factor):
     """
     差分进化算法最优个体算子1 (DE/best/1)
     :param best: 父代中最优个体
     :param parent1: 差分的父代1
     :param parent2: 差分的父代2
+    :param lower: 取值范围的下界
+    :param upper: 取值范围的上界
     :param cross_prob: 交叉概率
     :param factor: 缩放因子
     :return: 子代种群
@@ -206,10 +230,19 @@ def de_best_1(best, parent1, parent2, cross_prob, factor):
     site = np.random.random((N, D)) < cross_prob
     offspring = np.repeat(best[np.newaxis, :], N, axis=0)
     offspring[site] = offspring[site] + factor * (parent1[site] - parent2[site])
+    # 上下界裁剪
+    if isinstance(lower, int) or isinstance(lower, float):
+        Lower = np.ones((N, D)) * lower
+        Upper = np.ones((N, D)) * upper
+    else:
+        Lower = lower.reshape(1, -1).repeat(N, 0)
+        Upper = upper.reshape(1, -1).repeat(N, 0)
+    offspring[offspring < Lower] = Lower[offspring < Lower]
+    offspring[offspring > Upper] = Upper[offspring > Upper]
     return offspring
 
 
-def de_best_2(best, parent1, parent2, parent3, parent4, cross_prob, factor):
+def de_best_2(best, parent1, parent2, parent3, parent4, lower, upper, cross_prob, factor):
     """
     差分进化算法最优个体算子2 (DE/best/2)
     :param best: 父代中最优个体
@@ -217,6 +250,8 @@ def de_best_2(best, parent1, parent2, parent3, parent4, cross_prob, factor):
     :param parent2: 差分的父代2
     :param parent3: 差分的父代3
     :param parent4: 差分的父代4
+    :param lower: 取值范围的下界
+    :param upper: 取值范围的上界
     :param cross_prob: 交叉概率
     :param factor: 缩放因子
     :return: 子代种群
@@ -228,4 +263,13 @@ def de_best_2(best, parent1, parent2, parent3, parent4, cross_prob, factor):
     offspring = np.repeat(best[np.newaxis, :], N, axis=0)
     offspring[site] = (offspring[site] + factor * (parent1[site] - parent2[site]) +
                        factor * (parent3[site] - parent4[site]))
+    # 上下界裁剪
+    if isinstance(lower, int) or isinstance(lower, float):
+        Lower = np.ones((N, D)) * lower
+        Upper = np.ones((N, D)) * upper
+    else:
+        Lower = lower.reshape(1, -1).repeat(N, 0)
+        Upper = upper.reshape(1, -1).repeat(N, 0)
+    offspring[offspring < Lower] = Lower[offspring < Lower]
+    offspring[offspring > Upper] = Upper[offspring > Upper]
     return offspring

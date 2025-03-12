@@ -9,11 +9,11 @@ from Algorithms.Single.Greedy_KP import GreedyKP
 from Algorithms.CONTRAST import CONTRAST
 
 if __name__ == '__main__':
-    problem = KP(num_dec=10000)
+    problem = KP(num_dec=100)
     algorithms = dict()
     algorithms['GA'] = GA(problem, num_pop=100, num_iter=100)
     algorithms['SA'] = SA(problem, num_pop=100, num_iter=100)
-    # algorithms['DP'] = DPKP(problem)
+    algorithms['DP'] = DPKP(problem)
     algorithms['Greedy'] = GreedyKP(problem)
     algorithms['NNDREA'] = NNDREAS(problem, num_pop=100, num_iter=100)
     contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.BAR, same_init=True)

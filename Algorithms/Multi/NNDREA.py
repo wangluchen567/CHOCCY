@@ -36,6 +36,7 @@ class NNDREA(ALGORITHM):
         self.pop_weights = None
         self.delta_iter = None
 
+    @ALGORITHM.record_time
     def init_algorithm(self):
         """初始化算法"""
         # 问题必须为二进制问题
@@ -80,7 +81,7 @@ class NNDREA(ALGORITHM):
         self.pop = self.model_forward(self.pop_weights).astype(int)
         self.objs = self.cal_objs(self.pop)
         self.cons = self.cal_cons(self.pop)
-        self.fitness = self.get_fitness(self.objs, self.cons)
+        self.fitness = self.cal_fitness(self.objs, self.cons)
         # 记录当前种群信息
         self.record()
         # 构建迭代器
@@ -88,6 +89,7 @@ class NNDREA(ALGORITHM):
         # 按照delta占比分为两个阶段
         self.delta_iter = self.delta * self.num_iter
 
+    @ALGORITHM.record_time
     def init_algorithm_with(self, pop=None):
         if pop is not None:
             warnings.warn("This algorithm cannot be initialized with the given population")
@@ -129,7 +131,7 @@ class NNDREA(ALGORITHM):
         # 记录每步状态
         self.record()
 
-    def get_fitness(self, objs, cons):
+    def cal_fitness(self, objs, cons):
         """根据给定目标值和约束值得到适应度值"""
         # 检查是否均满足约束，若均满足约束则无需考虑约束
         if np.all(cons <= 0):
@@ -163,7 +165,7 @@ class NNDREA(ALGORITHM):
         new_cons = np.vstack((self.cons, off_cons))
         new_pop_weights = np.vstack((self.pop_weights, offspring_weights))
         # 重新计算合并种群的的等价适应度值
-        fitness = self.get_fitness(new_objs, new_cons)
+        fitness = self.cal_fitness(new_objs, new_cons)
         # 使用选择策略(默认精英选择)选择进入下一代新种群的个体
         best_indices = elitist_selection(fitness, self.num_pop)
         # 取目标值最优的个体组成新的种群

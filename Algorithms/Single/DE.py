@@ -64,11 +64,12 @@ class DE(ALGORITHM):
             raise ValueError(f"The operator type {self.operator_type} does not exist")
 
     def environmental_selection(self, offspring):
+        """差分进化环境选择"""
         # 先计算子代目标值与约束值
         off_objs = self.cal_objs(offspring)
         off_cons = self.cal_cons(offspring)
         # 计算子代的适应度值
-        fitness = self.get_fitness(off_objs, off_cons)
+        fitness = self.cal_fitness(off_objs, off_cons)
         # 得到更优的算子下标
         better = fitness < self.fitness
         # 将种群个体替换为优秀子代

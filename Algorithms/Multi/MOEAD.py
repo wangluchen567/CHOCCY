@@ -32,6 +32,7 @@ class MOEAD(ALGORITHM):
         self.indexes = None
         self.ref = None
 
+    @ALGORITHM.record_time
     def init_algorithm(self):
         """初始化算法"""
         # 重新设置种群大小
@@ -48,6 +49,7 @@ class MOEAD(ALGORITHM):
         # 初始化参考点
         self.ref = np.min(self.objs, axis=0)
 
+    @ALGORITHM.record_time
     def init_algorithm_with(self, pop=None):
         """通过给定种群进行初始化"""
         if pop is None:

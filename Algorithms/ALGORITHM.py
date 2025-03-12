@@ -1,10 +1,9 @@
-import time
 import numpy as np
 from tqdm import tqdm
 from typing import Union
 from Problems.PROBLEM import PROBLEM
 from Metrics.Hypervolume import cal_hv
-from Algorithms.Utility.Utils import fast_nd_sort, shuffle_matrix_in_row
+from Algorithms.Utility.Utils import fast_nd_sort, shuffle_matrix_in_row, record_time
 from Algorithms.Utility.Plots import plot_scores, plot_data, plot_objs, plot_decs_objs
 from Algorithms.Utility.Selections import elitist_selection, tournament_selection, roulette_selection
 from Algorithms.Utility.Operators import operator_real, operator_binary, operator_permutation, operator_fix_label
@@ -90,6 +89,7 @@ class ALGORITHM(object):
         if hasattr(problem, 'example_dec'):
             self.example_dec = problem.example_dec
 
+    @record_time
     def init_algorithm(self):
         """初始化算法"""
         # 初始化参数(各个概率参数)
@@ -99,6 +99,7 @@ class ALGORITHM(object):
         # 构建迭代器
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
 
+    @record_time
     def init_algorithm_with(self, pop=None):
         """通过给定种群进行初始化"""
         # 初始化参数(各个概率参数)
@@ -119,7 +120,7 @@ class ALGORITHM(object):
         self.pop = self.init_pop() if pop is None else pop
         self.objs = self.cal_objs(self.pop)
         self.cons = self.cal_cons(self.pop)
-        self.fitness = self.get_fitness(self.objs, self.cons)
+        self.fitness = self.cal_fitness(self.objs, self.cons)
         # 记录当前种群信息
         self.record()
 
@@ -149,24 +150,14 @@ class ALGORITHM(object):
     @staticmethod
     def record_time(method):
         """统计运行时间"""
-
-        def timed(*args, **kwargs):
-            self = args[0]
-            start_time = time.time()
-            result = method(*args, **kwargs)
-            end_time = time.time()
-            self.run_time += end_time - start_time
-            self.record_t.append(end_time - start_time)
-            return result
-
-        return timed
+        return record_time(method)
 
     def init_pop(self):
         """初始化种群"""
         init_dict = {ALGORITHM.REAL: self.init_pop_real,
                      ALGORITHM.INT: self.init_pop_integer,
                      ALGORITHM.BIN: self.init_pop_binary,
-                     ALGORITHM.PMU: self.init_pop_permute,
+                     ALGORITHM.PMU: self.init_pop_permutation,
                      ALGORITHM.FIX: self.init_pop_fix_label}
         pop = np.zeros((self.num_pop, self.num_dec))
         # 若没有实数或整数部分则直接初始化为整型
@@ -196,7 +187,7 @@ class ALGORITHM(object):
         pop = np.random.randint(2, size=(self.num_pop, len(self.type_indices[ALGORITHM.BIN])))
         return pop
 
-    def init_pop_permute(self):
+    def init_pop_permutation(self):
         """初始化求解序列问题的种群"""
         pop = np.argsort(np.random.uniform(0, 1,
                                            size=(self.num_pop, len(self.type_indices[ALGORITHM.PMU]))), axis=1)
@@ -247,7 +238,7 @@ class ALGORITHM(object):
         """对子代进行教育"""
         pass
 
-    def get_fitness(self, objs, cons):
+    def cal_fitness(self, objs, cons):
         """根据给定目标值和约束值得到适应度值(默认是单目标情况)"""
         # 检查是否均满足约束，若均满足约束则无需考虑约束
         if np.all(cons <= 0):
@@ -276,7 +267,7 @@ class ALGORITHM(object):
         new_objs = np.vstack((self.objs, off_objs))
         new_cons = np.vstack((self.cons, off_cons))
         # 重新计算合并种群的的等价适应度值
-        fitness = self.get_fitness(new_objs, new_cons)
+        fitness = self.cal_fitness(new_objs, new_cons)
         # 使用选择策略(默认精英选择)选择进入下一代新种群的个体
         best_indices = elitist_selection(fitness, self.num_pop)
         self.pop = new_pop[best_indices]

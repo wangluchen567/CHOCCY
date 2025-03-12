@@ -10,6 +10,7 @@ class GreedyKP(ALGORITHM):
         self.values = None
         self.capacity = None
 
+    @ALGORITHM.record_time
     def init_algorithm(self):
         # 问题必须为单目标问题
         if self.problem.num_obj > 1:

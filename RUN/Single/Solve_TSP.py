@@ -11,12 +11,13 @@ from Algorithms.ALGORITHM import ALGORITHM
 if __name__ == '__main__':
     problem = TSP(30)
     algorithms = dict()
-    algorithms['GA'] = GA(problem, num_pop=100, num_iter=100)
-    algorithms['SA'] = SA(problem, num_pop=100, num_iter=100)
-    algorithms['ACO'] = ACO(problem, num_pop=100, num_iter=100)
-    algorithms['HGA-TSP'] = HGATSP(problem, num_pop=100, num_iter=100)
+    num_pop, num_iter = 100, 100
+    algorithms['GA'] = GA(problem, num_pop, num_iter)
+    algorithms['SA'] = SA(problem, num_pop, num_iter)
+    algorithms['ACO'] = ACO(problem, num_pop, num_iter)
+    algorithms['HGA-TSP'] = HGATSP(problem, num_pop, num_iter)
     algorithms['FI'] = FI(problem)
-    algorithms['GFLS'] = GFLS(problem, num_iter=100)
+    algorithms['GFLS'] = GFLS(problem, num_iter)
     contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.BAR)
     contrast.run_contrast()
     contrast.plot(show_mode=CONTRAST.OBJ)
