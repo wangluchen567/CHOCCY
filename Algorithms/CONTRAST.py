@@ -1,4 +1,3 @@
-import warnings
 import matplotlib
 import numpy as np
 from typing import Union
@@ -10,7 +9,6 @@ from Problems.PROBLEM import PROBLEM
 from scipy.interpolate import griddata
 from Metrics.Hypervolume import cal_hv
 from mpl_toolkits.mplot3d import Axes3D
-from Algorithms.ALGORITHM import ALGORITHM
 
 
 class CONTRAST(object):
@@ -29,6 +27,7 @@ class CONTRAST(object):
                  num_iter: Union[int, None] = None,
                  num_run: int = 1,
                  same_init: bool = False,
+                 show_colors: Union[list, None] = None,
                  show_mode: int = 0):
         """
         对比类(用于对比多个算法效果)
@@ -37,6 +36,7 @@ class CONTRAST(object):
         :param num_iter: 最大迭代次数
         :param num_run: 重复运行次数
         :param same_init: 是否初始化相同
+        :param show_colors: 指定绘图颜色(名称或HEX)
         :param show_mode: 绘图模式
         """
         self.problem = problem
@@ -45,7 +45,7 @@ class CONTRAST(object):
         self.num_run = num_run
         self.same_init = same_init
         self.show_mode = show_mode
-        self.colors = self.get_colors()
+        self.colors = self.get_colors() if show_colors is None else show_colors
         self.iterator = None
 
     def init_algorithms(self):
@@ -180,10 +180,9 @@ class CONTRAST(object):
     def get_colors(self):
         """绘图颜色设置"""
         num_colors = len(self.algorithms)
-        if num_colors <= 10:
+        if num_colors <= 3:
             # 若数量少则直接指定颜色
-            colors = ['blue', 'red', 'green', 'purple', 'steelblue', 'darkorange',
-                      'tomato', 'deepskyblue', 'hotpink', 'springgreen']
+            colors = ['blue', 'red', 'green']
             return colors
         # 否则从彩虹色图中采样颜色
         # 检查 Matplotlib 版本

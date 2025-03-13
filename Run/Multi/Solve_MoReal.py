@@ -9,19 +9,20 @@ from Problems.Multi.DTLZ.DTLZ3 import DTLZ3
 from Problems.Multi.DTLZ.DTLZ4 import DTLZ4
 from Problems.Multi.DTLZ.DTLZ5 import DTLZ5
 from Problems.Multi.DTLZ.DTLZ7 import DTLZ7
-from Problems.Multi.Practical.MOKP import MOKP
 from Algorithms.Multi.MOEAD import MOEAD
 from Algorithms.Multi.NSGAII import NSGAII
-from Algorithms.Multi.NSGAII_DE import NSGAIIDE
+from Algorithms.Multi.SPEA2 import SPEA2
 from Algorithms.CONTRAST import CONTRAST
 
 
 if __name__ == '__main__':
-    problem = ZDT1()
+    problem = DTLZ1()
     algorithms = dict()
-    algorithms['NSGAII'] = NSGAII(problem, num_pop=100, num_iter=100)
-    algorithms['MOEAD'] = MOEAD(problem, num_pop=100, num_iter=100)
-    contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.OBJ)
+    num_pop, num_iter = 100, 300
+    algorithms['NSGA-II'] = NSGAII(problem, num_pop, num_iter)
+    algorithms['MOEA/D'] = MOEAD(problem, num_pop, num_iter)
+    algorithms['SPEA2'] = SPEA2(problem, num_pop, num_iter)
+    contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.BAR, same_init=True)
     contrast.run_contrast()
-    contrast.plot(show_mode=1)
+    contrast.plot(show_mode=CONTRAST.OBJ)
 

@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.spatial import distance_matrix
 from Algorithms.ALGORITHM import ALGORITHM
 from Algorithms.Utility.Utils import get_uniform_vectors
 
@@ -67,6 +68,8 @@ class MOEAD(ALGORITHM):
         self.num_pop = len(self.vectors)
         # 从指定种群中随机选择num_pop个个体
         super().init_algorithm_with(pop[:self.num_pop])
+        # 初始化参考点
+        self.ref = np.min(self.objs, axis=0)
 
     @staticmethod
     def get_neighbor_index(weights, t):
@@ -77,9 +80,9 @@ class MOEAD(ALGORITHM):
         :return: 前t个邻居向量的下标
         """
         # 计算欧式距离矩阵
-        dist_matrix = np.sqrt(np.sum((weights[:, np.newaxis, :] - weights[np.newaxis, :, :]) ** 2, axis=2))
+        dist_mat = distance_matrix(weights, weights)
         # 获取前T个最近的邻居的下标
-        return np.argsort(dist_matrix, axis=1)[:, :t]
+        return np.argsort(dist_mat, axis=1)[:, :t]
 
     def run(self):
         """运行算法(主函数)"""
@@ -118,6 +121,7 @@ class MOEAD(ALGORITHM):
         self.ref = np.min((offspring_obj.flatten(), self.ref), axis=0)
         # 对新解的所有邻居解进行更新
         neighbors = self.indexes[j]
+        np.random.shuffle(neighbors) # 打乱邻居解
         # 使用指定聚合函数计算后选择更优的个体
         better = (self.aggregate(self.vectors[neighbors], offspring_obj) <=
                   self.aggregate(self.vectors[neighbors], self.objs[neighbors]))

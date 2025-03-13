@@ -60,6 +60,8 @@ class ALGORITHM(object):
         self.cross_prob = cross_prob
         self.mutate_prob = mutate_prob
         self.educate_prob = educate_prob
+        # 算法可求解的问题类型
+
         # 初始化种群解及其目标/约束/适应度
         self.pop, self.objs, self.cons, self.fits = None, None, None, None
         # 记录种群解及其目标/约束(适应度为中间值不记录)

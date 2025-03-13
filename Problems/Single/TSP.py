@@ -38,6 +38,7 @@ class TSP(PROBLEM):
             self.dist_mat = self.data
         else:
             self.points = self.data
+            # self.dist_mat = np.linalg.norm(self.points[:, None] - self.points, axis=-1)
             self.dist_mat = distance_matrix(self.data, self.data)
 
     def _cal_objs(self, X):

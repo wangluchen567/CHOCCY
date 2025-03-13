@@ -16,6 +16,6 @@ if __name__ == '__main__':
     algorithms['DE/rand/2'] = DE(problem, num_pop, num_iter, operator_type=DE.RAND2)
     algorithms['DE/best/1'] = DE(problem, num_pop, num_iter, operator_type=DE.BEST1)
     algorithms['DE/best/2'] = DE(problem, num_pop, num_iter, operator_type=DE.BEST2)
-    contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.BAR, same_init=True)
+    contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.OBJ, same_init=True)
     contrast.run_contrast()
     contrast.plot(show_mode=CONTRAST.OBJ)

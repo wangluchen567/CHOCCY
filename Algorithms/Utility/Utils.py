@@ -39,6 +39,19 @@ def is_dom(p_objs, q_objs):
     return condition1 and condition2
 
 
+def get_dom_between_(objs):
+    """得到每对解的支配关系"""
+    n = len(objs)
+    dom_between = np.zeros((n, n), dtype=bool)
+    for i in range(n):
+        for j in range(n):
+            if i == j:
+                continue
+            if is_dom(objs[i], objs[j]):
+                dom_between[i, j] = True
+    return dom_between
+
+
 def fast_nd_sort_(objs):
     """快速非支配排序(非jit加速版)"""
     num_pop = len(objs)  # 获取种群数量
@@ -189,7 +202,25 @@ def two_opt_(tour, dist_mat):
 
 try:
     # 尝试导入numba
-    from numba import jit
+    from numba import jit, boolean
+
+
+    @jit(nopython=True)
+    def get_dom_between_jit(objs):
+        """得到每对解的支配关系"""
+        n = len(objs)
+        dom_between = np.zeros((n, n), dtype=boolean)
+        for i in range(n):
+            for j in range(n):
+                if i == j:
+                    continue
+                if np.all(objs[i] <= objs[j]) and np.any(objs[i] < objs[j]):
+                    dom_between[i, j] = True
+        return dom_between
+
+
+    def get_dom_between(objs):
+        return get_dom_between_jit(objs)
 
 
     @jit(nopython=True)
@@ -313,5 +344,6 @@ try:
 except ImportError:
     # 如果导入numba加速库失败，使用原始的快速排序函数
     warnings.warn("Optimizing problems without using numba acceleration...")
+    get_dom_between = get_dom_between_
     fast_nd_sort = fast_nd_sort_
     two_opt = two_opt_
