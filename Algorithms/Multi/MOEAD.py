@@ -68,6 +68,19 @@ class MOEAD(ALGORITHM):
         # 从指定种群中随机选择num_pop个个体
         super().init_algorithm_with(pop[:self.num_pop])
 
+    @staticmethod
+    def get_neighbor_index(weights, t):
+        """
+        获取每个权重向量的前T个邻居向量的下标
+        :param weights: 权重向量
+        :param t: 最近邻居的数量
+        :return: 前t个邻居向量的下标
+        """
+        # 计算欧式距离矩阵
+        dist_matrix = np.sqrt(np.sum((weights[:, np.newaxis, :] - weights[np.newaxis, :, :]) ** 2, axis=2))
+        # 获取前T个最近的邻居的下标
+        return np.argsort(dist_matrix, axis=1)[:, :t]
+
     def run(self):
         """运行算法(主函数)"""
         # 初始化算法
@@ -106,25 +119,12 @@ class MOEAD(ALGORITHM):
         # 对新解的所有邻居解进行更新
         neighbors = self.indexes[j]
         # 使用指定聚合函数计算后选择更优的个体
-        better = self.aggregate(self.vectors[neighbors], offspring_obj) <= self.aggregate(self.vectors[neighbors],
-                                                                                          self.objs[neighbors])
+        better = (self.aggregate(self.vectors[neighbors], offspring_obj) <=
+                  self.aggregate(self.vectors[neighbors], self.objs[neighbors]))
         # 更新种群和目标值
         self.pop[neighbors[better]] = offspring
         self.objs[neighbors[better]] = offspring_obj
         self.cons[neighbors[better]] = offspring_con
-
-    @staticmethod
-    def get_neighbor_index(weights, t):
-        """
-        获取每个权重向量的前T个邻居向量的下标
-        :param weights: 权重向量
-        :param t: 最近邻居的数量
-        :return: 前t个邻居向量的下标
-        """
-        # 计算欧式距离矩阵
-        dist_matrix = np.sqrt(np.sum((weights[:, np.newaxis, :] - weights[np.newaxis, :, :]) ** 2, axis=2))
-        # 获取前T个最近的邻居的下标
-        return np.argsort(dist_matrix, axis=1)[:, :t]
 
     def aggregate(self, vectors, objs):
         # 改变形状方便矩阵运算

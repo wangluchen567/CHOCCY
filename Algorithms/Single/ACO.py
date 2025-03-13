@@ -94,12 +94,12 @@ class ACO(ALGORITHM):
         self.objs = self.cal_objs(self.pop)
         self.cons = self.cal_cons(self.pop)
         # 重新计算等价适应度值
-        self.fitness = self.cal_fitness(self.objs, self.cons)
+        self.fits = self.cal_fits(self.objs, self.cons)
         # 更新信息素矩阵
         delta_tau_mat = np.zeros((self.num_dec, self.num_dec))
         # 使用add.at函数更新delta_tau_mat
         np.add.at(delta_tau_mat, (self.pop.flatten(), np.roll(self.pop, shift=-1, axis=1).flatten()),
-                  np.repeat(self.q_value / self.fitness, self.num_dec))
+                  np.repeat(self.q_value / self.fits, self.num_dec))
         self.tau_mat = (1 - self.rho) * self.tau_mat + delta_tau_mat
         # 记录每步状态
         self.record()

@@ -108,8 +108,8 @@ def cal_crowd_dist(objs, fronts):
     return crowd_dist
 
 
-def cal_fitness(ranks, crowd_dist):
-    """根据支配前沿数和拥挤度距离计算个体排名(适应度值)"""
+def cal_ranking(ranks, crowd_dist):
+    """根据支配前沿数和拥挤度距离计算个体排名"""
     # 初始化排序后的种群索引
     indicator = np.hstack((ranks.reshape(-1, 1), -crowd_dist.reshape(-1, 1)))
     # 使用 np.lexsort 对两列指标进行排序
@@ -117,8 +117,8 @@ def cal_fitness(ranks, crowd_dist):
     # 排序后的数据
     # sorted_data = indicator[indices]
     # 获取排序下标
-    fitness = np.argsort(indices)
-    return fitness
+    ranking = np.argsort(indices)
+    return ranking
 
 
 def get_uniform_vectors(N, M):

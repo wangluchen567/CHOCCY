@@ -29,14 +29,14 @@ class SA(ALGORITHM):
         self.p = self.pop[0].reshape(1, -1)
         self.obj = self.cal_objs(self.p)
         self.con = self.cal_cons(self.p)
-        self.fit = self.cal_fitness(self.obj, self.con)
+        self.fit = self.cal_fits(self.obj, self.con)
 
     def init_algorithm_with(self, pop=None):
         super().init_algorithm_with(pop)
         self.p = self.pop[0].reshape(1, -1)
         self.obj = self.cal_objs(self.p)
         self.con = self.cal_cons(self.p)
-        self.fit = self.cal_fitness(self.obj, self.con)
+        self.fit = self.cal_fits(self.obj, self.con)
 
     def run(self):
         """运行算法(主函数)"""
@@ -57,7 +57,7 @@ class SA(ALGORITHM):
         else:
             for i in range(len(self.pop)):
                 self.run_one()
-                self.pop[i], self.objs[i], self.cons[i], self.fitness[i] \
+                self.pop[i], self.objs[i], self.cons[i], self.fits[i] \
                     = self.p, self.obj, self.con, self.fit
         # 记录每步状态
         self.record()
@@ -70,7 +70,7 @@ class SA(ALGORITHM):
         # 得到扰动解的目标值与约束值
         new_obj = self.cal_objs(new_p)
         new_con = self.cal_cons(new_p)
-        new_fit = self.cal_fitness(new_obj, new_con)
+        new_fit = self.cal_fits(new_obj, new_con)
         # 使用metrospolis接受准则接受解
         if self.metrospolis(self.fit[0], new_fit[0], self.temp):
             # 更新解集

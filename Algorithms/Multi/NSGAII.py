@@ -1,6 +1,6 @@
 import numpy as np
 from Algorithms.ALGORITHM import ALGORITHM
-from Algorithms.Utility.Utils import fast_nd_sort, cal_crowd_dist, cal_fitness
+from Algorithms.Utility.Utils import fast_nd_sort, cal_crowd_dist, cal_ranking
 
 
 class NSGAII(ALGORITHM):
@@ -18,7 +18,6 @@ class NSGAII(ALGORITHM):
         :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
-
 
     def run(self):
         """运行算法(主函数)"""
@@ -44,7 +43,7 @@ class NSGAII(ALGORITHM):
         # 记录每步状态
         self.record()
 
-    def cal_fitness(self, objs, cons):
+    def cal_fits(self, objs, cons):
         """根据给定目标值和约束值得到适应度值"""
         # 检查是否均满足约束，若均满足约束则无需考虑约束
         if np.all(cons <= 0):
@@ -54,6 +53,6 @@ class NSGAII(ALGORITHM):
         # 对于多目标问题则需要考虑所在前沿面及拥挤度情况
         fronts, ranks = fast_nd_sort(objs_based_cons)
         crowd_dist = cal_crowd_dist(objs, fronts)
-        fitness = cal_fitness(ranks, crowd_dist)
+        fits = cal_ranking(ranks, crowd_dist)
 
-        return fitness
+        return fits

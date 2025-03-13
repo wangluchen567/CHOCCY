@@ -83,11 +83,11 @@ class PSO(ALGORITHM):
         # 计算目标值、约束值和适应度值
         particle_objs = self.cal_objs(self.particle)
         particle_cons = self.cal_cons(self.particle)
-        particle_fitness = self.cal_fitness(particle_objs, particle_cons)
+        particle_fits = self.cal_fits(particle_objs, particle_cons)
         # 得到更优的个体下标
-        better = particle_fitness < self.fitness
+        better = particle_fits < self.fits
         # 更新个体最优位置
-        self.pop[better] = self.particle[better].copy()
-        self.objs[better] = particle_objs[better].copy()
-        self.cons[better] = particle_cons[better].copy()
-        self.fitness[better] = particle_fitness[better].copy()
+        self.pop[better] = self.particle[better]
+        self.objs[better] = particle_objs[better]
+        self.cons[better] = particle_cons[better]
+        self.fits[better] = particle_fits[better]

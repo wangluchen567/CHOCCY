@@ -4,7 +4,7 @@ from tqdm import tqdm
 from Algorithms.ALGORITHM import ALGORITHM
 from Algorithms.Utility.Selections import elitist_selection
 from Algorithms.Utility.Operators import operator_real, operator_binary
-from Algorithms.Utility.Utils import fast_nd_sort, cal_crowd_dist, cal_fitness
+from Algorithms.Utility.Utils import fast_nd_sort, cal_crowd_dist, cal_ranking
 
 
 class NNDREA(ALGORITHM):
@@ -81,7 +81,7 @@ class NNDREA(ALGORITHM):
         self.pop = self.model_forward(self.pop_weights).astype(int)
         self.objs = self.cal_objs(self.pop)
         self.cons = self.cal_cons(self.pop)
-        self.fitness = self.cal_fitness(self.objs, self.cons)
+        self.fits = self.cal_fits(self.objs, self.cons)
         # 记录当前种群信息
         self.record()
         # 构建迭代器
@@ -131,7 +131,7 @@ class NNDREA(ALGORITHM):
         # 记录每步状态
         self.record()
 
-    def cal_fitness(self, objs, cons):
+    def cal_fits(self, objs, cons):
         """根据给定目标值和约束值得到适应度值"""
         # 检查是否均满足约束，若均满足约束则无需考虑约束
         if np.all(cons <= 0):
@@ -141,9 +141,9 @@ class NNDREA(ALGORITHM):
         # 对于多目标问题则需要考虑所在前沿面及拥挤度情况
         fronts, ranks = fast_nd_sort(objs_based_cons)
         crowd_dist = cal_crowd_dist(objs, fronts)
-        fitness = cal_fitness(ranks, crowd_dist)
+        fits = cal_ranking(ranks, crowd_dist)
 
-        return fitness
+        return fits
 
     def operator_weights(self, mating_pool):
         # 进行交叉变异生成子代
@@ -165,14 +165,14 @@ class NNDREA(ALGORITHM):
         new_cons = np.vstack((self.cons, off_cons))
         new_pop_weights = np.vstack((self.pop_weights, offspring_weights))
         # 重新计算合并种群的的等价适应度值
-        fitness = self.cal_fitness(new_objs, new_cons)
+        new_fits = self.cal_fits(new_objs, new_cons)
         # 使用选择策略(默认精英选择)选择进入下一代新种群的个体
-        best_indices = elitist_selection(fitness, self.num_pop)
+        best_indices = elitist_selection(new_fits, self.num_pop)
         # 取目标值最优的个体组成新的种群
         self.pop = new_pop[best_indices]
         self.objs = new_objs[best_indices]
         self.cons = new_cons[best_indices]
-        self.fitness = fitness[best_indices]
+        self.fits = new_fits[best_indices]
         self.pop_weights = new_pop_weights[best_indices]
 
     def model_forward(self, weights):

@@ -60,23 +60,14 @@ class ALGORITHM(object):
         self.cross_prob = cross_prob
         self.mutate_prob = mutate_prob
         self.educate_prob = educate_prob
-        # 初始化种群
-        self.pop = None
-        self.objs = None
-        self.cons = None
-        self.fitness = None
-        # 初始化历史最优个体及其目标值和约束
-        self.best = None
-        self.best_obj = 1e9
-        self.best_con = 1e9
-        # 记录种群个体及其目标值
-        self.pop_history = []
-        self.objs_history = []
-        self.cons_history = []
-        # 记录种群最优个体及其目标值
-        self.best_history = []
-        self.best_obj_his = []
-        self.best_con_his = []
+        # 初始化种群解及其目标/约束/适应度
+        self.pop, self.objs, self.cons, self.fits = None, None, None, None
+        # 记录种群解及其目标/约束(适应度为中间值不记录)
+        self.pop_history, self.objs_history, self.cons_history = [], [], []
+        # 初始化种群最优个体及其目标/约束(适应度为中间值不记录)
+        self.best, self.best_obj, self.best_con = None, np.inf, np.inf
+        # 记录种群最优个体及其目标/约束(适应度为中间值不记录)
+        self.best_history, self.best_obj_his, self.best_con_his = [], [], []
         # 初始化迭代器
         self.iterator = None
         # 记录评价指标
@@ -92,9 +83,9 @@ class ALGORITHM(object):
     @record_time
     def init_algorithm(self):
         """初始化算法"""
-        # 初始化参数(各个概率参数)
+        # 初始化种群与参数
         self.init_params()
-        # 初始化种群，计算目标值和约束值以及适应度值
+        # 初始化种群并对种群进行评价
         self.init_and_eval()
         # 构建迭代器
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
@@ -104,7 +95,7 @@ class ALGORITHM(object):
         """通过给定种群进行初始化"""
         # 初始化参数(各个概率参数)
         self.init_params()
-        # 初始化种群，计算目标值和约束值以及适应度值
+        # 初始化种群并对种群进行评价
         self.init_and_eval(pop)
         # 构建迭代器
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
@@ -116,11 +107,10 @@ class ALGORITHM(object):
         self.educate_prob = 0.5 if self.educate_prob is None else self.educate_prob
 
     def init_and_eval(self, pop=None):
-        """初始化种群并计算其目标值约束值以及适应度值"""
+        """初始化种群并对种群中解进行评价"""
         self.pop = self.init_pop() if pop is None else pop
-        self.objs = self.cal_objs(self.pop)
-        self.cons = self.cal_cons(self.pop)
-        self.fitness = self.cal_fitness(self.objs, self.cons)
+        # 对种群中解进行评价(求目标值/约束值/适应度)
+        self.objs, self.cons, self.fits = self.evaluate(self.pop)
         # 记录当前种群信息
         self.record()
 
@@ -147,10 +137,33 @@ class ALGORITHM(object):
 
         return objs_based_cons
 
+    def cal_fits(self, objs, cons):
+        """根据给定目标值和约束值得到适应度值(默认是单目标情况)"""
+        # 检查是否均满足约束，若均满足约束则无需考虑约束
+        if np.all(cons <= 0):
+            return objs.flatten()
+        else:
+            return self.cal_objs_based_cons(objs, cons).flatten()
+
+    def evaluate(self, pop):
+        """给定种群解并对解进行评价(求目标值/约束值/适应度)"""
+        objs = self.cal_objs(pop)
+        cons = self.cal_cons(pop)
+        fits = self.cal_fits(objs, cons)
+        return objs, cons, fits
+
     @staticmethod
     def record_time(method):
         """统计运行时间"""
         return record_time(method)
+
+    def run(self):
+        """运行算法(主函数)"""
+        raise NotImplemented
+
+    def run_step(self, *args, **kwargs):
+        """运行算法单步"""
+        self.record()
 
     def init_pop(self):
         """初始化种群"""
@@ -238,27 +251,19 @@ class ALGORITHM(object):
         """对子代进行教育"""
         pass
 
-    def cal_fitness(self, objs, cons):
-        """根据给定目标值和约束值得到适应度值(默认是单目标情况)"""
-        # 检查是否均满足约束，若均满足约束则无需考虑约束
-        if np.all(cons <= 0):
-            return objs.flatten()
-        else:
-            return self.cal_objs_based_cons(objs, cons).flatten()
-
     def mating_pool_selection(self, num_next=None, k=2):
         """交配池选择"""
         if num_next is None:
             num_next = self.num_pop
         if k >= 2:
             # 使用锦标赛选择获取交配池
-            return tournament_selection(self.fitness, num_next, k)
+            return tournament_selection(self.fits, num_next, k)
         else:
             # 使用轮盘赌选择获取交配池
-            return roulette_selection(self.fitness, num_next)
+            return roulette_selection(self.fits, num_next)
 
-    def environmental_selection(self, offspring):
-        """进行环境选择"""
+    def pop_merge(self, offspring):
+        """当前种群与其子代合并"""
         # 先计算子代目标值与约束值
         off_objs = self.cal_objs(offspring)
         off_cons = self.cal_cons(offspring)
@@ -267,21 +272,19 @@ class ALGORITHM(object):
         new_objs = np.vstack((self.objs, off_objs))
         new_cons = np.vstack((self.cons, off_cons))
         # 重新计算合并种群的的等价适应度值
-        fitness = self.cal_fitness(new_objs, new_cons)
+        new_fits = self.cal_fits(new_objs, new_cons)
+        return new_pop, new_objs, new_cons, new_fits
+
+    def environmental_selection(self, offspring):
+        """进行环境选择"""
+        # 将当前种群与其子代合并
+        new_pop, new_objs, new_cons, new_fits = self.pop_merge(offspring)
         # 使用选择策略(默认精英选择)选择进入下一代新种群的个体
-        best_indices = elitist_selection(fitness, self.num_pop)
+        best_indices = elitist_selection(new_fits, self.num_pop)
         self.pop = new_pop[best_indices]
         self.objs = new_objs[best_indices]
         self.cons = new_cons[best_indices]
-        self.fitness = fitness[best_indices]
-
-    def run(self):
-        """运行算法(主函数)"""
-        raise NotImplemented
-
-    def run_step(self, *args, **kwargs):
-        """运行算法单步"""
-        self.record()
+        self.fits = new_fits[best_indices]
 
     def get_best(self):
         """获取当前种群的最优解"""

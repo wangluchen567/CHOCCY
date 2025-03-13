@@ -69,11 +69,11 @@ class DE(ALGORITHM):
         off_objs = self.cal_objs(offspring)
         off_cons = self.cal_cons(offspring)
         # 计算子代的适应度值
-        fitness = self.cal_fitness(off_objs, off_cons)
+        off_fits = self.cal_fits(off_objs, off_cons)
         # 得到更优的算子下标
-        better = fitness < self.fitness
+        better = off_fits < self.fits
         # 将种群个体替换为优秀子代
         self.pop[better] = offspring[better]
         self.objs[better] = off_objs[better]
         self.cons[better] = off_cons[better]
-        self.fitness[better] = fitness[better]
+        self.fits[better] = off_fits[better]
