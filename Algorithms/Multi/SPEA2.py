@@ -1,0 +1,121 @@
+import numpy as np
+from scipy.spatial import distance_matrix
+from Algorithms.ALGORITHM import ALGORITHM
+from Algorithms.Utility.Utils import get_dom_between
+
+
+class SPEA2(ALGORITHM):
+    def __init__(self, problem, num_pop=100, num_iter=100, cross_prob=None, mutate_prob=None, show_mode=0):
+        """
+        This code is based on the research presented in
+        "SPEA2: Improving the strength Pareto evolutionary algorithm"
+        by E. Zitzler, M. Laumanns, and L. Thiele
+        *Code Author: Luchen Wang
+        :param problem: 问题对象
+        :param num_pop: 种群大小
+        :param num_iter: 迭代次数
+        :param cross_prob: 交叉概率
+        :param mutate_prob: 变异概率
+        :param show_mode: 绘图模式
+        """
+        super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
+
+    def run(self):
+        """运行算法(主函数)"""
+        # 初始化算法
+        self.init_algorithm()
+        # 绘制初始状态图
+        self.plot(n_iter=0, pause=True)
+        for i in self.iterator:
+            if i > 115:
+                print()
+            # 运行单步算法
+            self.run_step(i)
+            # 绘制迭代过程中每步状态
+            self.plot(n_iter=i + 1, pause=True)
+
+    @ALGORITHM.record_time
+    def run_step(self, i):
+        """运行算法单步"""
+        # 获取交配池
+        mating_pool = self.mating_pool_selection()
+        # 交叉变异生成子代
+        offspring = self.operator(mating_pool)
+        # 进行环境选择
+        self.environmental_selection(offspring)
+        # 记录每步状态
+        self.record()
+
+    def cal_fits(self, objs, cons):
+        """根据给定目标值和约束值得到适应度值"""
+        num_pop = len(objs)
+        # 检查是否均满足约束，若均满足约束则无需考虑约束
+        if np.all(cons <= 0):
+            objs_ = objs
+        else:
+            objs_ = self.cal_objs_based_cons(objs, cons)
+        # 得到每对解的支配关系
+        dom_between = get_dom_between(objs_)
+        # 得到 每个个体i支配的个体数 S
+        s_values = np.sum(dom_between, axis=1)
+        # 得到 支配i的每个个体j支配的所有个体数之和 R
+        r_values = np.zeros(num_pop)
+        for i in range(num_pop):
+            r_values[i] = np.sum(s_values[dom_between[:, i] == True])
+        # 当多个个体不相互支配时需要使用k邻近估算密度
+        # 计算每个个体目标值之间的距离
+        dist_mat = distance_matrix(objs_, objs_)
+        np.fill_diagonal(dist_mat, np.inf)  # 对角线设置为inf
+        # 将距离按照递增排序并选第k=sqrt(N+N)个作为指标(N+N:父代+子代)
+        dist_sort = np.sort(dist_mat, axis=1)
+        d_values = 1.0 / (dist_sort[:, int(np.sqrt(num_pop))] + 2)
+        # 计算个体适应度值
+        fits = r_values + d_values
+        return fits
+
+    def environmental_selection(self, offspring):
+        """SPEA2环境选择"""
+        # 将当前种群与其子代合并
+        new_pop, new_objs, new_cons, new_fits = self.pop_merge(offspring)
+        # 为了能求解约束问题这里对根据约束计算的新目标值进行计算
+        new_objs_ = self.cal_objs_based_cons(new_objs, new_cons)
+        # 使用SPEA2选择策略进行选择
+        chosen = np.array(new_fits < 1)
+        num_chosen = np.sum(chosen)
+        if num_chosen < self.num_pop:
+            # 默认可选数量过少则进行补充
+            ranking = np.argsort(new_fits)
+            chosen[ranking[:self.num_pop]] = True
+        elif num_chosen > self.num_pop:
+            # 若可选数量过多则进行裁剪
+            del_indices = self.truncation(new_objs_[chosen], num_chosen - self.num_pop)
+            chosen_indices = np.where(chosen)[0]
+            chosen[chosen_indices[del_indices]] = False
+        else:
+            pass
+        self.pop = new_pop[chosen]
+        self.objs = new_objs[chosen]
+        self.cons = new_cons[chosen]
+        self.fits = new_fits[chosen]
+
+    @staticmethod
+    def truncation(objs, k):
+        """截断选择(选择k个个体进行删除)"""
+        # 计算每个个体目标值之间的距离
+        dist_mat = distance_matrix(objs, objs)
+        np.fill_diagonal(dist_mat, np.inf)  # 对角线设置为inf
+        # 初始化删除标志数组
+        del_flag = np.zeros(objs.shape[0], dtype=bool)
+        # 寻找要删除的个体
+        while np.sum(del_flag) < k:
+            # 找到尚未被删除的个体索引
+            remain = np.where(~del_flag)[0]
+            # 提取剩余个体之间的距离矩阵
+            temp = dist_mat[np.ix_(remain, remain)]
+            # 对每一行的距离进行排序，并获取排序后的索引
+            sorted_indices = np.argsort(temp, axis=1)
+            # 找到距离最小的个体索引
+            min_index = sorted_indices[:, 1].min()
+            # 将该个体标记为删除
+            del_flag[remain[min_index]] = True
+        return del_flag
