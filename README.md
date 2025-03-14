@@ -163,7 +163,7 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 <img src="./References/Pictures/MFLC.gif" width="288" height="230"/>
 
 #### 多种算法优化相同问题对比
--运行`Solve_Real`对比`实数`问题优化; 运行`Solve_TSP`对比`TSP`问题优化<br>
+- 运行`Solve_Real`对比`实数`问题优化; 运行`Solve_TSP`对比`TSP`问题优化<br>
 <img src="./References/Pictures/Contrasts_Ackley.gif" width="288" height="230"/>
 <img src="./References/Pictures/Contrasts_TSP.gif" width="288" height="230"/>
 ```
