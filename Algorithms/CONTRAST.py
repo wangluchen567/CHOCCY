@@ -11,7 +11,6 @@ from Metrics.Hypervolume import cal_hv
 from mpl_toolkits.mplot3d import Axes3D
 
 
-
 class CONTRAST(object):
     # 定义绘图常量
     NULL = -1  # 不绘制
@@ -60,7 +59,7 @@ class CONTRAST(object):
             if self.same_init:
                 # 若使用相同初始化
                 alg.init_algorithm(pop)
-                pop = alg.pop.copy() if pop is None else pop
+                pop = alg.pop.copy() if pop is None else pop.copy()
             else:
                 alg.init_algorithm()
             # 检查是否有单独运行一步

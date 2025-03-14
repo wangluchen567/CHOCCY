@@ -9,7 +9,7 @@ class DE(ALGORITHM):
     BEST2 = 4  # (DE/best/2)
 
     def __init__(self, problem, num_pop=100, num_iter=100, cross_prob=None, mutate_prob=None,
-                 factor=0.5, operator_type=RAND1, show_mode=0):
+                 factor=0.5, operator_type=BEST1, show_mode=0):
         """
         差分进化算法
         *Code Author: Luchen Wang

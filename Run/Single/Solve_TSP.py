@@ -13,7 +13,7 @@ if __name__ == '__main__':
     algorithms = dict()
     num_pop, num_iter = 100, 100
     algorithms['GA'] = GA(problem, num_pop, num_iter)
-    algorithms['SA'] = SA(problem, num_pop, num_iter)
+    algorithms['SA'] = SA(problem, num_pop, num_iter, perturb_prob=0.5)
     algorithms['ACO'] = ACO(problem, num_pop, num_iter)
     algorithms['HGA-TSP'] = HGATSP(problem, num_pop, num_iter)
     algorithms['FI'] = FI(problem)
