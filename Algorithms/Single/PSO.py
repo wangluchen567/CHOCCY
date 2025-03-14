@@ -16,20 +16,16 @@ class PSO(ALGORITHM):
         :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, None, None, None, show_mode)
+        self.only_solve_single = True
+        self.solvable_type = [self.REAL, self.INT]
         self.w = w  # 惯性权重
         self.c1 = c1  # 个体学习权重
         self.c2 = c2  # 社会学习权重
         self.particle = None  # 粒子群位置
         self.velocity = None  # 粒子群速度
 
-    def init_algorithm(self):
-        super().init_algorithm()
-        # 初始化粒子群位置和速度
-        self.particle = self.pop.copy()
-        self.velocity = np.zeros_like(self.particle)
-
-    def init_algorithm_with(self, pop=None):
-        super().init_algorithm_with(pop)
+    def init_algorithm(self, pop=None):
+        super().init_algorithm(pop)
         # 初始化粒子群位置和速度
         self.particle = self.pop.copy()
         self.velocity = np.zeros_like(self.particle)

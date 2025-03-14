@@ -1,6 +1,5 @@
 import warnings
 import numpy as np
-from tqdm import tqdm
 from Algorithms.ALGORITHM import ALGORITHM
 
 
@@ -12,19 +11,16 @@ class DPKP(ALGORITHM):
         :param problem: 问题对象(必须是背包问题)
         :param
         """
-        super().__init__(problem, num_pop=1, show_mode=show_mode)
+        super().__init__(problem, num_pop=1, num_iter=problem.num_dec, show_mode=show_mode)
+        self.only_solve_single = True
+        self.solvable_type = [self.BIN]
         self.weights = None
         self.values = None
         self.capacity = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self):
-        # 问题必须为单目标问题
-        if self.problem.num_obj > 1:
-            raise ValueError("This method can only solve single objective problems")
-        # 问题必须为二进制问题
-        if np.sum(self.problem.problem_type != ALGORITHM.BIN):
-            raise ValueError("This method can only solve binary problems")
+    def init_algorithm(self, pop=None):
+        super().init_algorithm(None if pop is None else pop[0].reshape(1, -1))
         # 问题必须为背包问题
         if hasattr(self.problem, 'weights') and hasattr(self.problem, 'values') and hasattr(self.problem, 'capacity'):
             self.weights = self.problem.weights.astype(int).flatten()
@@ -39,8 +35,6 @@ class DPKP(ALGORITHM):
                     "and the provided dataset will be forcibly converted to integer type")
         else:
             raise ValueError("This method can only solve knapsack problems")
-        # 构建迭代器
-        self.iterator = tqdm(range(self.problem.num_dec)) if self.show_mode == 0 else range(self.problem.num_dec)
 
     @ALGORITHM.record_time
     def run(self):
@@ -57,10 +51,12 @@ class DPKP(ALGORITHM):
                     # 更新选择状态
                     selected[j] = selected[j - self.weights[i]].copy()
                     selected[j][i] = 1
-        self.pop = np.repeat(np.array([selected[self.capacity]]), len(self.pop), axis=0)
+        self.pop = np.array([selected[self.capacity]])
         self.objs = self.cal_objs(self.pop)
         self.cons = self.cal_cons(self.pop)
+        # 清空所有记录后重新记录
+        self.clear_record()
         self.record()
 
-    def get_best(self):
+    def get_current_best(self):
         self.best, self.best_obj, self.best_con = self.pop[0], self.objs[0], self.cons[0]

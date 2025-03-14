@@ -1,5 +1,3 @@
-import numpy as np
-
 from Problems.Multi.ZDT.ZDT1 import ZDT1
 from Problems.Multi.ZDT.ZDT2 import ZDT2
 from Problems.Multi.ZDT.ZDT3 import ZDT3
@@ -16,9 +14,8 @@ from Algorithms.Multi.SPEA2 import SPEA2
 import cProfile
 
 if __name__ == '__main__':
-    np.random.seed(0)
-    problem = DTLZ1()
-    alg = SPEA2(problem, num_pop=100, num_iter=200, show_mode=1)
+    problem = ZDT1()
+    alg = SPEA2(problem, num_pop=100, num_iter=100, show_mode=1)
     alg.run()
     # cProfile.run("alg.run()", sort='cumulative')
     print("Run time: ", alg.run_time)

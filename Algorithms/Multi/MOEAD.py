@@ -34,7 +34,7 @@ class MOEAD(ALGORITHM):
         self.ref = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self):
+    def init_algorithm(self, pop=None):
         """初始化算法"""
         # 重新设置种群大小
         # 选择的最近邻居的数量
@@ -45,29 +45,10 @@ class MOEAD(ALGORITHM):
         self.indexes = self.get_neighbor_index(self.vectors, self.num_near)
         # 根据权重向量个数重新确定种群大小(必须匹配)
         self.num_pop = len(self.vectors)
+        # 种群数量太多则进行裁剪
+        pop = pop[:self.num_pop] if pop is not None else None
         # 调用父类的初始化函数
-        super().init_algorithm()
-        # 初始化参考点
-        self.ref = np.min(self.objs, axis=0)
-
-    @ALGORITHM.record_time
-    def init_algorithm_with(self, pop=None):
-        """通过给定种群进行初始化"""
-        if pop is None:
-            raise ValueError("Due to the need to adjust the population size "
-                             "during initialization of MOEA/D, "
-                             "it does not support a None Population")
-        # 重新设置种群大小
-        # 选择的最近邻居的数量
-        self.num_near = int(np.ceil(self.num_pop / 10))
-        # 均匀生成权重向量
-        self.vectors = get_uniform_vectors(self.num_pop, self.problem.num_obj)
-        # 获取每个权重向量的前T个邻居向量的下标
-        self.indexes = self.get_neighbor_index(self.vectors, self.num_near)
-        # 根据权重向量个数重新确定种群大小(必须匹配)
-        self.num_pop = len(self.vectors)
-        # 从指定种群中随机选择num_pop个个体
-        super().init_algorithm_with(pop[:self.num_pop])
+        super().init_algorithm(pop)
         # 初始化参考点
         self.ref = np.min(self.objs, axis=0)
 
@@ -121,7 +102,7 @@ class MOEAD(ALGORITHM):
         self.ref = np.min((offspring_obj.flatten(), self.ref), axis=0)
         # 对新解的所有邻居解进行更新
         neighbors = self.indexes[j]
-        np.random.shuffle(neighbors) # 打乱邻居解
+        np.random.shuffle(neighbors)  # 打乱邻居解
         # 使用指定聚合函数计算后选择更优的个体
         better = (self.aggregate(self.vectors[neighbors], offspring_obj) <=
                   self.aggregate(self.vectors[neighbors], self.objs[neighbors]))

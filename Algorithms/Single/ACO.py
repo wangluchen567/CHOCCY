@@ -19,6 +19,8 @@ class ACO(ALGORITHM):
         :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, None, None, None, show_mode)
+        self.only_solve_single = True
+        self.solvable_type = [self.PMU]
         self.alpha = alpha
         self.beta = beta
         self.rho = rho
@@ -28,18 +30,15 @@ class ACO(ALGORITHM):
         self.tau_mat = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self):
-        # 问题必须为单目标问题
-        if self.problem.num_obj > 1:
-            raise ValueError("This method can only solve single objective problems")
-        # 问题必须为序列问题
-        if np.sum(self.problem_type != ALGORITHM.PMU):
-            raise ValueError("This method can only solve sequence problems")
+    def init_algorithm(self, pop=None):
+        """初始化算法"""
         # 问题必须提供距离矩阵
         if not hasattr(self.problem, 'dist_mat'):
             raise ValueError("The problem must provide the distance matrix")
-        # 初始化参数
-        super().init_algorithm()
+        # 初始化目标值和约束值为无穷大
+        self.best_obj, self.best_con = np.inf, np.inf
+        # 初始化算法参数
+        super().init_algorithm(pop)
         # 获取问题的距离矩阵
         self.dist_mat = self.problem.dist_mat  # type: ignore
         # 调整距离矩阵的对角线元素值
@@ -104,16 +103,16 @@ class ACO(ALGORITHM):
         # 记录每步状态
         self.record()
 
-    def get_best(self):
+    def get_current_best(self):
         """覆写获取最优解，这里获取的是历史最优解"""
-        best, best_obj, best_con = self.get_best_(self.pop, self.objs, self.cons)
+        best, best_obj, best_con = self.get_current_best_(self.pop, self.objs, self.cons)
         # 若满足约束则指定约束为0
         best_con = best_con if best_con > 0 else 0
         # 若解更满足约束或者目标值更好则更新解
         if (best_con < self.best_con) or (best_con == self.best_con and best_obj < self.best_obj):
             self.best, self.best_obj, self.best_con = best, best_obj, best_con
 
-    def plot_(self, n_iter=None, pause=False, pause_time=0.1):
+    def plot_(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制优化过程中信息素变化情况"""
         if n_iter == 0:
             return

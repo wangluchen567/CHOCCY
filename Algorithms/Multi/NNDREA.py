@@ -1,4 +1,3 @@
-import warnings
 import numpy as np
 from tqdm import tqdm
 from Algorithms.ALGORITHM import ALGORITHM
@@ -27,6 +26,7 @@ class NNDREA(ALGORITHM):
         """
         # 初始化相关参数(调用父类初始化)
         super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
+        self.solvable_type = [self.BIN]
         self.structure = structure
         self.search_range = search_range
         self.delta = delta
@@ -37,11 +37,8 @@ class NNDREA(ALGORITHM):
         self.delta_iter = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self):
+    def init_algorithm(self, pop=None):
         """初始化算法"""
-        # 问题必须为二进制问题
-        if np.sum(self.problem_type != ALGORITHM.BIN):
-            raise ValueError("This method can only solve binary problems")
         # 问题必须提供实例数据集
         if not hasattr(self.problem, 'instance'):
             raise ValueError("The problem must provide an instance dataset")
@@ -88,12 +85,6 @@ class NNDREA(ALGORITHM):
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
         # 按照delta占比分为两个阶段
         self.delta_iter = self.delta * self.num_iter
-
-    @ALGORITHM.record_time
-    def init_algorithm_with(self, pop=None):
-        if pop is not None:
-            warnings.warn("This algorithm cannot be initialized with the given population")
-        self.init_algorithm()
 
     def init_pop_weights(self):
         pop_weights = np.random.uniform(self.upper, self.lower, size=(self.num_pop, self.num_dec))

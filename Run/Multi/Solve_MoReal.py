@@ -16,13 +16,13 @@ from Algorithms.CONTRAST import CONTRAST
 
 
 if __name__ == '__main__':
-    problem = DTLZ1()
+    problem = ZDT1()
     algorithms = dict()
-    num_pop, num_iter = 100, 300
+    num_pop, num_iter = 100, 100
     algorithms['NSGA-II'] = NSGAII(problem, num_pop, num_iter)
     algorithms['MOEA/D'] = MOEAD(problem, num_pop, num_iter)
     algorithms['SPEA2'] = SPEA2(problem, num_pop, num_iter)
-    contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.BAR, same_init=True)
+    contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.OBJ, same_init=True)
     contrast.run_contrast()
     contrast.plot(show_mode=CONTRAST.OBJ)
 

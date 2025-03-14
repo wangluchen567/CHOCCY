@@ -45,7 +45,7 @@ class TSP(PROBLEM):
         objs = np.sum(self.dist_mat[X.astype(int), np.roll(X.astype(int), shift=-1, axis=1)], axis=1)
         return objs
 
-    def plot(self, best, n_iter=None, pause=False, pause_time=0.1):
+    def plot(self, best, n_iter=None, pause=False, pause_time=0.06):
         if not pause: plt.figure()
         if self.points is None:
             raise ValueError("Not given the position of each point")

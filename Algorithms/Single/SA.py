@@ -16,6 +16,7 @@ class SA(ALGORITHM):
         :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, None, perturb_prob, None, show_mode)
+        self.only_solve_single = True
         self.init_temp = init_temp
         self.temp = self.init_temp
         self.alpha = alpha
@@ -24,15 +25,8 @@ class SA(ALGORITHM):
         self.con = None
         self.fit = None
 
-    def init_algorithm(self):
-        super().init_algorithm()
-        self.p = self.pop[0].reshape(1, -1)
-        self.obj = self.cal_objs(self.p)
-        self.con = self.cal_cons(self.p)
-        self.fit = self.cal_fits(self.obj, self.con)
-
-    def init_algorithm_with(self, pop=None):
-        super().init_algorithm_with(pop)
+    def init_algorithm(self, pop=None):
+        super().init_algorithm(pop)
         self.p = self.pop[0].reshape(1, -1)
         self.obj = self.cal_objs(self.p)
         self.con = self.cal_cons(self.p)

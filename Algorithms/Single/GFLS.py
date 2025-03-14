@@ -14,6 +14,8 @@ class GFLS(ALGORITHM):
         :param show_mode: 绘图模式
         """
         super().__init__(problem, 1, num_iter, show_mode=show_mode)
+        self.only_solve_single = True
+        self.solvable_type = [self.PMU]
         self.alpha = alpha
         self.active_all = active_all
         self.dist_mat = None
@@ -24,18 +26,12 @@ class GFLS(ALGORITHM):
         self.tour_cost = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self):
-        # 问题必须为单目标问题
-        if self.problem.num_obj > 1:
-            raise ValueError("This method can only solve single objective problems")
-        # 问题必须为序列问题
-        if np.sum(self.problem_type != ALGORITHM.PMU):
-            raise ValueError("This method can only solve sequence problems")
+    def init_algorithm(self, pop=None):
         # 问题必须提供距离矩阵
         if not hasattr(self.problem, 'dist_mat'):
             raise ValueError("The problem must provide the distance matrix")
         # 初始化参数
-        super().init_algorithm()
+        super().init_algorithm(None if pop is None else pop[0].reshape(1, -1))
         # 获取问题的距离矩阵
         self.dist_mat = self.problem.dist_mat  # type: ignore
         # 初始化lambda值
@@ -96,6 +92,7 @@ class GFLS(ALGORITHM):
         if self.tour_cost < self.objs[0]:
             self.pop[0] = self.tour.copy()
             self.objs[0] = self.tour_cost
+            self.cons = self.cal_cons(self.pop)
         # 记录每步状态
         self.record()
 

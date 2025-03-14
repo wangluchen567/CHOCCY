@@ -1,4 +1,3 @@
-import warnings
 import numpy as np
 from tqdm import tqdm
 from Algorithms.ALGORITHM import ALGORITHM
@@ -25,6 +24,8 @@ class NNDREAS(ALGORITHM):
         :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
+        self.only_solve_single = True
+        self.solvable_type = [self.BIN]
         self.structure = structure
         self.search_range = search_range
         self.delta = delta
@@ -34,13 +35,7 @@ class NNDREAS(ALGORITHM):
         self.pop_weights = None
         self.delta_iter = None
 
-    def init_algorithm(self):
-        # 问题必须为单目标问题
-        if self.problem.num_obj > 1:
-            raise ValueError("This method can only solve single objective problems")
-        # 问题必须为二进制问题
-        if np.sum(self.problem.problem_type != ALGORITHM.BIN):
-            raise ValueError("This method can only solve binary problems")
+    def init_algorithm(self, pop=None):
         # 问题必须提供实例数据集
         if not hasattr(self.problem, 'instance'):
             raise ValueError("The problem must provide an instance dataset")
@@ -87,11 +82,6 @@ class NNDREAS(ALGORITHM):
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
         # 按照delta占比分为两个阶段
         self.delta_iter = self.delta * self.num_iter
-
-    def init_algorithm_with(self, pop=None):
-        if pop is not None:
-            warnings.warn("This algorithm cannot be initialized with the given population")
-        self.init_algorithm()
 
     def init_pop_weights(self):
         pop_weights = np.random.uniform(self.upper, self.lower, size=(self.num_pop, self.num_dec))

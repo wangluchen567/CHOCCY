@@ -23,6 +23,8 @@ class DE(ALGORITHM):
         :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
+        self.only_solve_single = True
+        self.solvable_type = [self.REAL, self.INT]
         self.factor = factor
         self.operator_type = operator_type
         self.num_parents = operator_type  # trick

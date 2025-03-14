@@ -60,14 +60,16 @@ class ALGORITHM(object):
         self.cross_prob = cross_prob
         self.mutate_prob = mutate_prob
         self.educate_prob = educate_prob
-        # 算法可求解的问题类型
-
+        # 算法是否只能求解单目标问题(默认可全部求解)
+        self.only_solve_single = False
+        # 算法可求解的问题类型(默认可全部求解)
+        self.solvable_type = [self.REAL, self.INT, self.BIN, self.PMU, self.FIX]
         # 初始化种群解及其目标/约束/适应度
         self.pop, self.objs, self.cons, self.fits = None, None, None, None
         # 记录种群解及其目标/约束(适应度为中间值不记录)
         self.pop_history, self.objs_history, self.cons_history = [], [], []
         # 初始化种群最优个体及其目标/约束(适应度为中间值不记录)
-        self.best, self.best_obj, self.best_con = None, np.inf, np.inf
+        self.best, self.best_obj, self.best_con = None, None, None
         # 记录种群最优个体及其目标/约束(适应度为中间值不记录)
         self.best_history, self.best_obj_his, self.best_con_his = [], [], []
         # 初始化迭代器
@@ -83,19 +85,14 @@ class ALGORITHM(object):
             self.example_dec = problem.example_dec
 
     @record_time
-    def init_algorithm(self):
+    def init_algorithm(self, pop=None):
         """初始化算法"""
+        # 检查算法可求解问题
+        if self.only_solve_single and self.num_obj > 1:
+            raise ValueError("This algorithm can only solve single objective problems")
+        if not np.all(np.isin(self.unique_type, self.solvable_type)):
+            raise ValueError("This algorithm does not support solving this type of problem")
         # 初始化种群与参数
-        self.init_params()
-        # 初始化种群并对种群进行评价
-        self.init_and_eval()
-        # 构建迭代器
-        self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
-
-    @record_time
-    def init_algorithm_with(self, pop=None):
-        """通过给定种群进行初始化"""
-        # 初始化参数(各个概率参数)
         self.init_params()
         # 初始化种群并对种群进行评价
         self.init_and_eval(pop)
@@ -166,6 +163,13 @@ class ALGORITHM(object):
     def run_step(self, *args, **kwargs):
         """运行算法单步"""
         self.record()
+
+    def get_best(self):
+        """获取种群最优解与其目标值约束值"""
+        if self.num_obj == 1:
+            return self.best, self.best_obj[0], self.best_con[0]
+        else:
+            return self.best, self.best_obj, self.best_con
 
     def init_pop(self):
         """初始化种群"""
@@ -288,12 +292,12 @@ class ALGORITHM(object):
         self.cons = new_cons[best_indices]
         self.fits = new_fits[best_indices]
 
-    def get_best(self):
+    def get_current_best(self):
         """获取当前种群的最优解"""
-        self.best, self.best_obj, self.best_con = self.get_best_(self.pop, self.objs, self.cons)
+        self.best, self.best_obj, self.best_con = self.get_current_best_(self.pop, self.objs, self.cons)
 
     @staticmethod
-    def get_best_(pop, objs, cons):
+    def get_current_best_(pop, objs, cons):
         """获取给定种群的最优解"""
         num_obj = objs.shape[1]
         # 先判断是否满足约束
@@ -327,7 +331,7 @@ class ALGORITHM(object):
         self.objs_history.append(self.objs.copy())
         self.cons_history.append(self.cons.copy())
         # 记录种群最优个体及其目标和约束值
-        self.get_best()
+        self.get_current_best()
         self.best_history.append(self.best)
         self.best_obj_his.append(self.best_obj)
         self.best_con_his.append(self.best_con)
@@ -342,6 +346,17 @@ class ALGORITHM(object):
         else:
             hv_value = cal_hv(self.best_obj, self.problem.optimums)
             self.scores = np.append(self.scores, hv_value)
+
+    def clear_record(self):
+        """清除所有记录"""
+        # 记录种群解及其目标/约束(适应度为中间值不记录)
+        self.pop_history, self.objs_history, self.cons_history = [], [], []
+        # 初始化种群最优个体及其目标/约束(适应度为中间值不记录)
+        self.best, self.best_obj, self.best_con = None, np.inf, np.inf
+        # 记录种群最优个体及其目标/约束(适应度为中间值不记录)
+        self.best_history, self.best_obj_his, self.best_con_his = [], [], []
+        # 记录评价指标
+        self.scores = np.empty(0)
 
     def plot(self, show_mode=None, n_iter=None, pause=False):
         """
@@ -372,14 +387,14 @@ class ALGORITHM(object):
         """提供算法自定义绘图的接口"""
         pass
 
-    def plot_pop(self, n_iter=None, pause=False, pause_time=0.1):
+    def plot_pop(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制种群个体决策向量"""
         if pause or n_iter is None:
             plot_data(self.pop, n_iter, pause, pause_time)
         else:
             plot_data(self.pop_history[n_iter], n_iter, pause, pause_time)
 
-    def plot_objs(self, n_iter=None, pause=False, pause_time=0.1):
+    def plot_objs(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制种群目标值"""
         if self.num_obj == 1:
             # 若是单目标问题，绘制目标值范围情况
@@ -387,7 +402,7 @@ class ALGORITHM(object):
         else:
             plot_objs(self.objs, n_iter, pause, pause_time, self.problem.pareto_front)
 
-    def plot_decs_objs(self, n_iter=None, pause=False, pause_time=0.1, contour=True, sym=True):
+    def plot_decs_objs(self, n_iter=None, pause=False, pause_time=0.06, contour=True, sym=True):
         """在特定条件下可同时绘制决策向量与目标值"""
         if pause or n_iter is None:
             plot_decs_objs(self.problem, self.pop, self.objs,

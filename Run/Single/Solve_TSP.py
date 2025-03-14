@@ -18,7 +18,7 @@ if __name__ == '__main__':
     algorithms['HGA-TSP'] = HGATSP(problem, num_pop, num_iter)
     algorithms['FI'] = FI(problem)
     algorithms['GFLS'] = GFLS(problem, num_iter)
-    contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.BAR)
+    contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.OBJ, same_init=True)
     contrast.run_contrast()
     contrast.plot(show_mode=CONTRAST.OBJ)
     algorithms['HGA-TSP'].plot(show_mode=ALGORITHM.PRB)

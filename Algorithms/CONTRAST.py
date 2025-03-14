@@ -1,14 +1,15 @@
 import matplotlib
 import numpy as np
-from typing import Union
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
 from tqdm import tqdm
+from typing import Union
 from Problems.PROBLEM import PROBLEM
 from scipy.interpolate import griddata
 from Metrics.Hypervolume import cal_hv
 from mpl_toolkits.mplot3d import Axes3D
+
 
 
 class CONTRAST(object):
@@ -55,22 +56,24 @@ class CONTRAST(object):
         for alg in self.algorithms.values():
             # 对比算法时各个算法的进度条关闭
             alg.show_mode = -1
-            # 得到最大迭代次数
-            max_iter = max(max_iter, alg.num_iter)
             # 初始化算法
             if self.same_init:
                 # 若使用相同初始化
-                alg.init_algorithm_with(pop)
-                pop = alg.pop.copy()
+                alg.init_algorithm(pop)
+                pop = alg.pop.copy() if pop is None else pop
             else:
                 alg.init_algorithm()
+            # 检查是否有单独运行一步
+            if 'run_step' not in type(alg).__dict__:
+                # 如果算法没有覆写单独运行一步，则全部运行
+                alg.show_mode = 0  # 若全部运行则展示bar
+                alg.run()
+            else:
+                # 得到最大迭代次数
+                max_iter = max(max_iter, alg.num_iter)
             if self.show_mode == self.SCORE:
                 # 若展示指标值则需每步计算指标值
                 alg.record_score()
-            # 如果算法没有覆写单独运行一步，则全部运行
-            if 'run_step' not in type(alg).__dict__:
-                alg.show_mode = 0  # 若全部运行则展示bar
-                alg.run()
         # 迭代次数若为空则根据给定算法最大迭代次数
         self.num_iter = max_iter if self.num_iter is None else self.num_iter
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
@@ -196,7 +199,7 @@ class CONTRAST(object):
         colors = [mcolors.to_hex(c) for c in raw_colors]
         return colors
 
-    def plot_pop(self, n_iter=None, pause=False, pause_time=0.1):
+    def plot_pop(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制种群个体决策向量"""
         if not pause: plt.figure()
         plt.clf()
@@ -248,7 +251,7 @@ class CONTRAST(object):
         else:
             plt.show()
 
-    def plot_objs(self, n_iter=None, pause=False, pause_time=0.1):
+    def plot_objs(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制种群目标值"""
         if not pause: plt.figure()
         plt.clf()
@@ -318,7 +321,7 @@ class CONTRAST(object):
         else:
             plt.show()
 
-    def plot_decs_objs(self, n_iter=None, pause=False, pause_time=0.1, contour=True, sym=True):
+    def plot_decs_objs(self, n_iter=None, pause=False, pause_time=0.06, contour=True, sym=True):
         """在特定条件下可同时绘制决策向量与目标值"""
         if not pause: plt.figure()
         plt.clf()
@@ -388,7 +391,7 @@ class CONTRAST(object):
         else:
             plt.show()
 
-    def plot_scores(self, n_iter=None, pause=False, pause_time=0.1):
+    def plot_scores(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制种群目标值"""
         if not pause: plt.figure()
         plt.clf()

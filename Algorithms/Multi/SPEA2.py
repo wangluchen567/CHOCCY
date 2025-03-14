@@ -27,8 +27,6 @@ class SPEA2(ALGORITHM):
         # 绘制初始状态图
         self.plot(n_iter=0, pause=True)
         for i in self.iterator:
-            if i > 115:
-                print()
             # 运行单步算法
             self.run_step(i)
             # 绘制迭代过程中每步状态

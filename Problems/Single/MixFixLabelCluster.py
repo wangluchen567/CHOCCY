@@ -45,7 +45,7 @@ class MixFixLabelCluster(PROBLEM):
             objs += np.sum(distances_weights, axis=1)
         return objs
 
-    def plot(self, best, n_iter=None, pause=False, pause_time=0.1):
+    def plot(self, best, n_iter=None, pause=False, pause_time=0.06):
         if not pause: plt.figure()
         plt.clf()
         best_types = best[:self.num_points]

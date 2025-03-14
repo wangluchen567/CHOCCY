@@ -14,6 +14,7 @@ class GA(ALGORITHM):
         :param show_mode: 绘图模式
         """
         super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
+        self.only_solve_single = True
 
     def run(self):
         """运行算法(主函数)"""
