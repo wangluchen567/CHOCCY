@@ -164,6 +164,11 @@ class CONTRAST(object):
         """
         if show_mode is not None:
             self.show_mode = show_mode
+        if show_mode == self.SCORE:
+            # 若单独指定展示指标分数，则检查并计算评价指标
+            for alg in self.algorithms.values():
+                if len(alg.scores) == 0:
+                    alg.get_scores()
         if self.show_mode == self.NULL or self.show_mode == self.BAR:
             pass
         elif self.show_mode == self.OBJ:

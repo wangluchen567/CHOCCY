@@ -24,5 +24,5 @@ if __name__ == '__main__':
     algorithms['SPEA2'] = SPEA2(problem, num_pop, num_iter)
     contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.OBJ, same_init=True)
     contrast.run_contrast()
-    contrast.plot(show_mode=CONTRAST.OBJ)
+    contrast.plot(show_mode=CONTRAST.SCORE)
 

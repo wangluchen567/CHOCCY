@@ -15,4 +15,4 @@ if __name__ == '__main__':
     algorithms['NNDREA'] = NNDREA(problem, num_pop, num_iter)
     contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.OBJ)
     contrast.run_contrast()
-    contrast.plot(show_mode=CONTRAST.OBJ)
+    contrast.plot(show_mode=CONTRAST.SCORE)
