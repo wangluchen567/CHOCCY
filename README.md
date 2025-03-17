@@ -221,6 +221,6 @@ time(s)      4.122707e+01    8.077614e+01    4.170565e+01    8.810133e+01
 ## 参与贡献
 
 **Luchen Wang**<br>
-如在使用过程中遇到任何问题，可随时联系邮箱：wangluchen567@qq.com
+<small>（如在使用过程中遇到任何问题，可随时联系邮箱：wangluchen567@qq.com）</small>
 
 
