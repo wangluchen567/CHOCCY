@@ -1,3 +1,4 @@
+import warnings
 import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,7 +8,6 @@ from tqdm import tqdm
 from typing import Union
 from Problems.PROBLEM import PROBLEM
 from scipy.interpolate import griddata
-from Metrics.Hypervolume import cal_hv
 from mpl_toolkits.mplot3d import Axes3D
 
 
@@ -20,6 +20,8 @@ class Comparator(object):
     OAD2 = 3  # 绘制目标空间和决策空间混合(等高线)
     OAD3 = 4  # 绘制目标空间和决策空间混合(三维空间)
     SCORE = 5  # 绘制分数情况(单目标为目标值,多目标为评价指标)
+    # 定义指标类型常量(多目标)
+    score_types = ['HV', 'GD', 'IGD', 'GD+', 'IGD+']
 
     def __init__(self,
                  problem: PROBLEM,
@@ -46,6 +48,8 @@ class Comparator(object):
         self.same_init = same_init
         self.show_mode = show_mode
         self.colors = self.get_colors() if show_colors is None else show_colors
+        # 初始化评价指标类型(单目标为适应度, 多目标默认为超体积指标)
+        self.score_type = "Fitness" if self.problem.num_obj == 1 else "HV"
         self.iterator = None
 
     def init_algorithms(self):
@@ -98,6 +102,18 @@ class Comparator(object):
             self.plot(n_iter=i + 1, pause=True)
         self.print_results()
 
+    def set_score_type(self, score_type):
+        """重新设置指标分数类型(多目标)"""
+        if self.problem.num_obj == 1:
+            warnings.warn("Single objective problem cannot set score type")
+            return
+        if score_type not in self.score_types:
+            raise ValueError(f"There is no {score_type} score type")
+        self.score_type = score_type
+        # 将所有算法重设指标分数类型
+        for alg in self.algorithms.values():
+            alg.set_score_type(score_type)
+
     def print_results(self, dec=6, show_con=False):
         """格式化打印多个算法的对比结果"""
         if self.problem.num_obj == 1:
@@ -145,7 +161,7 @@ class Comparator(object):
         col_widths = [max(len("Algorithm"), len(problem_name)) + 3]
         for (name, alg) in self.algorithms.items():
             titles.append(name)
-            metric_value = cal_hv(alg.best_obj, self.problem.optimums)
+            metric_value = alg.cal_score(alg.best_obj, self.problem.optimums)
             scores.append(f"{metric_value:.{dec}e}")
             times.append(f"{alg.run_time:.{dec}e}")
             col_widths.append(max(len(titles[-1]), len(scores[-1])) + 3)
@@ -404,7 +420,7 @@ class Comparator(object):
             plt.plot(np.arange(len(alg.scores)), alg.scores,
                      marker=".", c=self.colors[idx], label=name, alpha=0.6)
         plt.xlabel('n_iter')
-        plt.ylabel('score')
+        plt.ylabel(self.score_type)
         plt.grid()
         plt.legend()
         if pause:
@@ -412,4 +428,5 @@ class Comparator(object):
                 plt.title("iter: " + str(n_iter))
             plt.pause(pause_time)
         else:
+            plt.title(self.score_type + " Scores")
             plt.show()

@@ -1,10 +1,11 @@
+import warnings
 import numpy as np
 from tqdm import tqdm
 from typing import Union
 from Problems.PROBLEM import PROBLEM
-from Metrics.Hypervolume import cal_hv
 from Algorithms.Utility.Utils import fast_nd_sort, shuffle_matrix_in_row, record_time
-from Algorithms.Utility.Plots import plot_scores, plot_data, plot_objs, plot_decs_objs
+from Algorithms.Utility.PlotUtils import plot_scores, plot_data, plot_objs, plot_decs_objs
+from Algorithms.Utility.PerfMetrics import cal_GD, cal_IGD, cal_GDPlus, cal_IGDPlus, cal_HV
 from Algorithms.Utility.Selections import elitist_selection, tournament_selection, roulette_selection
 from Algorithms.Utility.Operators import operator_real, operator_binary, operator_permutation, operator_fix_label
 
@@ -26,6 +27,8 @@ class ALGORITHM(object):
     SCORE = 5  # 绘制分数情况(单目标为目标值,多目标为评价指标)
     PRB = 6  # 问题提供绘图方法
     ALG = 7  # 算法提供绘图方法
+    # 定义指标类型常量(多目标)
+    score_types = ['HV', 'GD', 'IGD', 'GD+', 'IGD+']
 
     def __init__(self,
                  problem: PROBLEM,
@@ -77,7 +80,7 @@ class ALGORITHM(object):
         self.iterator = None
         # 记录评价指标
         self.scores = np.empty(0)
-        # 初始化评价指标类型
+        # 初始化评价指标类型(单目标为适应度, 多目标默认为超体积指标)
         self.score_type = "Fitness" if self.num_obj == 1 else "HV"
         # 记录运行时间
         self.run_time = 0.0
@@ -153,6 +156,30 @@ class ALGORITHM(object):
         cons = self.cal_cons(pop)
         fits = self.cal_fits(objs, cons)
         return objs, cons, fits
+
+    def set_score_type(self, score_type):
+        """重新设置指标分数类型(多目标)"""
+        if self.num_obj == 1:
+            warnings.warn("Single objective problem cannot set score type")
+            return
+        if score_type not in self.score_types:
+            raise ValueError(f"There is no {score_type} score type")
+        self.score_type = score_type
+
+    def cal_score(self, best_obj, optimums):
+        """给定种群解的最优个体目标值计算评价指标分数(多目标)"""
+        if self.score_type == 'HV':
+            return cal_HV(best_obj, optimums)
+        elif self.score_type == 'GD':
+            return cal_GD(best_obj, optimums)
+        elif self.score_type == 'IGD':
+            return cal_IGD(best_obj, optimums)
+        elif self.score_type == 'GD+':
+            return cal_GDPlus(best_obj, optimums)
+        elif self.score_type == 'IGD+':
+            return cal_IGDPlus(best_obj, optimums)
+        else:
+            raise ValueError(f"There is no {self.score_type} score type")
 
     @staticmethod
     def record_time(method):
@@ -347,8 +374,8 @@ class ALGORITHM(object):
         if self.num_obj == 1:
             self.scores = self.best_obj_his
         else:
-            hv_value = cal_hv(self.best_obj, self.problem.optimums)
-            self.scores = np.append(self.scores, hv_value)
+            score_value = self.cal_score(self.best_obj, self.problem.optimums)
+            self.scores = np.append(self.scores, score_value)
 
     def clear_record(self):
         """清除所有记录"""
@@ -428,7 +455,7 @@ class ALGORITHM(object):
         # 若是多目标问题则计算评价分数
         self.scores = np.zeros(len(self.best_obj_his))
         for i in range(len(self.best_obj_his)):
-            self.scores[i] = cal_hv(self.best_obj_his[i], self.problem.optimums)
+            self.scores[i] = self.cal_score(self.best_obj_his[i], self.problem.optimums)
         return self.scores
 
     def plot_scores(self, n_iter=None, pause=False, pause_time=0.06):

@@ -190,7 +190,7 @@ def plot_scores(scores, score_type=None, n_iter=None, pause=False, pause_time=0.
     plt.plot(np.arange(len(scores)), scores, marker=".", c="red")
     plt.xlabel('n_iter')
     if score_type is not None:
-        plt.ylabel(score_type.lower())
+        plt.ylabel(score_type)
     plt.grid()
     if pause:
         if n_iter is not None:

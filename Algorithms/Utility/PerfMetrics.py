@@ -1,13 +1,106 @@
 import warnings
 import numpy as np
+from scipy.spatial.distance import cdist
 
 
-def cal_hv(objs, optimum=None):
+def cal_GD(objs, optimum):
     """
-    给定目标值和参考点计算HV值
+    计算代际距离指标(Generational Distance)
     :param objs: 目标值
     :param optimum: 理论最优目标值
-    :return: HV值
+    :return: 代际距离指标值
+    """
+    if optimum is None:
+        raise ValueError("optimal targets is None")
+    if objs.shape[1] != optimum.shape[1]:
+        raise ValueError("The objs does not match the dimension of the optimal targets")
+    # 计算给定目标值中每一行与最优目标值中每一行之间的欧式距离
+    distance_matrix = cdist(objs, optimum, metric='euclidean')
+    # 按行取最小值，得到每个点到最近最优点的距离
+    distance = np.min(distance_matrix, axis=1)
+    # 计算得到分数值
+    score = np.mean(distance)
+    return score
+
+
+def cal_IGD(objs, optimum=None):
+    """
+    计算逆代际距离指标(Inverted Generational Distance)
+    :param objs: 目标值
+    :param optimum: 理论最优目标值
+    :return: 逆代际距离指标值
+    """
+    if optimum is None:
+        raise ValueError("optimal targets is None")
+    if objs.shape[1] != optimum.shape[1]:
+        raise ValueError("The objs does not match the dimension of the optimal targets")
+    # 计算给定目标值中每一行与最优目标值中每一行之间的欧式距离
+    distance_matrix = cdist(objs, optimum, metric='euclidean')
+    # 按列取最小值，得到每个最优点到最近点的距离
+    min_distances = np.min(distance_matrix, axis=0)
+    # 计算最小值的均值
+    score = np.mean(min_distances)
+    return score
+
+
+def distance_plus(x, y):
+    """
+    自定义距离函数：
+    计算两个向量之间的
+    逐元素差值的最大值的平方和的平方根
+    """
+    # 取逐元素差值的最大值（与零比较）
+    diff = np.maximum(x - y, 0)
+    # 计算其平方和的平方根
+    return np.sqrt(np.sum(diff ** 2))
+
+
+def cal_GDPlus(objs, optimum=None):
+    """
+    计算代际距离+指标(Generational Distance Plus)
+    :param objs: 目标值
+    :param optimum: 理论最优目标值
+    :return: 代际距离+指标值
+    """
+    if optimum is None:
+        raise ValueError("optimal targets is None")
+    if objs.shape[1] != optimum.shape[1]:
+        raise ValueError("The objs does not match the dimension of the optimal targets")
+    # 计算给定目标值中每一行与最优目标值中每一行之间的自定义plus距离
+    distance_matrix = cdist(objs, optimum, metric=distance_plus)
+    # 按行取最小值，得到每个点到最近最优点的距离
+    distance = np.min(distance_matrix, axis=1)
+    # 计算得到分数值
+    score = np.mean(distance)
+    return score
+
+
+def cal_IGDPlus(objs, optimum=None):
+    """
+    计算逆代际距离+指标(Inverted Generational Distance Plus)
+    :param objs: 目标值
+    :param optimum: 理论最优目标值
+    :return: 逆代际距离+指标值
+    """
+    if optimum is None:
+        raise ValueError("optimal targets is None")
+    if objs.shape[1] != optimum.shape[1]:
+        raise ValueError("The objs does not match the dimension of the optimal targets")
+    # 计算给定目标值中每一行与最优目标值中每一行之间的自定义plus距离
+    distance_matrix = cdist(objs, optimum, metric=distance_plus)
+    # 按列取最小值，得到每个最优点到最近点的距离
+    distance = np.min(distance_matrix, axis=0)
+    # 计算得到分数值
+    score = np.mean(distance)
+    return score
+
+
+def cal_HV(objs, optimum=None):
+    """
+    计算超体积指标(Hyper-volume)
+    :param objs: 目标值
+    :param optimum: 理论最优目标值
+    :return: 超体积指标值
     """
     if objs.ndim == 1:
         objs = objs.reshape(1, -1)
