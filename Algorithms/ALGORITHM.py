@@ -23,8 +23,9 @@ class ALGORITHM(object):
     DEC = 2  # 绘制决策空间
     OAD2 = 3  # 绘制目标空间和决策空间混合(等高线)
     OAD3 = 4  # 绘制目标空间和决策空间混合(三维空间)
-    PRB = 5  # 问题提供绘图方法
-    ALG = 6  # 算法提供绘图方法
+    SCORE = 5  # 绘制分数情况(单目标为目标值,多目标为评价指标)
+    PRB = 6  # 问题提供绘图方法
+    ALG = 7  # 算法提供绘图方法
 
     def __init__(self,
                  problem: PROBLEM,
@@ -76,6 +77,8 @@ class ALGORITHM(object):
         self.iterator = None
         # 记录评价指标
         self.scores = np.empty(0)
+        # 初始化评价指标类型
+        self.score_type = "Fitness" if self.num_obj == 1 else "HV"
         # 记录运行时间
         self.run_time = 0.0
         self.record_t = []
@@ -335,8 +338,8 @@ class ALGORITHM(object):
         self.best_history.append(self.best)
         self.best_obj_his.append(self.best_obj)
         self.best_con_his.append(self.best_con)
-        if self.num_obj == 1:
-            # 若是单目标问题则直接记录分数(低复杂度)
+        if self.num_obj == 1 or self.show_mode == self.SCORE:
+            # 若是单目标问题或需要展示评价指标变化则直接记录分数
             self.record_score()
 
     def record_score(self):
@@ -376,6 +379,8 @@ class ALGORITHM(object):
             self.plot_decs_objs(n_iter, pause)
         elif self.show_mode == self.OAD3:
             self.plot_decs_objs(n_iter, pause, contour=False)
+        elif self.show_mode == self.SCORE:
+            self.plot_scores(n_iter, pause)
         elif self.show_mode == self.PRB:
             self.plot_by_problem(n_iter, pause)
         elif self.show_mode == self.ALG:
@@ -411,13 +416,6 @@ class ALGORITHM(object):
             plot_decs_objs(self.problem, self.pop_history[n_iter], self.objs_history[n_iter],
                            n_iter, pause, pause_time, contour=contour, sym=sym)
 
-    def plot_by_problem(self, n_iter=None, pause=False):
-        """使用问题给定的绘图函数绘图"""
-        if pause or n_iter is None:
-            self.problem.plot(self.best_history[-1], n_iter, pause)
-        else:
-            self.problem.plot(self.best_history[n_iter], n_iter, pause)
-
     def get_scores(self):
         """获取历史所有种群的评价分数"""
         # 若是单目标问题则评价分数就是最优目标值
@@ -430,13 +428,15 @@ class ALGORITHM(object):
             self.scores[i] = cal_hv(self.best_obj_his[i], self.problem.optimums)
         return self.scores
 
-    def plot_scores(self, score_type=None):
+    def plot_scores(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制指标的变化情况"""
-        if score_type is None:
-            if self.num_obj == 1:
-                score_type = "Fitness"
-            else:
-                score_type = "HV"
         if self.scores is None or len(self.scores) == 0:
             self.get_scores()
-        plot_scores(self.scores, score_type)
+        plot_scores(self.scores, self.score_type, n_iter, pause, pause_time)
+
+    def plot_by_problem(self, n_iter=None, pause=False):
+        """使用问题给定的绘图函数绘图"""
+        if pause or n_iter is None:
+            self.problem.plot(self.best_history[-1], n_iter, pause)
+        else:
+            self.problem.plot(self.best_history[n_iter], n_iter, pause)

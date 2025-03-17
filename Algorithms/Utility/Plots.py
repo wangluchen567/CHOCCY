@@ -4,16 +4,6 @@ from scipy.interpolate import griddata
 from mpl_toolkits.mplot3d import Axes3D
 
 
-def plot_scores(scores, score_type=None):
-    """绘制评价指标情况"""
-    plt.figure()
-    plt.plot(np.arange(len(scores)), scores, marker=".", c="red")
-    plt.grid()
-    if score_type is not None:
-        plt.title(score_type + " Scores")
-    plt.show()
-
-
 def plot_data(X, n_iter=None, pause=False, pause_time=0.06):
     """对任意维度数据进行绘图"""
     if not pause: plt.figure()
@@ -190,4 +180,23 @@ def plot_decs_objs(problem, decs, objs, n_iter=None, pause=False, pause_time=0.0
             plt.title("iter: " + str(n_iter))
         plt.pause(pause_time)
     else:
+        plt.show()
+
+
+def plot_scores(scores, score_type=None, n_iter=None, pause=False, pause_time=0.06):
+    """绘制评价指标情况"""
+    if not pause: plt.figure()
+    plt.clf()
+    plt.plot(np.arange(len(scores)), scores, marker=".", c="red")
+    plt.xlabel('n_iter')
+    if score_type is not None:
+        plt.ylabel(score_type.lower())
+    plt.grid()
+    if pause:
+        if n_iter is not None:
+            plt.title("iter: " + str(n_iter))
+        plt.pause(pause_time)
+    else:
+        if score_type is not None:
+            plt.title(score_type + " Scores")
         plt.show()
