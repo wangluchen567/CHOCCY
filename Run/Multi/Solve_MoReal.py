@@ -12,8 +12,7 @@ from Problems.Multi.DTLZ.DTLZ7 import DTLZ7
 from Algorithms.Multi.MOEAD import MOEAD
 from Algorithms.Multi.NSGAII import NSGAII
 from Algorithms.Multi.SPEA2 import SPEA2
-from Algorithms.CONTRAST import CONTRAST
-
+from Algorithms.Comparator import Comparator
 
 if __name__ == '__main__':
     problem = ZDT1()
@@ -22,7 +21,7 @@ if __name__ == '__main__':
     algorithms['NSGA-II'] = NSGAII(problem, num_pop, num_iter)
     algorithms['MOEA/D'] = MOEAD(problem, num_pop, num_iter)
     algorithms['SPEA2'] = SPEA2(problem, num_pop, num_iter)
-    contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.OBJ, same_init=True)
-    contrast.run_contrast()
-    contrast.plot(show_mode=CONTRAST.SCORE)
+    comparator = Comparator(problem, algorithms, show_mode=Comparator.OBJ, same_init=True)
+    comparator.run_compare()
+    comparator.plot(show_mode=Comparator.SCORE)
 

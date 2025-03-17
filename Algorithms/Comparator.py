@@ -11,7 +11,7 @@ from Metrics.Hypervolume import cal_hv
 from mpl_toolkits.mplot3d import Axes3D
 
 
-class CONTRAST(object):
+class Comparator(object):
     # 定义绘图常量
     NULL = -1  # 不绘制
     BAR = 0  # 绘制进度条
@@ -30,7 +30,7 @@ class CONTRAST(object):
                  show_colors: Union[list, None] = None,
                  show_mode: int = 0):
         """
-        对比类(用于对比多个算法效果)
+        算法比较器(用于对比多个算法效果)
         :param problem: 问题对象
         :param algorithms: 需要对比的算法字典
         :param num_iter: 最大迭代次数
@@ -77,7 +77,7 @@ class CONTRAST(object):
         self.num_iter = max_iter if self.num_iter is None else self.num_iter
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
 
-    def run_contrast(self):
+    def run_compare(self):
         """运行多个算法的实时比较"""
         # 初始化所有算法
         self.init_algorithms()
