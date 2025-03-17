@@ -58,7 +58,7 @@ CHOCCY/
 │   │   ├── Selections.py       # 选择函数
 │   │   └── Utils.py            # 各种工具函数
 │   ├── ALGORITHM               # 算法函数父类
-│   └── CONTRAST.py             # 算法对比封装函数
+│   └── Comparator.py           # 算法比较器封装类
 ├── Datasets/                   # 数据集
 │   ├── Multi/                  # 多目标问题数据集
 │   └── Single/                 # 单目标问题数据集
@@ -126,7 +126,7 @@ print("最优解的目标值：", best_obj)
 from Problems.Single.Ackley import Ackley  # 导入问题
 from Algorithms.Single.GA import GA  # 导入GA算法
 from Algorithms.Single.DE import DE  # 导入DE算法
-from Algorithms.CONTRAST import CONTRAST  # 导入对比类
+from Algorithms.Comparator import Comparator  # 导入比较器类
 
 problem = Ackley(num_dec=2)  # 实例化问题，并指定决策向量大小 
 algorithms = dict()  # 将多个算法放入字典
@@ -136,14 +136,14 @@ algorithms['GA'] = GA(problem, num_pop, num_iter)
 algorithms['DE/rand/1'] = DE(problem, num_pop, num_iter, operator_type=DE.RAND1)
 algorithms['DE/best/1'] = DE(problem, num_pop, num_iter, operator_type=DE.BEST1)
 # 定义算法对比类，并指定绘图模式为决策向量与目标向量绘制到同一个二维图像上
-contrast = CONTRAST(problem, algorithms, show_mode=CONTRAST.OAD2, same_init=True)
-contrast.run_contrast()  # 运行所有算法进行对比
+comparator = Comparator(problem, algorithms, show_mode=Comparator.OAD2, same_init=True)
+comparator.run_compare()  # 运行所有算法进行比较
 # 绘制优化结果图，展示目标值变化情况
-contrast.plot(show_mode=CONTRAST.OBJ)
+comparator.plot(show_mode=Comparator.OBJ)
 ```
 运行代码后可以看到优化过程动图，并给出最终结果如下：<br>
-<img src="./References/Pictures/Contrast_OAD.gif" width="288" height="220"/>
-<img src="./References/Pictures/Contrast_OBJ.png" width="288" height="220"/>
+<img src="./References/Pictures/Compare_OAD.gif" width="288" height="220"/>
+<img src="./References/Pictures/Compare_OBJ.png" width="288" height="220"/>
 ```
 Algorithm    GA              DE/rand/1       DE/best/1      
 Ackley       5.228867e-03    1.713851e-06    2.176037e-14   
@@ -170,8 +170,8 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 
 #### 多种算法优化相同问题对比
 - 运行`Solve_Real`对比`实数`问题优化; 运行`Solve_TSP`对比`TSP`问题优化<br>
-<img src="./References/Pictures/Contrasts_Ackley.gif" width="288" height="230"/>
-<img src="./References/Pictures/Contrasts_TSP.gif" width="288" height="230"/>
+<img src="./References/Pictures/Compares_Ackley.gif" width="288" height="230"/>
+<img src="./References/Pictures/Compares_TSP.gif" width="288" height="230"/>
 ```
 Solve_Real.py
 Algorithm    GA              SA              PSO             DE/rand/1       DE/rand/2       DE/best/1       DE/best/2      
@@ -192,7 +192,7 @@ time(s)      2.190208e-01    4.163930e-01    2.879641e+00    1.294901e+00    1.2
 
 #### 多种算法优化相同问题对比
 - 运行`Solve_MoReal`对比`ZDT1`问题优化<br>
-<img src="./References/Pictures/Contrasts_ZDT1.gif" width="288" height="230"/>
+<img src="./References/Pictures/Compares_ZDT1.gif" width="288" height="230"/>
 <img src="./References/Pictures/ZDT1_Scores.png" width="288" height="230"/><br/>
 ```
 Algorithm    NSGA-II         MOEA/D          SPEA2          
@@ -201,7 +201,7 @@ time(s)      1.359894e+00    1.362040e+00    1.452784e+00
 ```
 
 - 运行`Solve_MOKP`对比`MOKP`问题(10000维)优化<br>
-<img src="./References/Pictures/Contrasts_MOKP10k.gif" width="288" height="230"/>
+<img src="./References/Pictures/Compares_MOKP10k.gif" width="288" height="230"/>
 <img src="./References/Pictures/MOKP10k_Scores.png" width="288" height="230"/><br/>
 ```
 Algorithm    NSGA-II         MOEA/D          SPEA2           NNDREA         
@@ -209,7 +209,7 @@ MOKP         3.695199e-01    3.957151e-01    3.682235e-01    6.028418e-01
 time(s)      5.158727e+00    8.979299e+00    4.523172e+00    8.853093e+00 
 ```
 - 运行`Solve_MOKP`对比`MOKP`问题(100000维)优化<br>
-<img src="./References/Pictures/Contrasts_MOKP100k.gif" width="288" height="230"/>
+<img src="./References/Pictures/Compares_MOKP100k.gif" width="288" height="230"/>
 <img src="./References/Pictures/MOKP100k_Scores.png" width="288" height="230"/><br/>
 ```
 Algorithm    NSGA-II         MOEA/D          SPEA2           NNDREA         
