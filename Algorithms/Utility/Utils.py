@@ -342,7 +342,7 @@ try:
         return two_opt_jit(tour, dist_mat)
 
 except ImportError:
-    # 如果导入numba加速库失败，使用原始的快速排序函数
+    # 如果导入numba加速库失败，使用原始的函数
     warnings.warn("Optimizing problems without using numba acceleration...")
     get_dom_between = get_dom_between_
     fast_nd_sort = fast_nd_sort_

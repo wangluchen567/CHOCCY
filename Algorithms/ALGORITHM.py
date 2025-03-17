@@ -418,6 +418,9 @@ class ALGORITHM(object):
 
     def get_scores(self):
         """获取历史所有种群的评价分数"""
+        # 若之前已经记录评价分数则直接返回分数
+        if self.scores is not None and len(self.scores):
+            return self.scores
         # 若是单目标问题则评价分数就是最优目标值
         if self.num_obj == 1:
             self.scores = self.best_obj_his

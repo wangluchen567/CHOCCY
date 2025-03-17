@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 
 
@@ -79,7 +80,7 @@ def Slice(pl: np.ndarray, k: int, ref_point: np.ndarray) -> list:
         pl = Tail(pl)
     ql = Insert(p, k + 1, ql)
     if ql.ndim == 1:
-        list_ = [[np.abs(p[k] - ref_point[k]), [ql]]]
+        list_ = [[np.abs(p[k] - ref_point[k]), np.array([ql])]]
     else:
         list_ = [[np.abs(p[k] - ref_point[k]), ql]]
     s = Add(list_, s)
@@ -141,7 +142,7 @@ def Add(list_: list, s: list) -> list:
     n = len(s)
     m = 0
     for k in range(n):
-        if np.array_equal(list_[0][1], s[k][1]) and len(list_[0][1]) == len(s[k][1]):
+        if len(list_[0][1]) == len(s[k][1]) and array_equal(list_[0][1], s[k][1]):
             s[k][0] = s[k][0] + list_[0][0]
             m = 1
             break
@@ -152,3 +153,40 @@ def Add(list_: list, s: list) -> list:
             s.append(list_[0])
     s_ = s
     return s_
+
+
+try:
+    # 尝试导入numba
+    from numba import jit
+
+
+    @jit(nopython=True)
+    def array_equal(arr1, arr2, equal_nan=False):
+        """
+        检查两个数组是否具有相同的形状和元素。
+        :param arr1: 第一个输入数组
+        :param arr2: 第二个输入数组
+        :param equal_nan: 是否将 NaN 视为相等，默认为 False
+        :return: 如果两个数组的形状和所有元素都相等，则返回 True，否则返回 False
+        """
+        # 检查形状是否一致
+        if arr1.shape != arr2.shape:
+            return False
+
+        # 遍历数组元素进行比较
+        for i in range(arr1.size):
+            if equal_nan:
+                if np.isnan(arr1.flat[i]) and np.isnan(arr2.flat[i]):
+                    continue
+                elif arr1.flat[i] != arr2.flat[i]:
+                    return False
+            else:
+                if arr1.flat[i] != arr2.flat[i] and not (np.isnan(arr1.flat[i]) and np.isnan(arr2.flat[i])):
+                    return False
+
+        return True
+
+except ImportError:
+    # 如果导入numba加速库失败，使用原始的函数
+    warnings.warn("Optimizing problems without using numba acceleration...")
+    array_equal = np.array_equal
