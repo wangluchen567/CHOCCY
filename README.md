@@ -50,20 +50,19 @@ CHOCCY/
 │   │   ├── PSO.py              # 粒子群算法(实数)
 │   │   └── SA.py               # 模拟退火算法
 │   ├── Utility/                # 工具和功能函数
-│   │   ├── Crossovers.py       # 交叉函数
-│   │   ├── Educations.py       # 教育函数
-│   │   ├── Mutations.py        # 变异函数
+│   │   ├── Crossovers.py       # 交叉算子函数
+│   │   ├── Educations.py       # 教育算子函数
+│   │   ├── Mutations.py        # 变异算子函数
 │   │   ├── Operators.py        # 算子函数(整合)
-│   │   ├── Plots.py            # 绘图函数
-│   │   ├── Selections.py       # 选择函数
+│   │   ├── PerfMetrics.py      # 评价指标函数
+│   │   ├── PlotUtils.py        # 绘图函数
+│   │   ├── Selections.py       # 选择算子函数
 │   │   └── Utils.py            # 各种工具函数
 │   ├── ALGORITHM               # 算法函数父类
 │   └── Comparator.py           # 算法比较器封装类
 ├── Datasets/                   # 数据集
 │   ├── Multi/                  # 多目标问题数据集
 │   └── Single/                 # 单目标问题数据集
-├── Metrics/                    # 评价指标函数
-│   └── Hypervolume.py          # 超体积指标
 ├── Problems/                   # 问题集
 │   ├── Multi/                  # 多目标问题集
 │   └── Single/                 # 单目标问题集
