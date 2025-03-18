@@ -161,7 +161,7 @@ class Comparator(object):
         col_widths = [max(len("Algorithm"), len(problem_name)) + 3]
         for (name, alg) in self.algorithms.items():
             titles.append(name)
-            metric_value = alg.cal_score(alg.best_obj, self.problem.optimums)
+            metric_value = alg.cal_score(best_obj=alg.best_obj)
             scores.append(f"{metric_value:.{dec}e}")
             times.append(f"{alg.run_time:.{dec}e}")
             col_widths.append(max(len(titles[-1]), len(scores[-1])) + 3)
@@ -429,4 +429,5 @@ class Comparator(object):
             plt.pause(pause_time)
         else:
             plt.title(self.score_type + " Scores")
+            plt.savefig("D:/MOKP100k_Scores.png", dpi=160)
             plt.show()

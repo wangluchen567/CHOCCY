@@ -14,6 +14,9 @@ def cal_GD(objs, optimum):
         raise ValueError("optimal targets is None")
     if objs.shape[1] != optimum.shape[1]:
         raise ValueError("The objs does not match the dimension of the optimal targets")
+    if len(optimum) == 1:
+        warnings.warn("Only one theoretical optimal solution has been provided, "
+                      "which may be a reference point. Please use HV to calculate the score")
     # 计算给定目标值中每一行与最优目标值中每一行之间的欧式距离
     distance_matrix = cdist(objs, optimum, metric='euclidean')
     # 按行取最小值，得到每个点到最近最优点的距离
@@ -34,6 +37,9 @@ def cal_IGD(objs, optimum=None):
         raise ValueError("optimal targets is None")
     if objs.shape[1] != optimum.shape[1]:
         raise ValueError("The objs does not match the dimension of the optimal targets")
+    if len(optimum) == 1:
+        warnings.warn("Only one theoretical optimal solution has been provided, "
+                      "which may be a reference point. Please use HV to calculate the score")
     # 计算给定目标值中每一行与最优目标值中每一行之间的欧式距离
     distance_matrix = cdist(objs, optimum, metric='euclidean')
     # 按列取最小值，得到每个最优点到最近点的距离
@@ -66,6 +72,9 @@ def cal_GDPlus(objs, optimum=None):
         raise ValueError("optimal targets is None")
     if objs.shape[1] != optimum.shape[1]:
         raise ValueError("The objs does not match the dimension of the optimal targets")
+    if len(optimum) == 1:
+        warnings.warn("Only one theoretical optimal solution has been provided, "
+                      "which may be a reference point. Please use HV to calculate the score")
     # 计算给定目标值中每一行与最优目标值中每一行之间的自定义plus距离
     distance_matrix = cdist(objs, optimum, metric=distance_plus)
     # 按行取最小值，得到每个点到最近最优点的距离
@@ -86,6 +95,9 @@ def cal_IGDPlus(objs, optimum=None):
         raise ValueError("optimal targets is None")
     if objs.shape[1] != optimum.shape[1]:
         raise ValueError("The objs does not match the dimension of the optimal targets")
+    if len(optimum) == 1:
+        warnings.warn("Only one theoretical optimal solution has been provided, "
+                      "which may be a reference point. Please use HV to calculate the score")
     # 计算给定目标值中每一行与最优目标值中每一行之间的自定义plus距离
     distance_matrix = cdist(objs, optimum, metric=distance_plus)
     # 按列取最小值，得到每个最优点到最近点的距离
@@ -99,24 +111,24 @@ def cal_HV(objs, optimum=None):
     """
     计算超体积指标(Hyper-volume)
     :param objs: 目标值
-    :param optimum: 理论最优目标值
+    :param optimum: 理论最优目标值或参考点
     :return: 超体积指标值
     """
     if objs.ndim == 1:
         objs = objs.reshape(1, -1)
     # 获取目标值维度信息
     N, M = objs.shape
-    # 如果未提供理论最优目标值，则参考向量全置1
+    # 如果未提供理论最优目标值，则参考点向量全置1
     if optimum is None:
         refer_array = np.ones(M)
     else:
         refer_array = np.array(optimum)
-    # 根据参考点规范化目标值
+    # 根据参考点向量规范化目标值
     f_min = np.min(np.vstack((np.min(objs, axis=0), np.zeros([1, M]))), axis=0)
     f_max = np.max(refer_array, axis=0)
     objs_normalized = (objs - f_min) / np.tile((f_max - f_min) * 1.1, (N, 1))
     objs_normalized = objs_normalized[np.all(objs_normalized <= 1, axis=1)]
-    # 参考点设为(1, 1, ...)
+    # 参考点向量设置为全1向量
     ref_point = np.ones(M)
     # 如果目标值矩阵为空，超体积为0
     if objs_normalized.size == 0:

@@ -121,12 +121,12 @@ class PROBLEM(object):
         pass
 
     def get_optimum(self, *args, **kwargs):
-        """获取理论最优目标值"""
-        pass
+        """获取理论最优目标值(或参考点向量)(形状必须为(N*M))"""
+        return None
 
     def get_pareto_front(self, *args, **kwargs):
         """获取帕累托最优前沿"""
-        pass
+        return None
 
     def plot(self, *args, **kwargs):
         """问题提供的绘图函数"""

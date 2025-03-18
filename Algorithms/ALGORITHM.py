@@ -81,7 +81,7 @@ class ALGORITHM(object):
         # 记录评价指标
         self.scores = np.empty(0)
         # 初始化评价指标类型(单目标为适应度, 多目标默认为超体积指标)
-        self.score_type = "Fitness" if self.num_obj == 1 else "HV"
+        self.score_type = 'Fitness' if self.num_obj == 1 else 'HV'
         # 记录运行时间
         self.run_time = 0.0
         self.record_t = []
@@ -166,17 +166,23 @@ class ALGORITHM(object):
             raise ValueError(f"There is no {score_type} score type")
         self.score_type = score_type
 
-    def cal_score(self, best_obj, optimums):
+    def cal_score(self, score_type=None, best_obj=None, optimums=None):
         """给定种群解的最优个体目标值计算评价指标分数(多目标)"""
-        if self.score_type == 'HV':
+        if score_type is None:
+            score_type = self.score_type
+        if best_obj is None:
+            best_obj = self.best_obj
+        if optimums is None:
+            optimums = self.problem.optimums
+        if score_type == 'HV':
             return cal_HV(best_obj, optimums)
-        elif self.score_type == 'GD':
+        elif score_type == 'GD':
             return cal_GD(best_obj, optimums)
-        elif self.score_type == 'IGD':
+        elif score_type == 'IGD':
             return cal_IGD(best_obj, optimums)
-        elif self.score_type == 'GD+':
+        elif score_type == 'GD+':
             return cal_GDPlus(best_obj, optimums)
-        elif self.score_type == 'IGD+':
+        elif score_type == 'IGD+':
             return cal_IGDPlus(best_obj, optimums)
         else:
             raise ValueError(f"There is no {self.score_type} score type")
@@ -374,7 +380,7 @@ class ALGORITHM(object):
         if self.num_obj == 1:
             self.scores = self.best_obj_his
         else:
-            score_value = self.cal_score(self.best_obj, self.problem.optimums)
+            score_value = self.cal_score()
             self.scores = np.append(self.scores, score_value)
 
     def clear_record(self):
@@ -455,7 +461,7 @@ class ALGORITHM(object):
         # 若是多目标问题则计算评价分数
         self.scores = np.zeros(len(self.best_obj_his))
         for i in range(len(self.best_obj_his)):
-            self.scores[i] = self.cal_score(self.best_obj_his[i], self.problem.optimums)
+            self.scores[i] = self.cal_score(best_obj=self.best_obj_his[i])
         return self.scores
 
     def plot_scores(self, n_iter=None, pause=False, pause_time=0.06):

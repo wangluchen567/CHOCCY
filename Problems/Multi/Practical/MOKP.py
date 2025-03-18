@@ -59,4 +59,4 @@ class MOKP(PROBLEM):
         return cons
 
     def get_optimum(self):
-        return np.sum(self.values, axis=0)
+        return np.sum(self.values, axis=0).reshape(1, -1)
