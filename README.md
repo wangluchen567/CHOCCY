@@ -99,17 +99,19 @@ from Algorithms.Single.DE import DE  # 导入求解该问题的算法
 
 problem = Ackley(num_dec=2)  # 实例化问题，并指定决策向量大小
 # 实例化算法并设置种群大小为100，迭代次数为100，优化过程展示为目标值变化情况
-alg = DE(problem, num_pop=100, num_iter=100, show_mode=DE.OBJ)
-alg.run()  # 运行算法
+algorithm = DE(num_pop=100, num_iter=100, show_mode=DE.OAD3)
+algorithm.solve(problem)  # 使用该算法求解问题
 # 获取最优解并打印
-best, best_obj, best_con = alg.get_best()
+best, best_obj, best_con = algorithm.get_best()
 print("最优解：", best)
 print("最优解的目标值：", best_obj)
+print("算法运行时间(秒)：", algorithm.run_time)
 ```
 运行代码后可以看到优化过程动图，并给出最终结果。
 ```
-最优解： [ 1.01622726e-15 -9.49773421e-16]
+最优解： [ 7.06806125e-16 -1.44623723e-15]
 最优解的目标值： 3.9968028886505635e-15
+算法运行时间(秒)： 0.058713674545288086
 ```
 下面给出不同参数下的效果动图：<br>
 - 左图：`num_dec=2`, `show_mode=DE.OBJ`; 右图：`num_dec=1`, `show_mode=DE.OAD2`<br>
@@ -131,9 +133,9 @@ problem = Ackley(num_dec=2)  # 实例化问题，并指定决策向量大小
 algorithms = dict()  # 将多个算法放入字典
 num_pop, num_iter = 100, 100  # 定义所有算法的参数
 # 实例化所有算法
-algorithms['GA'] = GA(problem, num_pop, num_iter)
-algorithms['DE/rand/1'] = DE(problem, num_pop, num_iter, operator_type=DE.RAND1)
-algorithms['DE/best/1'] = DE(problem, num_pop, num_iter, operator_type=DE.BEST1)
+algorithms['GA'] = GA(num_pop, num_iter)
+algorithms['DE/rand/1'] = DE(num_pop, num_iter, operator_type=DE.RAND1)
+algorithms['DE/best/1'] = DE(num_pop, num_iter, operator_type=DE.BEST1)
 # 定义算法对比类，并指定绘图模式为决策向量与目标向量绘制到同一个二维图像上
 comparator = Comparator(problem, algorithms, show_mode=Comparator.OAD2, same_init=True)
 comparator.run()  # 运行所有算法进行比较
