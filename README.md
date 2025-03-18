@@ -42,7 +42,7 @@ CHOCCY/
 │   │   ├── DE.py               # 差分进化算法(实数)
 │   │   ├── DP_KP.py            # 动态规划算法(KP)
 │   │   ├── FI.py               # 最远插入算法(TSP)
-│   │   ├── GA.py               # 遗传算法
+│   │   ├── GA.py               # 遗传算法(进化算法)
 │   │   ├── GFLS.py             # 引导快速局部搜索算法(TSP)
 │   │   ├── Greedy_KP.py        # 贪婪算法(KP)
 │   │   ├── HGA_TSP.py          # 混合启发式遗传算法(TSP)
@@ -55,7 +55,7 @@ CHOCCY/
 │   │   ├── Mutations.py        # 变异算子函数
 │   │   ├── Operators.py        # 算子函数(整合)
 │   │   ├── PerfMetrics.py      # 评价指标函数
-│   │   ├── PlotUtils.py        # 绘图函数
+│   │   ├── PlotUtils.py        # 绘图工具函数
 │   │   ├── Selections.py       # 选择算子函数
 │   │   └── Utils.py            # 各种工具函数
 │   ├── ALGORITHM               # 算法函数父类
