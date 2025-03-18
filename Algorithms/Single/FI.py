@@ -16,7 +16,7 @@ class FI(ALGORITHM):
 
     @ALGORITHM.record_time
     def init_algorithm(self, pop=None):
-        super().init_algorithm(None if pop is None else pop[0].reshape(1, -1))
+        super().init_algorithm(pop)
         # 问题必须提供距离矩阵
         if not hasattr(self.problem, 'dist_mat'):
             raise ValueError("The problem must provide the distance matrix")

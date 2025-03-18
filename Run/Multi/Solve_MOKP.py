@@ -14,5 +14,5 @@ if __name__ == '__main__':
     algorithms['SPEA2'] = SPEA2(problem, num_pop, num_iter)
     algorithms['NNDREA'] = NNDREA(problem, num_pop, num_iter)
     comparator = Comparator(problem, algorithms, show_mode=Comparator.OBJ)
-    comparator.run_compare()
+    comparator.run()
     comparator.plot(show_mode=Comparator.SCORE)

@@ -31,7 +31,7 @@ class GFLS(ALGORITHM):
         if not hasattr(self.problem, 'dist_mat'):
             raise ValueError("The problem must provide the distance matrix")
         # 初始化参数
-        super().init_algorithm(None if pop is None else pop[0].reshape(1, -1))
+        super().init_algorithm(pop)
         # 获取问题的距离矩阵
         self.dist_mat = self.problem.dist_mat  # type: ignore
         # 初始化lambda值

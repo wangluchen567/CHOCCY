@@ -9,25 +9,16 @@ from typing import Union
 from Problems.PROBLEM import PROBLEM
 from scipy.interpolate import griddata
 from mpl_toolkits.mplot3d import Axes3D
+from Algorithms.ALGORITHM import ALGORITHM
 
 
-class Comparator(object):
-    # 定义绘图常量
-    NULL = -1  # 不绘制
-    BAR = 0  # 绘制进度条
-    OBJ = 1  # 绘制目标空间
-    DEC = 2  # 绘制决策空间
-    OAD2 = 3  # 绘制目标空间和决策空间混合(等高线)
-    OAD3 = 4  # 绘制目标空间和决策空间混合(三维空间)
-    SCORE = 5  # 绘制分数情况(单目标为目标值,多目标为评价指标)
-    # 定义指标类型常量(多目标)
-    score_types = ['HV', 'GD', 'IGD', 'GD+', 'IGD+']
+class Comparator(ALGORITHM):
 
     def __init__(self,
                  problem: PROBLEM,
                  algorithms: dict,
+                 num_pop: Union[int, None] = None,
                  num_iter: Union[int, None] = None,
-                 num_run: int = 1,
                  same_init: bool = False,
                  show_colors: Union[list, None] = None,
                  show_mode: int = 0):
@@ -35,35 +26,36 @@ class Comparator(object):
         算法比较器(用于对比多个算法效果)
         :param problem: 问题对象
         :param algorithms: 需要对比的算法字典
+        :param num_pop: 初始化种群大小
         :param num_iter: 最大迭代次数
-        :param num_run: 重复运行次数
         :param same_init: 是否初始化相同
         :param show_colors: 指定绘图颜色(名称或HEX)
         :param show_mode: 绘图模式
         """
-        self.problem = problem
+        super().__init__(problem, num_pop, num_iter)
         self.algorithms = algorithms
-        self.num_iter = num_iter
-        self.num_run = num_run
         self.same_init = same_init
         self.show_mode = show_mode
+        self.iterator = None
         self.colors = self.get_colors() if show_colors is None else show_colors
         # 初始化评价指标类型(单目标为适应度, 多目标默认为超体积指标)
-        self.score_type = "Fitness" if self.problem.num_obj == 1 else "HV"
-        self.iterator = None
+        self.score_type = 'Fitness' if self.problem.num_obj == 1 else 'HV'
+        # 若没有指定种群大小则默认使用算法集合中第一个算法的种群大小(可能会有bug)
+        self.num_pop = next(iter(self.algorithms.values())).num_pop if self.num_pop is None else self.num_pop
 
-    def init_algorithms(self):
-        """初始化所有算法"""
-        max_iter = 0
-        pop = None
+    def init_comparator(self):
+        """初始化比较器"""
+        max_iter = 0  # 统计最大迭代次数
+        # 若使用相同初始化则先初始化种群
+        pop = self.init_pop() if self.same_init else None
+        # 初始化所有算法
         for alg in self.algorithms.values():
             # 对比算法时各个算法的进度条关闭
             alg.show_mode = -1
             # 初始化算法
             if self.same_init:
                 # 若使用相同初始化
-                alg.init_algorithm(pop)
-                pop = alg.pop.copy() if pop is None else pop.copy()
+                alg.init_algorithm(pop.copy())
             else:
                 alg.init_algorithm()
             # 检查是否有单独运行一步
@@ -81,10 +73,10 @@ class Comparator(object):
         self.num_iter = max_iter if self.num_iter is None else self.num_iter
         self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
 
-    def run_compare(self):
+    def run(self):
         """运行多个算法的实时比较"""
-        # 初始化所有算法
-        self.init_algorithms()
+        # 初始化比较器（所有算法）
+        self.init_comparator()
         # 绘制初始状态图
         self.plot(n_iter=0, pause=True)
         for i in self.iterator:

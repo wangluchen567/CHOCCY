@@ -17,7 +17,7 @@ if __name__ == '__main__':
     algorithms['Greedy'] = GreedyKP(problem)
     algorithms['NNDREA'] = NNDREAS(problem, num_pop=100, num_iter=100)
     comparator = Comparator(problem, algorithms, show_mode=Comparator.SCORE, same_init=True)
-    comparator.run_compare()
+    comparator.run()
     comparator.plot(show_mode=Comparator.SCORE)
     print(np.min(algorithms['NNDREA'].pop_weights), np.max(algorithms['NNDREA'].pop_weights))
     sns.heatmap(algorithms['NNDREA'].pop_weights, cmap="YlGnBu")

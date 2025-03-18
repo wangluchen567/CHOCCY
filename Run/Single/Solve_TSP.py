@@ -19,6 +19,6 @@ if __name__ == '__main__':
     algorithms['FI'] = FI(problem)
     algorithms['GFLS'] = GFLS(problem, num_iter)
     comparator = Comparator(problem, algorithms, show_mode=Comparator.OBJ, same_init=True)
-    comparator.run_compare()
+    comparator.run()
     comparator.plot(show_mode=Comparator.OBJ)
     algorithms['HGA-TSP'].plot(show_mode=ALGORITHM.PRB)

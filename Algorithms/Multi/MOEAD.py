@@ -45,8 +45,6 @@ class MOEAD(ALGORITHM):
         self.indexes = self.get_neighbor_index(self.vectors, self.num_near)
         # 根据权重向量个数重新确定种群大小(必须匹配)
         self.num_pop = len(self.vectors)
-        # 种群数量太多则进行裁剪
-        pop = pop[:self.num_pop] if pop is not None else None
         # 调用父类的初始化函数
         super().init_algorithm(pop)
         # 初始化参考点

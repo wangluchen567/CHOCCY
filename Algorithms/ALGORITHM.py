@@ -113,6 +113,9 @@ class ALGORITHM(object):
 
     def init_and_eval(self, pop=None):
         """初始化种群并对种群中解进行评价"""
+        # 若给定种群中个体数量太多则进行裁剪
+        pop = pop[:self.num_pop] if pop is not None else None
+        # 初始化种群(随机初始化或给定种群初始化)
         self.pop = self.init_pop() if pop is None else pop
         # 对种群中解进行评价(求目标值/约束值/适应度)
         self.objs, self.cons, self.fits = self.evaluate(self.pop)

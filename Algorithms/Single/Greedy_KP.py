@@ -13,7 +13,7 @@ class GreedyKP(ALGORITHM):
 
     @ALGORITHM.record_time
     def init_algorithm(self, pop=None):
-        super().init_algorithm(None if pop is None else pop[0].reshape(1, -1))
+        super().init_algorithm(pop)
         # 问题必须为背包问题
         if hasattr(self.problem, 'weights') and hasattr(self.problem, 'values') and hasattr(self.problem, 'capacity'):
             self.weights = self.problem.weights
