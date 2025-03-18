@@ -8,12 +8,11 @@ class DE(ALGORITHM):
     BEST1 = 2  # (DE/best/1)
     BEST2 = 4  # (DE/best/2)
 
-    def __init__(self, problem, num_pop=100, num_iter=100, cross_prob=None, mutate_prob=None,
+    def __init__(self, num_pop=None, num_iter=None, cross_prob=None, mutate_prob=None,
                  factor=0.5, operator_type=BEST1, show_mode=0):
         """
         差分进化算法
         *Code Author: Luchen Wang
-        :param problem: 问题对象
         :param num_pop: 种群大小
         :param num_iter: 迭代次数
         :param cross_prob: 交叉概率
@@ -22,25 +21,13 @@ class DE(ALGORITHM):
         :param operator_type: 算子类型
         :param show_mode: 绘图模式
         """
-        super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
+        super().__init__(num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.REAL, self.INT]
         self.factor = factor
         self.operator_type = operator_type
         self.num_parents = operator_type  # trick
         self.cross_prob = 0.9 if cross_prob is None else cross_prob
-
-    def run(self):
-        """运行算法(主函数)"""
-        # 初始化算法
-        self.init_algorithm()
-        # 绘制初始状态图
-        self.plot(n_iter=0, pause=True)
-        for i in self.iterator:
-            # 运行单步算法
-            self.run_step(i)
-            # 绘制迭代过程中每步状态
-            self.plot(n_iter=i + 1, pause=True)
 
     @ALGORITHM.record_time
     def run_step(self, i):

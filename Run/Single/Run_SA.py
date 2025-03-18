@@ -9,59 +9,59 @@ from Problems.Single.MixFixLabelCluster import MixFixLabelCluster
 
 def Solve_Ackley():
     problem = Ackley(num_dec=2)
-    alg = SA(problem, num_pop=1, num_iter=10000, show_mode=0)
-    alg.run()
-    best, best_obj, best_con = alg.get_best()
+    algorithm = SA(num_pop=1, num_iter=10000, show_mode=0)
+    algorithm.solve(problem)
+    best, best_obj, best_con = algorithm.get_best()
     print(best_obj)
-    alg.plot_scores()
+    algorithm.plot_scores()
 
 
 def Solve_Square():
     problem = Square(num_dec=2)
-    alg = SA(problem, num_pop=1, num_iter=10000, show_mode=0)
-    alg.run()
-    best, best_obj, best_con = alg.get_best()
+    algorithm = SA(num_pop=1, num_iter=10000, show_mode=0)
+    algorithm.solve(problem)
+    best, best_obj, best_con = algorithm.get_best()
     print(best_obj)
-    alg.plot_scores()
+    algorithm.plot_scores()
 
 
 def Solve_KP():
     problem = KP(num_dec=100)
-    alg = SA(problem, num_pop=1, num_iter=10000, perturb_prob=1 / 100, show_mode=0)
-    alg.run()
-    best, best_obj, best_con = alg.get_best()
+    algorithm = SA(num_pop=1, num_iter=10000, perturb_prob=1 / 100, show_mode=0)
+    algorithm.solve(problem)
+    best, best_obj, best_con = algorithm.get_best()
     print(best_obj)
-    alg.plot_scores()
+    algorithm.plot_scores()
 
 
 def Solve_TSP():
-    problem = TSP(20)
-    alg = SA(problem, num_pop=1, num_iter=10000, perturb_prob=1.0, show_mode=0)
-    alg.run()
-    best, best_obj, best_con = alg.get_best()
+    problem = TSP(30)
+    algorithm = SA(num_pop=1, num_iter=10000, perturb_prob=0.5, show_mode=0)
+    algorithm.solve(problem)
+    best, best_obj, best_con = algorithm.get_best()
     print(best_obj)
-    alg.plot_scores()
-    alg.plot(show_mode=SA.PRB)
+    algorithm.plot_scores()
+    algorithm.plot(show_mode=SA.PRB)
 
 
 def Solve_FixLabelCluster():
     problem = FixLabelCluster()
-    alg = SA(problem, num_pop=1, num_iter=10000, show_mode=0)
-    alg.run()
-    best, best_obj, best_con = alg.get_best()
+    algorithm = SA(num_pop=1, num_iter=10000, show_mode=0)
+    algorithm.solve(problem)
+    best, best_obj, best_con = algorithm.get_best()
     print(best_obj)
-    alg.plot_scores()
-    alg.plot(show_mode=SA.PRB)
+    algorithm.plot_scores()
+    algorithm.plot(show_mode=SA.PRB)
 
 
 def Solve_MixFixLabelCluster():
     problem = MixFixLabelCluster(90)
-    alg = SA(problem, num_pop=1, num_iter=10000, show_mode=0)
-    alg.run()
-    best, best_obj, best_con = alg.get_best()
+    algorithm = SA(num_pop=1, num_iter=10000, show_mode=0)
+    algorithm.solve(problem)
+    best, best_obj, best_con = algorithm.get_best()
     print(best_obj)
-    alg.plot_scores()
-    alg.plot(show_mode=SA.PRB)
+    algorithm.plot_scores()
+    algorithm.plot(show_mode=SA.PRB)
 
 
 if __name__ == '__main__':

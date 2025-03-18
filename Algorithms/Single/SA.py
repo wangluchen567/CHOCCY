@@ -3,19 +3,17 @@ from Algorithms.Utility.Mutations import *
 
 
 class SA(ALGORITHM):
-    def __init__(self, problem, num_pop, num_iter, init_temp=1e4, alpha=0.99, perturb_prob=0.5, show_mode=0):
+    def __init__(self, num_pop=1, num_iter=10000, init_temp=1e4, alpha=0.99, perturb_prob=0.5, show_mode=0):
         """
         模拟退火算法
         *Code Author: Luchen Wang
-        :param problem: 问题对象
-        :param num_pop: 种群大小
         :param num_iter: 迭代次数
         :param init_temp: 初始温度
         :param alpha: 温度衰减系数
         :param perturb_prob: 扰动概率(变异概率)
         :param show_mode: 绘图模式
         """
-        super().__init__(problem, num_pop, num_iter, None, perturb_prob, None, show_mode)
+        super().__init__(num_pop, num_iter, None, perturb_prob, None, show_mode)
         self.only_solve_single = True
         self.init_temp = init_temp
         self.temp = self.init_temp
@@ -25,23 +23,12 @@ class SA(ALGORITHM):
         self.con = None
         self.fit = None
 
-    def init_algorithm(self, pop=None):
-        super().init_algorithm(pop)
+    def init_algorithm(self, problem, pop=None):
+        super().init_algorithm(problem, pop)
         self.p = self.pop[0].reshape(1, -1)
         self.obj = self.cal_objs(self.p)
         self.con = self.cal_cons(self.p)
         self.fit = self.cal_fits(self.obj, self.con)
-
-    def run(self):
-        """运行算法(主函数)"""
-        # 初始化算法
-        self.init_algorithm()
-        # 绘制初始状态图
-        self.plot(n_iter=0, pause=True)
-        for i in self.iterator:
-            self.run_step(i)
-            # 绘制迭代过程中每步状态
-            self.plot(n_iter=i + 1, pause=True)
 
     @ALGORITHM.record_time
     def run_step(self, i):

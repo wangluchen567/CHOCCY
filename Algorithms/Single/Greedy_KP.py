@@ -3,8 +3,13 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 
 class GreedyKP(ALGORITHM):
-    def __init__(self, problem, show_mode=0):
-        super().__init__(problem, num_pop=1, num_iter=problem.num_dec, show_mode=show_mode)
+    def __init__(self, show_mode=0):
+        """
+        贪婪算法求解背包问题(KP)
+        *Code Author: Luchen Wang
+        :param show_mode: 绘图模式
+        """
+        super().__init__(num_pop=1, num_iter=None, show_mode=show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.BIN]
         self.weights = None
@@ -12,8 +17,10 @@ class GreedyKP(ALGORITHM):
         self.capacity = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self, pop=None):
-        super().init_algorithm(pop)
+    def init_algorithm(self, problem, pop=None):
+        super().init_algorithm(problem, pop)
+        # 初始化迭代次数
+        self.num_iter = self.num_dec
         # 问题必须为背包问题
         if hasattr(self.problem, 'weights') and hasattr(self.problem, 'values') and hasattr(self.problem, 'capacity'):
             self.weights = self.problem.weights
@@ -24,12 +31,11 @@ class GreedyKP(ALGORITHM):
 
     @ALGORITHM.record_time
     def run(self):
-        self.init_algorithm()  # 初始化算法
         cost = (self.values / self.weights).flatten()
         cost_sort = np.argsort(-cost)
         sum_weight = 0
         chosen = []
-        for i in self.iterator:
+        for i in self.get_iterator():
             if sum_weight == self.capacity:
                 break
             if sum_weight > self.capacity:

@@ -4,14 +4,13 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 
 class DPKP(ALGORITHM):
-    def __init__(self, problem, show_mode=0):
+    def __init__(self, show_mode=0):
         """
         动态规划求解背包问题(KP)
         *Code Author: Luchen Wang
-        :param problem: 问题对象(必须是背包问题)
-        :param
+        :param show_mode: 绘图模式
         """
-        super().__init__(problem, num_pop=1, num_iter=problem.num_dec, show_mode=show_mode)
+        super().__init__(num_pop=1, num_iter=None, show_mode=show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.BIN]
         self.weights = None
@@ -19,8 +18,10 @@ class DPKP(ALGORITHM):
         self.capacity = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self, pop=None):
-        super().init_algorithm(pop)
+    def init_algorithm(self, problem, pop=None):
+        super().init_algorithm(problem, pop)
+        # 初始化迭代次数
+        self.num_iter = self.num_dec
         # 问题必须为背包问题
         if hasattr(self.problem, 'weights') and hasattr(self.problem, 'values') and hasattr(self.problem, 'capacity'):
             self.weights = self.problem.weights.astype(int).flatten()
@@ -38,13 +39,11 @@ class DPKP(ALGORITHM):
 
     @ALGORITHM.record_time
     def run(self):
-        # 初始化算法
-        self.init_algorithm()
         num_items = len(self.weights)
         dp = [0] * (self.capacity + 1)
         # selected 用于记录在每个dp状态下选择的物品
         selected = [[0] * num_items for _ in range(self.capacity + 1)]
-        for i in self.iterator:
+        for i in self.get_iterator():
             for j in range(self.capacity, self.weights[i] - 1, -1):
                 if dp[j] < dp[j - self.weights[i]] + self.values[i]:
                     dp[j] = dp[j - self.weights[i]] + self.values[i]

@@ -31,9 +31,8 @@ class ALGORITHM(object):
     score_types = ['HV', 'GD', 'IGD', 'GD+', 'IGD+']
 
     def __init__(self,
-                 problem: PROBLEM,
-                 num_pop: int = 100,
-                 num_iter: int = 100,
+                 num_pop: Union[int, None] = None,
+                 num_iter: Union[int, None] = None,
                  cross_prob: Union[float, None] = None,
                  mutate_prob: Union[float, None] = None,
                  educate_prob: Union[float, None] = None,
@@ -41,7 +40,6 @@ class ALGORITHM(object):
         """
         算法父类
         *Code Author: LuChen Wang
-        :param problem: 问题对象
         :param num_pop: 种群大小
         :param num_iter: 迭代次数
         :param cross_prob: 交叉概率
@@ -49,21 +47,22 @@ class ALGORITHM(object):
         :param educate_prob: 教育概率
         :param show_mode: 绘图模式
         """
-        self.problem = problem
-        self.num_dec = self.problem.num_dec
-        self.num_obj = self.problem.num_obj
+
         self.num_pop = num_pop
         self.num_iter = num_iter
-        self.problem_type = self.problem.problem_type
-        self.unique_type = self.problem.unique_type
-        self.type_indices = self.problem.type_indices
-        self.lower = self.problem.lower
-        self.upper = self.problem.upper
         self.show_mode = show_mode
         # 初始化交叉、变异和教育概率
         self.cross_prob = cross_prob
         self.mutate_prob = mutate_prob
         self.educate_prob = educate_prob
+        # 初始化问题上下界
+        self.lower, self.upper = None, None
+        # 初始化问题决策向量与目标向量大小
+        self.num_dec, self.num_obj = None, None
+        # 初始化问题对象与问题类型
+        self.problem, self.problem_type = None, None
+        # 初始化问题类型情况和每个问题类别对应的位置
+        self.unique_type, self.type_indices = None, None
         # 算法是否只能求解单目标问题(默认可全部求解)
         self.only_solve_single = False
         # 算法可求解的问题类型(默认可全部求解)
@@ -76,40 +75,52 @@ class ALGORITHM(object):
         self.best, self.best_obj, self.best_con = None, None, None
         # 记录种群最优个体及其目标/约束(适应度为中间值不记录)
         self.best_history, self.best_obj_his, self.best_con_his = [], [], []
-        # 初始化迭代器
-        self.iterator = None
-        # 记录评价指标
-        self.scores = np.empty(0)
-        # 初始化评价指标类型(单目标为适应度, 多目标默认为超体积指标)
-        self.score_type = 'Fitness' if self.num_obj == 1 else 'HV'
         # 记录运行时间
         self.run_time = 0.0
-        self.record_t = []
-        # 决策变量示例(固定标签问题)
+        # 初始化决策变量示例
         self.example_dec = None
-        if hasattr(problem, 'example_dec'):
-            self.example_dec = problem.example_dec
+        # 初始化评价指标记录与评价指标类型
+        self.scores, self.score_type = np.empty(0), None
 
     @record_time
-    def init_algorithm(self, pop=None):
+    def init_algorithm(self, problem: PROBLEM, pop=None):
         """初始化算法"""
-        # 检查算法可求解问题
+        # 初始化算法所有参数
+        self.init_params(problem)
+        # 检查算法是否可求解该问题
+        self.check_feasibility()
+        # 初始化种群并对种群进行评价
+        self.init_and_eval(pop)
+
+    def init_params(self, problem: PROBLEM):
+        """初始化所有参数"""
+        # 初始化问题参数
+        self.problem = problem
+        self.num_dec = self.problem.num_dec
+        self.num_obj = self.problem.num_obj
+        self.problem_type = self.problem.problem_type
+        self.unique_type = self.problem.unique_type
+        self.type_indices = self.problem.type_indices
+        self.lower = self.problem.lower
+        self.upper = self.problem.upper
+        # 决策变量示例(固定标签问题)
+        if hasattr(self.problem, 'example_dec'):
+            self.example_dec = self.problem.example_dec
+        # 初始化评价指标类型(单目标为适应度, 多目标默认为超体积指标)
+        self.score_type = 'Fitness' if self.num_obj == 1 else 'HV'
+        # 初始化算法参数
+        self.num_pop = 100 if self.num_pop is None else self.num_pop
+        self.num_iter = 100 if self.num_iter is None else self.num_iter
+        self.cross_prob = 1.0 if self.cross_prob is None else self.cross_prob
+        self.educate_prob = 0.5 if self.educate_prob is None else self.educate_prob
+        self.mutate_prob = 1 / self.num_dec if self.mutate_prob is None else self.mutate_prob
+
+    def check_feasibility(self):
+        """检查算法是否可求解该问题"""
         if self.only_solve_single and self.num_obj > 1:
             raise ValueError("This algorithm can only solve single objective problems")
         if not np.all(np.isin(self.unique_type, self.solvable_type)):
             raise ValueError("This algorithm does not support solving this type of problem")
-        # 初始化种群与参数
-        self.init_params()
-        # 初始化种群并对种群进行评价
-        self.init_and_eval(pop)
-        # 构建迭代器
-        self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
-
-    def init_params(self):
-        """初始化参数(交叉、变异和教育概率)"""
-        self.cross_prob = 1.0 if self.cross_prob is None else self.cross_prob
-        self.mutate_prob = 1 / self.num_dec if self.mutate_prob is None else self.mutate_prob
-        self.educate_prob = 0.5 if self.educate_prob is None else self.educate_prob
 
     def init_and_eval(self, pop=None):
         """初始化种群并对种群中解进行评价"""
@@ -120,6 +131,35 @@ class ALGORITHM(object):
         # 对种群中解进行评价(求目标值/约束值/适应度)
         self.objs, self.cons, self.fits = self.evaluate(self.pop)
         # 记录当前种群信息
+        self.record()
+
+    def get_iterator(self):
+        """构建迭代器"""
+        if self.show_mode == 0:
+            return tqdm(range(self.num_iter))
+        else:
+            return range(self.num_iter)
+
+    def solve(self, problem: PROBLEM):
+        """算法求解问题(主入口函数)"""
+        # 初始化算法
+        self.init_algorithm(problem)
+        # 运行算法求解问题
+        self.run()
+
+    def run(self):
+        """运行算法"""
+        # 绘制初始状态图
+        self.plot(n_iter=0, pause=True)
+        # 算法迭代并优化问题
+        for i in self.get_iterator():
+            # 运行单步算法
+            self.run_step(i)
+            # 绘制迭代过程中每步状态
+            self.plot(n_iter=i + 1, pause=True)
+
+    def run_step(self, *args, **kwargs):
+        """运行算法单步"""
         self.record()
 
     def cal_objs(self, decs):
@@ -194,14 +234,6 @@ class ALGORITHM(object):
     def record_time(method):
         """统计运行时间"""
         return record_time(method)
-
-    def run(self):
-        """运行算法(主函数)"""
-        raise NotImplemented
-
-    def run_step(self, *args, **kwargs):
-        """运行算法单步"""
-        self.record()
 
     def get_best(self):
         """获取种群最优解与其目标值约束值"""

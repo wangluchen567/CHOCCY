@@ -32,7 +32,8 @@ class Comparator(ALGORITHM):
         :param show_colors: 指定绘图颜色(名称或HEX)
         :param show_mode: 绘图模式
         """
-        super().__init__(problem, num_pop, num_iter)
+        super().__init__(num_pop, num_iter)
+        self.problem = problem
         self.algorithms = algorithms
         self.same_init = same_init
         self.show_mode = show_mode
@@ -46,6 +47,7 @@ class Comparator(ALGORITHM):
     def init_comparator(self):
         """初始化比较器"""
         max_iter = 0  # 统计最大迭代次数
+        self.init_algorithm(self.problem)
         # 若使用相同初始化则先初始化种群
         pop = self.init_pop() if self.same_init else None
         # 初始化所有算法
@@ -55,9 +57,9 @@ class Comparator(ALGORITHM):
             # 初始化算法
             if self.same_init:
                 # 若使用相同初始化
-                alg.init_algorithm(pop.copy())
+                alg.init_algorithm(self.problem, pop.copy())
             else:
-                alg.init_algorithm()
+                alg.init_algorithm(self.problem)
             # 检查是否有单独运行一步
             if 'run_step' not in type(alg).__dict__:
                 # 如果算法没有覆写单独运行一步，则全部运行
@@ -71,7 +73,6 @@ class Comparator(ALGORITHM):
                 alg.record_score()
         # 迭代次数若为空则根据给定算法最大迭代次数
         self.num_iter = max_iter if self.num_iter is None else self.num_iter
-        self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
 
     def run(self):
         """运行多个算法的实时比较"""
@@ -79,7 +80,7 @@ class Comparator(ALGORITHM):
         self.init_comparator()
         # 绘制初始状态图
         self.plot(n_iter=0, pause=True)
-        for i in self.iterator:
+        for i in self.get_iterator():
             for alg in self.algorithms.values():
                 if i < alg.num_iter:
                     # 若算法未结束迭代

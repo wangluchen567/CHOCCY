@@ -5,11 +5,10 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 
 class ACO(ALGORITHM):
-    def __init__(self, problem, num_pop=50, num_iter=100, alpha=1, beta=4, rho=0.2, q_value=100, show_mode=0):
+    def __init__(self, num_pop=None, num_iter=None, alpha=1, beta=4, rho=0.2, q_value=100, show_mode=0):
         """
         蚁群算法 (蚁周模型 Ant-Cycle)
         *Code Author: Luchen Wang
-        :param problem: 问题对象
         :param num_pop: 种群大小(蚁群大小)
         :param num_iter: 迭代次数
         :param alpha: 信息素因子，反映信息素的重要程度，一般取值[1~4]
@@ -18,7 +17,7 @@ class ACO(ALGORITHM):
         :param q_value: 信息素常量，一般取值[10, 1000]
         :param show_mode: 绘图模式
         """
-        super().__init__(problem, num_pop, num_iter, None, None, None, show_mode)
+        super().__init__(num_pop, num_iter, None, None, None, show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.PMU]
         self.alpha = alpha
@@ -30,15 +29,15 @@ class ACO(ALGORITHM):
         self.tau_mat = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self, pop=None):
+    def init_algorithm(self, problem, pop=None):
         """初始化算法"""
-        # 问题必须提供距离矩阵
-        if not hasattr(self.problem, 'dist_mat'):
-            raise ValueError("The problem must provide the distance matrix")
         # 初始化目标值和约束值为无穷大
         self.best_obj, self.best_con = np.inf, np.inf
         # 初始化算法参数
-        super().init_algorithm(pop)
+        super().init_algorithm(problem, pop)
+        # 问题必须提供距离矩阵
+        if not hasattr(self.problem, 'dist_mat'):
+            raise ValueError("The problem must provide the distance matrix")
         # 获取问题的距离矩阵
         self.dist_mat = self.problem.dist_mat  # type: ignore
         # 调整距离矩阵的对角线元素值
@@ -51,18 +50,6 @@ class ACO(ALGORITHM):
         self.tau_mat = np.ones((self.num_dec, self.num_dec))
         # 蚁群路径(路径记录表, 记录已经访问过的节点)
         self.pop = np.zeros((self.num_pop, self.num_dec), dtype=int)
-
-    def run(self):
-        """运行算法(主函数)"""
-        # 初始化算法
-        self.init_algorithm()
-        # 绘制初始状态图
-        self.plot(n_iter=0, pause=True)
-        for i in self.iterator:
-            # 运行单步算法
-            self.run_step(i)
-            # 绘制迭代过程中每步状态
-            self.plot(n_iter=i + 1, pause=True)
 
     @ALGORITHM.record_time
     def run_step(self, i):

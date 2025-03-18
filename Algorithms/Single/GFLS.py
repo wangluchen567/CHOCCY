@@ -3,7 +3,7 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 
 class GFLS(ALGORITHM):
-    def __init__(self, problem, num_iter=1000, alpha=1 / 4, active_all=True, show_mode=0):
+    def __init__(self, num_iter=1000, alpha=1 / 4, active_all=True, show_mode=0):
         """
         引导快速局部搜索(Guided Fast Local Search)
         *Code Author: Luchen Wang
@@ -13,7 +13,7 @@ class GFLS(ALGORITHM):
         :param active_all: 是否激活全部子邻域
         :param show_mode: 绘图模式
         """
-        super().__init__(problem, 1, num_iter, show_mode=show_mode)
+        super().__init__(num_pop=1, num_iter=num_iter, show_mode=show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.PMU]
         self.alpha = alpha
@@ -26,12 +26,11 @@ class GFLS(ALGORITHM):
         self.tour_cost = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self, pop=None):
+    def init_algorithm(self, problem, pop=None):
+        super().init_algorithm(problem, pop)
         # 问题必须提供距离矩阵
         if not hasattr(self.problem, 'dist_mat'):
             raise ValueError("The problem must provide the distance matrix")
-        # 初始化参数
-        super().init_algorithm(pop)
         # 获取问题的距离矩阵
         self.dist_mat = self.problem.dist_mat  # type: ignore
         # 初始化lambda值
@@ -57,18 +56,6 @@ class GFLS(ALGORITHM):
             self.bits = np.zeros(len(self.tour))
             self.bits[np.where(utils == utils_max)[0][0]] = 1
             self.bits[np.where(utils == utils_max)[0][1]] = 1
-
-    def run(self):
-        """运行算法(主函数)"""
-        # 初始化算法
-        self.init_algorithm()
-        # 绘制初始状态图
-        self.plot(n_iter=0, pause=True)
-        for i in self.iterator:
-            # 运行单步算法
-            self.run_step(i)
-            # 绘制迭代过程中每步状态
-            self.plot(n_iter=i + 1, pause=True)
 
     @ALGORITHM.record_time
     def run_step(self, i):

@@ -4,12 +4,12 @@ from Algorithms.Multi.MOEAD import MOEAD
 
 if __name__ == '__main__':
     problem = DTLZ2()
-    alg = MOEAD(problem, num_pop=100, num_iter=100, func_type=1, show_mode=1)
-    alg.run()
-    print("HV: ", alg.cal_score('HV'))
-    print("GD: ", alg.cal_score('GD'))
-    print("IGD: ", alg.cal_score('IGD'))
-    print("time(s): ", alg.run_time)
-    alg.plot(show_mode=1)
-    alg.plot_scores()
+    algorithm = MOEAD(num_pop=100, num_iter=100, func_type=1, show_mode=1)
+    algorithm.solve(problem)
+    print("HV: ", algorithm.cal_score('HV'))
+    print("GD: ", algorithm.cal_score('GD'))
+    print("IGD: ", algorithm.cal_score('IGD'))
+    print("time(s): ", algorithm.run_time)
+    algorithm.plot(show_mode=1)
+    algorithm.plot_scores()
 

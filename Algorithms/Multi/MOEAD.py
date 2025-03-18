@@ -9,14 +9,12 @@ class MOEAD(ALGORITHM):
     TCH = 2  # 切比雪夫聚合方法
     LAG = 3  # 线性聚合方法
 
-    def __init__(self, problem, num_pop=100, num_iter=100, func_type=PBI,
-                 cross_prob=None, mutate_prob=None, show_mode=0):
+    def __init__(self, num_pop=100, num_iter=None, func_type=PBI, cross_prob=None, mutate_prob=None, show_mode=0):
         """
         This code is based on the research presented in
         "MOEA/D: A multi-objective evolutionary algorithm based on decomposition"
         by Q. Zhang and H. Li
         *Code Author: Luchen Wang
-        :param problem: 问题对象
         :param num_pop: 种群大小
         :param num_iter: 迭代次数
         :param func_type: 聚合函数类型
@@ -25,7 +23,7 @@ class MOEAD(ALGORITHM):
         :param show_mode: 绘图模式
         """
         # 初始化相关参数(调用父类初始化)
-        super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
+        super().__init__(num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
         # 聚合函数类型
         self.func_type = func_type
         self.num_near = None
@@ -34,19 +32,18 @@ class MOEAD(ALGORITHM):
         self.ref = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self, pop=None):
+    def init_algorithm(self, problem, pop=None):
         """初始化算法"""
-        # 重新设置种群大小
         # 选择的最近邻居的数量
         self.num_near = int(np.ceil(self.num_pop / 10))
         # 均匀生成权重向量
-        self.vectors = get_uniform_vectors(self.num_pop, self.problem.num_obj)
+        self.vectors = get_uniform_vectors(self.num_pop, problem.num_obj)
         # 获取每个权重向量的前T个邻居向量的下标
         self.indexes = self.get_neighbor_index(self.vectors, self.num_near)
         # 根据权重向量个数重新确定种群大小(必须匹配)
         self.num_pop = len(self.vectors)
         # 调用父类的初始化函数
-        super().init_algorithm(pop)
+        super().init_algorithm(problem, pop)
         # 初始化参考点
         self.ref = np.min(self.objs, axis=0)
 
@@ -62,18 +59,6 @@ class MOEAD(ALGORITHM):
         dist_mat = distance_matrix(weights, weights)
         # 获取前T个最近的邻居的下标
         return np.argsort(dist_mat, axis=1)[:, :t]
-
-    def run(self):
-        """运行算法(主函数)"""
-        # 初始化算法
-        self.init_algorithm()
-        # 绘制初始状态图
-        self.plot(n_iter=0, pause=True)
-        for i in self.iterator:
-            # 运行单步算法
-            self.run_step(i)
-            # 绘制迭代过程中每步状态
-            self.plot(n_iter=i + 1, pause=True)
 
     @ALGORITHM.record_time
     def run_step(self, i):

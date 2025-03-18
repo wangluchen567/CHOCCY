@@ -7,14 +7,13 @@ from Algorithms.Utility.Utils import fast_nd_sort, cal_crowd_dist, cal_ranking
 
 
 class NNDREA(ALGORITHM):
-    def __init__(self, problem, num_pop=100, num_iter=100, structure=None, search_range=None, delta=0.5,
+    def __init__(self, num_pop=None, num_iter=None, structure=None, search_range=None, delta=0.5,
                  cross_prob=None, mutate_prob=None, show_mode=0):
         """
         This code is based on the research presented in
         "Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimization With Millions of Variables"
         by Ye Tian, Luchen Wang, Shangshang Yang, Jinliang Ding, Yaochu Jin, Xingyi Zhang
         *Code Author: Luchen Wang
-        :param problem: 问题对象
         :param num_pop: 种群大小
         :param num_iter: 迭代次数
         :param structure: 神经网络结构
@@ -25,7 +24,7 @@ class NNDREA(ALGORITHM):
         :param show_mode: 绘图模式
         """
         # 初始化相关参数(调用父类初始化)
-        super().__init__(problem, num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
+        super().__init__(num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
         self.solvable_type = [self.BIN]
         self.structure = structure
         self.search_range = search_range
@@ -37,8 +36,9 @@ class NNDREA(ALGORITHM):
         self.delta_iter = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self, pop=None):
+    def init_algorithm(self, problem, pop=None):
         """初始化算法"""
+        super().init_algorithm(problem, pop)
         # 问题必须提供实例数据集
         if not hasattr(self.problem, 'instance'):
             raise ValueError("The problem must provide an instance dataset")
@@ -81,26 +81,12 @@ class NNDREA(ALGORITHM):
         self.fits = self.cal_fits(self.objs, self.cons)
         # 记录当前种群信息
         self.record()
-        # 构建迭代器
-        self.iterator = tqdm(range(self.num_iter)) if self.show_mode == 0 else range(self.num_iter)
         # 按照delta占比分为两个阶段
         self.delta_iter = self.delta * self.num_iter
 
     def init_pop_weights(self):
         pop_weights = np.random.uniform(self.upper, self.lower, size=(self.num_pop, self.num_dec))
         return pop_weights
-
-    def run(self):
-        """运行算法(主函数)"""
-        # 初始化算法
-        self.init_algorithm()
-        # 绘制初始状态图
-        self.plot(n_iter=0, pause=True)
-        for i in self.iterator:
-            # 运行单步算法
-            self.run_step(i)
-            # 绘制迭代过程中每步状态
-            self.plot(n_iter=i + 1, pause=True)
 
     @ALGORITHM.record_time
     def run_step(self, i):

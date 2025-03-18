@@ -3,34 +3,34 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 
 class FI(ALGORITHM):
-    def __init__(self, problem, show_mode=0):
+    def __init__(self, show_mode=0):
         """
         最远插入启发式算法(Farthest Insertion)
         *Code Author: Luchen Wang
-        :param problem: 问题对象(TSP类型)
+        :param show_mode: 绘图模式
         """
-        super().__init__(problem, num_pop=1, num_iter=problem.num_dec, show_mode=show_mode)
+        super().__init__(num_pop=1, num_iter=None, show_mode=show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.PMU]
         self.dist_mat = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self, pop=None):
-        super().init_algorithm(pop)
+    def init_algorithm(self, problem, pop=None):
+        super().init_algorithm(problem, pop)
         # 问题必须提供距离矩阵
         if not hasattr(self.problem, 'dist_mat'):
             raise ValueError("The problem must provide the distance matrix")
+        # 初始化迭代次数
+        self.num_iter = self.num_dec
         # 获取问题的距离矩阵
         self.dist_mat = self.problem.dist_mat  # type: ignore
 
     @ALGORITHM.record_time
     def run(self):
-        # 初始化算法
-        self.init_algorithm()
         num_points = len(self.dist_mat)
         mask = np.zeros(num_points, dtype=bool)
         tour = []
-        for i in self.iterator:
+        for i in self.get_iterator():
             # 得到候选下标
             cand_index = np.flatnonzero(mask == 0)
             if i == 0:

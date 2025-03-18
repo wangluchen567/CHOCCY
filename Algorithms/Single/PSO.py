@@ -3,11 +3,10 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 
 class PSO(ALGORITHM):
-    def __init__(self, problem, num_pop=100, num_iter=100, w=0.7298, c1=2.0, c2=2.0, show_mode=0):
+    def __init__(self, num_pop=None, num_iter=None, w=0.7298, c1=2.0, c2=2.0, show_mode=0):
         """
         粒子群优化算法
         *Code Author: Luchen Wang
-        :param problem: 问题对象
         :param num_pop: 种群大小
         :param num_iter: 迭代次数
         :param w: 惯性权重
@@ -15,7 +14,7 @@ class PSO(ALGORITHM):
         :param c2: 社会学习权重
         :param show_mode: 绘图模式
         """
-        super().__init__(problem, num_pop, num_iter, None, None, None, show_mode)
+        super().__init__(num_pop, num_iter, None, None, None, show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.REAL, self.INT]
         self.w = w  # 惯性权重
@@ -24,23 +23,11 @@ class PSO(ALGORITHM):
         self.particle = None  # 粒子群位置
         self.velocity = None  # 粒子群速度
 
-    def init_algorithm(self, pop=None):
-        super().init_algorithm(pop)
+    def init_algorithm(self, problem, pop=None):
+        super().init_algorithm(problem, pop)
         # 初始化粒子群位置和速度
         self.particle = self.pop.copy()
         self.velocity = np.zeros_like(self.particle)
-
-    def run(self):
-        """运行算法(主函数)"""
-        # 初始化算法
-        self.init_algorithm()
-        # 绘制初始状态图
-        self.plot(n_iter=0, pause=True)
-        for i in self.iterator:
-            # 运行单步算法
-            self.run_step(i)
-            # 绘制迭代过程中每步状态
-            self.plot(n_iter=i + 1, pause=True)
 
     @ALGORITHM.record_time
     def run_step(self, i):
