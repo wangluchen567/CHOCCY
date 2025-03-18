@@ -163,7 +163,7 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 ### 单目标问题优化
 #### 算法优化不同类型问题
 - 实数问题参考[快速开始](#快速开始)
-- 运行`Run_GA`中的`Solve_TSP()`优化`TSP`问题; 运行`Solve_MixFixLabelCluster()`优化`混合`实数与标签问题<br>
+- 运行`Run_GA`中的`Solve_TSP()`优化`TSP`问题; 运行`Solve_MixFixLabelCluster()`优化`混合`问题(`实数`+`标签`)<br>
 <img src="./References/Pictures/TSP30.gif" width="288" height="230"/>
 <img src="./References/Pictures/MFLC.gif" width="288" height="230"/>
 
@@ -195,8 +195,8 @@ time(s)      2.190208e-01    4.163930e-01    2.879641e+00    1.294901e+00    1.2
 <img src="./References/Pictures/ZDT1_Scores.png" width="288" height="230"/><br/>
 ```
 Algorithm    NSGA-II         MOEA/D          SPEA2          
-ZDT1         7.107659e-01    7.134855e-01    7.081822e-01   
-time(s)      1.359894e+00    1.362040e+00    1.452784e+00   
+ZDT1         9.736895e-03    2.963049e-02    1.147498e-02   
+time(s)      1.519827e+00    1.510509e+00    1.585913e+00   
 ```
 
 - 运行`Solve_MOKP`对比`MOKP`问题(10000维)优化<br>
@@ -204,16 +204,16 @@ time(s)      1.359894e+00    1.362040e+00    1.452784e+00
 <img src="./References/Pictures/MOKP10k_Scores.png" width="288" height="230"/><br/>
 ```
 Algorithm    NSGA-II         MOEA/D          SPEA2           NNDREA         
-MOKP         3.695199e-01    3.957151e-01    3.682235e-01    6.028418e-01   
-time(s)      5.158727e+00    8.979299e+00    4.523172e+00    8.853093e+00 
+MOKP         3.705192e-01    4.011776e-01    3.729958e-01    6.052205e-01   
+time(s)      5.749037e+00    1.060391e+01    5.286980e+00    1.019342e+01   
 ```
 - 运行`Solve_MOKP`对比`MOKP`问题(100000维)优化<br>
 <img src="./References/Pictures/Compares_MOKP100k.gif" width="288" height="230"/>
 <img src="./References/Pictures/MOKP100k_Scores.png" width="288" height="230"/><br/>
 ```
 Algorithm    NSGA-II         MOEA/D          SPEA2           NNDREA         
-MOKP         3.197438e-01    3.167430e-01    3.202157e-01    6.086408e-01   
-time(s)      4.122707e+01    8.077614e+01    4.170565e+01    8.810133e+01  
+MOKP         3.196409e-01    3.172811e-01    3.202622e-01    6.076854e-01   
+time(s)      4.570414e+01    8.844192e+01    4.248132e+01    9.847076e+01  
 ```
 (PS: 可以看到即使问题扩大十倍，NNDREA的效果几乎不变，仍然是收敛快且效果好)
 
