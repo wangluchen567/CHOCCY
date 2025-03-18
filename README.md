@@ -136,7 +136,7 @@ algorithms['DE/rand/1'] = DE(problem, num_pop, num_iter, operator_type=DE.RAND1)
 algorithms['DE/best/1'] = DE(problem, num_pop, num_iter, operator_type=DE.BEST1)
 # 定义算法对比类，并指定绘图模式为决策向量与目标向量绘制到同一个二维图像上
 comparator = Comparator(problem, algorithms, show_mode=Comparator.OAD2, same_init=True)
-comparator.run_compare()  # 运行所有算法进行比较
+comparator.run()  # 运行所有算法进行比较
 # 绘制优化结果图，展示目标值变化情况
 comparator.plot(show_mode=Comparator.OBJ)
 ```
