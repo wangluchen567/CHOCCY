@@ -24,9 +24,9 @@ conda activate my_env
 ```
 **注意**：本项目支持 Python 3.7 及以上版本，建议使用 Python 3.9 以获得最佳兼容性。请确保已安装 Python 3.7 或更高版本。<br>
 **2. 安装必要包**<br>
-本项目依赖以下包: `numpy`、`scipy`、`matplotlib`、`tqdm`、`networkx`、`numba`。请确保已安装 Python 3.7 或更高版本，运行以下命令一键安装必要包：<br>
+本项目依赖以下包: `numpy`、`scipy`、`matplotlib`、`seaborn`、`tqdm`、`networkx`、`numba`。请确保已安装 Python 3.7 或更高版本，运行以下命令一键安装必要包：<br>
 ```bash
-pip install numpy scipy matplotlib tqdm networkx numba
+pip install numpy scipy matplotlib seaborn tqdm networkx numba
 ```
 
 ## 项目结构
@@ -36,7 +36,8 @@ CHOCCY/
 │   ├── Multi/                  # 多目标优化算法
 │   │   ├── MOEAD.py            # 基于分解的经典进化算法
 │   │   ├── NNDREA.py           # 特殊二进制问题进化算法
-│   │   └── NSGAII.py           # 经典多目标进化算法
+│   │   ├── NSGAII.py           # 经典多目标进化算法
+│   │   └── SPEA2.py            # 经典多目标进化算法
 │   ├── Single/                 # 单目标优化算法
 │   │   ├── ACO.py              # 蚁群算法(TSP)
 │   │   ├── DE.py               # 差分进化算法(实数)
@@ -59,7 +60,8 @@ CHOCCY/
 │   │   ├── Selections.py       # 选择算子函数
 │   │   └── Utils.py            # 各种工具函数
 │   ├── ALGORITHM               # 算法函数父类
-│   └── Comparator.py           # 算法比较器封装类
+│   ├── Comparator.py           # 算法比较器封装类
+│   └── Comparator.py           # 算法评估器封装类
 ├── Datasets/                   # 数据集
 │   ├── Multi/                  # 多目标问题数据集
 │   └── Single/                 # 单目标问题数据集
@@ -69,16 +71,24 @@ CHOCCY/
 │   └── PROBLEM.py              # 问题父类
 ├── Run/                        # 算法优化问题实例
 │   ├── Multi/                  # 多目标问题的优化实例
+│   │   ├── Cal_Scores.py       # 计算评价指标示例
+│   │   ├── Eval_DTLZ.py        # 多种算法优化与评估DTLZ示例
+│   │   ├── Eval_ZDT.py         # 多种算法优化与评估ZDT示例
 │   │   ├── Run_MOEAD.py        # 运行MOEA/D算法实例
 │   │   ├── Run_NNDREA.py       # 运行NNDREA算法实例
 │   │   ├── Run_NSGAII.py       # 运行NSGAII算法实例
+│   │   ├── Run_SPEA2.py        # 运行SPEA2算法实例
 │   │   ├── Solve_MOKP.py       # 多种算法求解MOKP问题对比实例
-│   │   └── Solve_MoReal.py     # 多种算法求解多目标实数问题对比实例
+│   │   └── Solve_ZDT.py        # 多种算法求解ZDT问题对比实例
 │   └── Single/                 # 单目标问题的优化实例
+│   │   ├── Eval_Ackley.py      # 多种算法优化与评估Ackley示例
+│   │   ├── Eval_TSP.py         # 多种算法优化与评估TSP示例
+│   │   ├── Run_DE.py           # 运行差分进化算法实例
+│   │   ├── Run_SA.py           # 运行模拟退火算法实例
 │   │   ├── Run_GA.py           # 运行遗传算法实例
 │   │   ├── Run_SA.py           # 运行模拟退火算法实例
+│   │   ├── Solve_Ackley.py     # 多种算法求解Ackley问题对比实例
 │   │   ├── Solve_KP.py         # 多种算法求解KP问题对比实例
-│   │   ├── Solve_Real.py       # 多种算法求解实数问题对比实例
 │   │   └── Solve_TSP.py        # 多种算法求解TSP问题对比实例
 └── README.md                   # 项目文档
 ```
@@ -122,7 +132,8 @@ print("算法运行时间(秒)：", algorithm.run_time)
 <img src="./References/Pictures/DE_Ackley3.gif" width="288" height="220"/>
 
 ### 多种算法优化问题对比
-仍然以Ackley为例，我们可以实例化该问题，并使用多种算法对比进行优化：
+#### 算法优化实时对比
+仍然以Ackley为例，我们可以实例化该问题，并使用多种算法进行实时优化与对比：
 ```python
 from Problems.Single.Ackley import Ackley  # 导入问题
 from Algorithms.Single.GA import GA  # 导入GA算法
@@ -138,7 +149,7 @@ algorithms['DE/rand/1'] = DE(num_pop, num_iter, operator_type=DE.RAND1)
 algorithms['DE/best/1'] = DE(num_pop, num_iter, operator_type=DE.BEST1)
 # 定义算法对比类，并指定绘图模式为决策向量与目标向量绘制到同一个二维图像上
 comparator = Comparator(problem, algorithms, show_mode=Comparator.OAD2, same_init=True)
-comparator.run()  # 运行所有算法进行比较
+comparator.run()  # 运行所有算法进行比较，实时对比算法运行情况
 # 绘制优化结果图，展示目标值变化情况
 comparator.plot(show_mode=Comparator.OBJ)
 ```
@@ -150,6 +161,11 @@ Algorithm    GA              DE/rand/1       DE/best/1
 Ackley       5.228867e-03    1.713851e-06    2.176037e-14   
 time(s)      3.272367e-02    2.751327e-02    2.319741e-02   
 ```
+#### 算法优化结果对比
+仍然以Ackley为例(决策变量维度为30)，运行`Eval_Ackley`可实现对算法结果的对比，并支持绘制`小提琴图`、`箱型图`、`核密度估计图`等，
+运行代码后可以得到算法的结果对比，并绘制图像，下面给出绘制的小提琴图与核密度估计图：<br>
+<img src="./References/Pictures/violin.png" width="288" height="220"/>
+<img src="./References/Pictures/kde.png" width="288" height="220"/>
 
 
 ## 更新计划
@@ -158,8 +174,9 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 - [ ] 更新算法笔记
 - [ ] 加入多问题多算法对比类
 - [ ] 优化超体积的计算
-- [ ] 加入其他评价指标
+- [x] 加入其他评价指标
 - [ ] 加入约束相关算法
+- [ ] 实现多核CPU并行计算
 
 ## 效果展示
 ### 单目标问题优化
@@ -170,11 +187,11 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 <img src="./References/Pictures/MFLC.gif" width="288" height="230"/>
 
 #### 多种算法优化相同问题对比
-- 运行`Solve_Real`对比`实数`问题优化; 运行`Solve_TSP`对比`TSP`问题优化<br>
+- 运行`Solve_Ackley`对比`实数`问题(Ackley)优化; 运行`Solve_TSP`对比`TSP`问题优化<br>
 <img src="./References/Pictures/Compares_Ackley.gif" width="288" height="230"/>
 <img src="./References/Pictures/Compares_TSP.gif" width="288" height="230"/>
 ```
-Solve_Real.py
+Solve_Ackley.py
 Algorithm    GA              SA              PSO             DE/rand/1       DE/rand/2       DE/best/1       DE/best/2      
 Ackley       3.296624e-03    7.433576e-03    6.715419e-05    1.235109e-06    9.501386e-06    4.440892e-16    1.128765e-09   
 time(s)      4.106760e-02    5.498104e-01    2.985716e-03    2.389169e-02    2.673411e-02    2.406955e-02    1.493549e-02   
@@ -192,7 +209,7 @@ time(s)      2.190208e-01    4.163930e-01    2.879641e+00    1.294901e+00    1.2
 <img src="./References/Pictures/DTLZ2_MOEAD.gif" width="288" height="230"/><br/>
 
 #### 多种算法优化相同问题对比
-- 运行`Solve_MoReal`对比`ZDT1`问题优化<br>
+- 运行`Solve_ZDT`对比`ZDT1`问题优化<br>
 <img src="./References/Pictures/Compares_ZDT1.gif" width="288" height="230"/>
 <img src="./References/Pictures/ZDT1_Scores.png" width="288" height="230"/><br/>
 ```
