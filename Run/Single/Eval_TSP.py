@@ -27,8 +27,6 @@ if __name__ == '__main__':
     evaluator.plot_violin()
     # 绘制箱线图
     evaluator.plot_box()
-    # 绘制核密度估计图
-    evaluator.plot_kde()
     # 打印时间对比
     print('*** Time ***')
     evaluator.prints('time')

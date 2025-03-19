@@ -198,6 +198,7 @@ class Evaluator(object):
         plt.xlabel('Algorithms')
         plt.ylabel(self.score_types[problem_name])
         plt.xticks(ticks, labels)
+        plt.savefig('violin.png', dpi=160)
         # 显示图形
         plt.show()
 
@@ -247,9 +248,10 @@ class Evaluator(object):
                 sns.kdeplot(data=scores, label=alg_name, fill=True, color=self.colors[idx])
         # 添加标题和标签
         plt.title(problem_name)
-        plt.xlabel('Algorithms')
-        plt.ylabel(self.score_types[problem_name])
+        plt.xlabel(self.score_types[problem_name])
+        plt.ylabel('Density')
         plt.grid()
         plt.legend()
         # 显示图形
+        plt.savefig('kde.png', dpi=160)
         plt.show()
