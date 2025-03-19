@@ -1,6 +1,7 @@
 """
 选择操作
 Selections
+Copyright (c) 2024 LuChen Wang
 """
 import numpy as np
 

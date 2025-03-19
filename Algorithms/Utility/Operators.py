@@ -1,6 +1,7 @@
 """
 算子调用
 Operators
+Copyright (c) 2024 LuChen Wang
 """
 from .Crossovers import *
 from .Mutations import *

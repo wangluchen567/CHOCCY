@@ -1,3 +1,8 @@
+"""
+计算评价指标工具类
+Performance Metrics
+Copyright (c) 2024 LuChen Wang
+"""
 import warnings
 import numpy as np
 from scipy.spatial.distance import cdist

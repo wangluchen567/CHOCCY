@@ -1,6 +1,7 @@
 """
 交叉算子
 Crossover Operator
+Copyright (c) 2024 LuChen Wang
 """
 import numpy as np
 

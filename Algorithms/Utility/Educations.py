@@ -1,6 +1,7 @@
 """
 教育操作(用于混合算法)
 Educations Operator
+Copyright (c) 2024 LuChen Wang
 """
 import numpy as np
 from Algorithms.Utility.Utils import two_opt

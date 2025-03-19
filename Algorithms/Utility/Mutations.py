@@ -1,6 +1,7 @@
 """
 变异算子
 Mutation Operator
+Copyright (c) 2024 LuChen Wang
 """
 import numpy as np
 
