@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
-from tqdm import tqdm
 from typing import Union
 from Problems.PROBLEM import PROBLEM
 from scipy.interpolate import griddata
@@ -16,7 +15,7 @@ class Comparator(ALGORITHM):
 
     def __init__(self,
                  problem: PROBLEM,
-                 algorithms: dict,
+                 algorithms: Union[list, dict],
                  num_pop: Union[int, None] = None,
                  num_iter: Union[int, None] = None,
                  same_init: bool = False,
@@ -25,7 +24,7 @@ class Comparator(ALGORITHM):
         """
         算法比较器(用于对比多个算法效果)
         :param problem: 问题对象
-        :param algorithms: 需要对比的算法字典
+        :param algorithms: 需要对比的算法(字典或列表)
         :param num_pop: 初始化种群大小
         :param num_iter: 最大迭代次数
         :param same_init: 是否初始化相同
@@ -34,15 +33,24 @@ class Comparator(ALGORITHM):
         """
         super().__init__(num_pop, num_iter)
         self.problem = problem
-        self.algorithms = algorithms
         self.same_init = same_init
         self.show_mode = show_mode
-        self.iterator = None
+        self.algorithms = self._format(algorithms)
         self.colors = self.get_colors() if show_colors is None else show_colors
         # 初始化评价指标类型(单目标为适应度, 多目标默认为超体积指标)
         self.score_type = 'Fitness' if self.problem.num_obj == 1 else 'HV'
         # 若没有指定种群大小则默认使用算法集合中第一个算法的种群大小(可能会有bug)
         self.num_pop = next(iter(self.algorithms.values())).num_pop if self.num_pop is None else self.num_pop
+
+    @staticmethod
+    def _format(value):
+        """格式化列表(将列表变为字典)"""
+        if isinstance(value, dict):
+            return value
+        elif isinstance(value, list):
+            return {type(item).__name__: item for item in value}
+        else:
+            raise ValueError("This type of conversion is not supported")
 
     def init_comparator(self):
         """初始化比较器"""
@@ -93,7 +101,7 @@ class Comparator(ALGORITHM):
                     alg.record_score()
             # 绘制迭代过程中每步状态
             self.plot(n_iter=i + 1, pause=True)
-        self.print_results()
+        self.prints()
 
     def set_score_type(self, score_type):
         """重新设置指标分数类型(多目标)"""
@@ -107,7 +115,7 @@ class Comparator(ALGORITHM):
         for alg in self.algorithms.values():
             alg.set_score_type(score_type)
 
-    def print_results(self, dec=6, show_con=False):
+    def prints(self, dec=6, show_con=False):
         """格式化打印多个算法的对比结果"""
         if self.problem.num_obj == 1:
             self.print_single(dec, show_con)
