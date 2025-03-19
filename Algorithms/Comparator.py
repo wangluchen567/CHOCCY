@@ -173,6 +173,25 @@ class Comparator(ALGORITHM):
         print(scores_format)
         print(times_format)
 
+    def get_colors(self):
+        """绘图颜色设置"""
+        num_colors = len(self.algorithms)
+        if num_colors <= 3:
+            # 若数量少则直接指定颜色
+            colors = ['blue', 'red', 'green']
+            return colors
+        # 否则从彩虹色图中采样颜色
+        # 检查 Matplotlib 版本
+        if matplotlib.__version__ >= '3.7':
+            rainbow_cmap = plt.colormaps['rainbow']
+        else:
+            rainbow_cmap = plt.cm.get_cmap('rainbow')
+        # 生成 num_colors 种颜色
+        raw_colors = rainbow_cmap(np.linspace(0, 1, num_colors))
+        # 将颜色转换为十六进制格式
+        colors = [mcolors.to_hex(c) for c in raw_colors]
+        return colors
+
     def plot(self, show_mode=None, n_iter=None, pause=False):
         """
         绘图函数，根据不同模式进行绘图
@@ -201,28 +220,10 @@ class Comparator(ALGORITHM):
         else:
             raise ValueError("There is no such plotting mode")
 
-    def get_colors(self):
-        """绘图颜色设置"""
-        num_colors = len(self.algorithms)
-        if num_colors <= 3:
-            # 若数量少则直接指定颜色
-            colors = ['blue', 'red', 'green']
-            return colors
-        # 否则从彩虹色图中采样颜色
-        # 检查 Matplotlib 版本
-        if matplotlib.__version__ >= '3.7':
-            rainbow_cmap = plt.colormaps['rainbow']
-        else:
-            rainbow_cmap = plt.cm.get_cmap('rainbow')
-        # 生成 num_colors 种颜色
-        raw_colors = rainbow_cmap(np.linspace(0, 1, num_colors))
-        # 将颜色转换为十六进制格式
-        colors = [mcolors.to_hex(c) for c in raw_colors]
-        return colors
-
     def plot_pop(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制种群个体决策向量"""
-        if not pause: plt.figure()
+        if not pause:
+            plt.figure()
         plt.clf()
         if self.problem.num_dec == 1:
             plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
@@ -274,7 +275,8 @@ class Comparator(ALGORITHM):
 
     def plot_objs(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制种群目标值"""
-        if not pause: plt.figure()
+        if not pause:
+            plt.figure()
         plt.clf()
         if self.problem.num_obj == 1:
             plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
@@ -344,7 +346,8 @@ class Comparator(ALGORITHM):
 
     def plot_decs_objs(self, n_iter=None, pause=False, pause_time=0.06, contour=True, sym=True):
         """在特定条件下可同时绘制决策向量与目标值"""
-        if not pause: plt.figure()
+        if not pause:
+            plt.figure()
         plt.clf()
         if self.problem.num_dec == 1:
             all_pop = np.empty(shape=(0, 1))
@@ -414,7 +417,8 @@ class Comparator(ALGORITHM):
 
     def plot_scores(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制种群目标值"""
-        if not pause: plt.figure()
+        if not pause:
+            plt.figure()
         plt.clf()
         plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
         for idx, (name, alg) in enumerate(self.algorithms.items()):

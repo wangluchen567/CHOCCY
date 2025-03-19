@@ -1,5 +1,4 @@
 from Problems.Multi.ZDT.ZDT1 import ZDT1
-from Problems.Multi.DTLZ.DTLZ2 import DTLZ2
 from Algorithms.Multi.MOEAD import MOEAD
 from Algorithms.Multi.NSGAII import NSGAII
 from Algorithms.Multi.SPEA2 import SPEA2
