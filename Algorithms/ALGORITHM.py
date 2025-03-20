@@ -59,7 +59,7 @@ class ALGORITHM(object):
         :param educate_prob: 教育概率
         :param show_mode: 绘图模式
         """
-
+        # 初始化给定参数
         self.num_pop = num_pop
         self.num_iter = num_iter
         self.show_mode = show_mode
