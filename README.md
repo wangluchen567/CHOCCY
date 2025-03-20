@@ -118,7 +118,7 @@ from Algorithms.Single.DE import DE  # 导入求解该问题的算法
 
 problem = Ackley(num_dec=2)  # 实例化问题，并指定决策向量大小
 # 实例化算法并设置种群大小为100，迭代次数为100，优化过程展示为目标值变化情况
-algorithm = DE(num_pop=100, num_iter=100, show_mode=DE.OAD3)
+algorithm = DE(pop_size=100, max_iter=100, show_mode=DE.OAD3)
 algorithm.solve(problem)  # 使用该算法求解问题
 # 获取最优解并打印
 best, best_obj, best_con = algorithm.get_best()
@@ -151,11 +151,11 @@ from Algorithms.Comparator import Comparator  # 导入比较器类
 
 problem = Ackley(num_dec=2)  # 实例化问题，并指定决策向量大小 
 algorithms = dict()  # 将多个算法放入字典
-num_pop, num_iter = 100, 100  # 定义所有算法的参数
+pop_size, max_iter = 100, 100  # 定义所有算法的参数
 # 实例化所有算法
-algorithms['GA'] = GA(num_pop, num_iter)
-algorithms['DE/rand/1'] = DE(num_pop, num_iter, operator_type=DE.RAND1)
-algorithms['DE/best/1'] = DE(num_pop, num_iter, operator_type=DE.BEST1)
+algorithms['GA'] = GA(pop_size, max_iter)
+algorithms['DE/rand/1'] = DE(pop_size, max_iter, operator_type=DE.RAND1)
+algorithms['DE/best/1'] = DE(pop_size, max_iter, operator_type=DE.BEST1)
 # 定义算法对比类，并指定绘图模式为决策向量与目标向量绘制到同一个二维图像上
 comparator = Comparator(problem, algorithms, show_mode=Comparator.OAD2, same_init=True)
 comparator.run()  # 运行所有算法进行比较，实时对比算法运行情况
