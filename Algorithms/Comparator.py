@@ -36,12 +36,12 @@ class Comparator(ALGORITHM):
         """
         算法比较器(用于对比多个算法效果)
         :param problem: 问题对象
-        :param algorithms: 需要对比的算法(字典或列表)
-        :param num_pop: 初始化种群大小
-        :param num_iter: 最大迭代次数
-        :param same_init: 是否初始化相同
-        :param show_colors: 指定绘图颜色(名称或HEX)
-        :param show_mode: 绘图模式
+        :param algorithms: 需要对比的算法集合(字典或列表)
+        :param num_pop: 每种算法初始化的种群大小
+        :param num_iter: 每种算法的迭代次数
+        :param same_init: 所有算法是否初始化相同
+        :param show_colors: 指定每种算法的展示颜色(名称或HEX)
+        :param show_mode: 绘图模式(与ALGORITHM相同)
         """
         super().__init__(num_pop, num_iter)
         self.problem = problem

@@ -27,14 +27,24 @@ class Evaluator(object):
     def __init__(self,
                  problems: Union[list, dict],
                  algorithms: Union[list, dict],
-                 num_run: int = 1,
+                 num_run: int = 3,
                  num_pop: Union[int, None] = None,
                  num_iter: Union[int, None] = None,
                  same_init: bool = False,
                  score_types: Union[str, dict, None] = None,
                  show_colors: Union[list, None] = None):
-        """算法评估器(多问题多算法评估)"""
-
+        """
+        算法评估器(多问题多算法评估)
+        :param problems: 问题集合(字典或列表)
+        :param algorithms: 算法集合(字典或列表)
+        :param num_run: 每种算法的运行次数
+        :param num_pop: 每种算法初始化的种群大小
+        :param num_iter: 每种算法的迭代次数
+        :param same_init: 所有算法是否初始化相同
+        :param score_types: 每个问题的评价指标分数
+        :param show_colors: 指定每种算法的展示颜色
+        """
+        # 初始化给定参数
         self.num_run = num_run
         self.num_pop = num_pop
         self.num_iter = num_iter
@@ -42,7 +52,7 @@ class Evaluator(object):
         self.show_colors = show_colors
         self.problems = self._format(problems)
         self.algorithms = self._format(algorithms)
-
+        # 初始化要使用的参数
         self.pairs = dict()  # 初始化'问题-算法'对
         # 初始化评价分数类型(支持每个问题独立指定不同类型)
         self.score_types = None
