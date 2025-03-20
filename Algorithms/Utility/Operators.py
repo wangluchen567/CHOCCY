@@ -3,8 +3,8 @@
 Operators
 Copyright (c) 2024 LuChen Wang
 """
-from .Crossovers import *
-from .Mutations import *
+from Algorithms.Utility.Crossovers import *
+from Algorithms.Utility.Mutations import *
 
 
 def operator_real(pop, lower, upper, cross_prob=None, mutate_prob=None):
@@ -136,20 +136,20 @@ def operator_rand_de(parents, lower, upper, cross_prob=None, mutate_prob=None, f
     :param factor: 缩放因子
     :return: 交叉变异得到的子代
     """
-    base_parent = parents[0].copy()  # 防止影响原数据
+    base_parents = parents[0].copy()  # 防止影响原数据
     if cross_prob is None:
         cross_prob = 0.9
     if mutate_prob is None:
-        mutate_prob = 1 / base_parent.shape[1]
+        mutate_prob = 1 / base_parents.shape[1]
     if factor is None:
         factor = 0.5
     # 进行差分进化交叉
     if len(parents) == 3:
         # 一个基向量加一对差分向量
-        offspring = de_rand_1(base_parent, parents[1], parents[2], lower, upper, cross_prob, factor)
+        offspring = de_rand_1(base_parents, parents[1], parents[2], lower, upper, cross_prob, factor)
     elif len(parents) == 5:
         # 一个基向量加两对差分向量
-        offspring = de_rand_2(base_parent, parents[1], parents[2], parents[3], parents[4],
+        offspring = de_rand_2(base_parents, parents[1], parents[2], parents[3], parents[4],
                               lower, upper, cross_prob, factor)
     else:
         raise ValueError("The number of parents is incorrect")

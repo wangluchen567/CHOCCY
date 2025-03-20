@@ -9,23 +9,23 @@ class MOEAD(ALGORITHM):
     TCH = 2  # 切比雪夫聚合方法
     LAG = 3  # 线性聚合方法
 
-    def __init__(self, num_pop=100, num_iter=None, func_type=PBI, cross_prob=None, mutate_prob=None, show_mode=0):
+    def __init__(self, pop_size=100, max_iter=None, agg_type=PBI, cross_prob=None, mutate_prob=None, show_mode=0):
         """
         This code is based on the research presented in
         "MOEA/D: A multi-objective evolutionary algorithm based on decomposition"
         by Q. Zhang and H. Li
         *Code Author: Luchen Wang
-        :param num_pop: 种群大小
-        :param num_iter: 迭代次数
-        :param func_type: 聚合函数类型
+        :param pop_size: 种群大小
+        :param max_iter: 迭代次数
+        :param agg_type: 聚合函数类型
         :param cross_prob: 交叉概率
         :param mutate_prob: 变异概率
         :param show_mode: 绘图模式
         """
         # 初始化相关参数(调用父类初始化)
-        super().__init__(num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
+        super().__init__(pop_size, max_iter, cross_prob, mutate_prob, None, show_mode)
         # 聚合函数类型
-        self.func_type = func_type
+        self.agg_type = agg_type
         self.num_near = None
         self.vectors = None
         self.indexes = None
@@ -35,13 +35,13 @@ class MOEAD(ALGORITHM):
     def init_algorithm(self, problem, pop=None):
         """初始化算法"""
         # 选择的最近邻居的数量
-        self.num_near = int(np.ceil(self.num_pop / 10))
+        self.num_near = int(np.ceil(self.pop_size / 10))
         # 均匀生成权重向量
-        self.vectors = get_uniform_vectors(self.num_pop, problem.num_obj)
+        self.vectors = get_uniform_vectors(self.pop_size, problem.num_obj)
         # 获取每个权重向量的前T个邻居向量的下标
         self.indexes = self.get_neighbor_index(self.vectors, self.num_near)
         # 根据权重向量个数重新确定种群大小(必须匹配)
-        self.num_pop = len(self.vectors)
+        self.pop_size = len(self.vectors)
         # 调用父类的初始化函数
         super().init_algorithm(problem, pop)
         # 初始化参考点
@@ -63,7 +63,7 @@ class MOEAD(ALGORITHM):
     @ALGORITHM.record_time
     def run_step(self, i):
         """运行算法单步"""
-        for j in range(self.num_pop):
+        for j in range(self.pop_size):
             # 随机选择两个个体作为父代个体
             mating_pool = self.selection_single(j)
             # 进行交叉变异得到一个新的子代
@@ -98,7 +98,7 @@ class MOEAD(ALGORITHM):
         # 改变形状方便矩阵运算
         if objs.ndim == 1:
             objs = objs.reshape(1, -1)
-        if self.func_type == self.PBI:
+        if self.agg_type == self.PBI:
             # 基于惩罚边界的聚合方法
             theta = 5  # 设置超参数
             if len(objs) == 1:
@@ -110,10 +110,10 @@ class MOEAD(ALGORITHM):
                 d1 = np.abs(np.diag(np.dot(objs - self.ref, vectors.T))) / np.linalg.norm(vectors, axis=1)
                 d2 = np.linalg.norm(objs - (self.ref + d1.reshape(-1, 1) * vectors), axis=1)
             return d1 + theta * d2
-        elif self.func_type == self.TCH:
+        elif self.agg_type == self.TCH:
             # 切比雪夫聚合方法
             return np.max(vectors * np.abs(objs - self.ref), axis=1)
-        elif self.func_type == self.LAG:
+        elif self.agg_type == self.LAG:
             # 线性聚合方法
             if len(objs) == 1:
                 # 若是单个个体则直接求点积

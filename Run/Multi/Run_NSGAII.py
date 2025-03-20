@@ -5,7 +5,7 @@ from Algorithms.Multi.NSGAII import NSGAII
 
 if __name__ == '__main__':
     problem = ZDT3()
-    algorithm = NSGAII(num_pop=100, num_iter=100, show_mode=1)
+    algorithm = NSGAII(pop_size=100, max_iter=100, show_mode=1)
     algorithm.set_score_type('IGD')
     algorithm.solve(problem)
     print("HV: ", algorithm.cal_score('HV'))

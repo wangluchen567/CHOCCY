@@ -11,13 +11,13 @@ from Algorithms.Comparator import Comparator
 if __name__ == '__main__':
     problem = TSP(30)
     algorithms = dict()
-    num_pop, num_iter = 100, 100
-    algorithms['GA'] = GA(num_pop, num_iter)
-    algorithms['SA'] = SA(num_pop, num_iter, perturb_prob=0.5)
-    algorithms['ACO'] = ACO(num_pop, num_iter)
-    algorithms['HGA-TSP'] = HGATSP(num_pop, num_iter)
+    pop_size, max_iter = 100, 100
+    algorithms['GA'] = GA(pop_size, max_iter)
+    algorithms['SA'] = SA(pop_size, max_iter, perturb_prob=0.5)
+    algorithms['ACO'] = ACO(pop_size, max_iter)
+    algorithms['HGA-TSP'] = HGATSP(pop_size, max_iter)
     algorithms['FI'] = FI()
-    algorithms['GFLS'] = GFLS(num_iter)
+    algorithms['GFLS'] = GFLS(max_iter)
     comparator = Comparator(problem, algorithms, show_mode=Comparator.OBJ, same_init=True)
     comparator.run()
     comparator.plot(show_mode=Comparator.OBJ)

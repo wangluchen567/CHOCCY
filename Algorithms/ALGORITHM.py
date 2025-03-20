@@ -16,7 +16,7 @@ from tqdm import tqdm
 from typing import Union
 from Problems.PROBLEM import PROBLEM
 from Algorithms.Utility.Utils import fast_nd_sort, shuffle_matrix_in_row, record_time
-from Algorithms.Utility.PlotUtils import plot_scores, plot_data, plot_objs, plot_decs_objs
+from Algorithms.Utility.PlotUtils import plot_scores, plot_data, plot_objs, plot_objs_decs
 from Algorithms.Utility.PerfMetrics import cal_GD, cal_IGD, cal_GDPlus, cal_IGDPlus, cal_HV
 from Algorithms.Utility.Selections import elitist_selection, tournament_selection, roulette_selection
 from Algorithms.Utility.Operators import operator_real, operator_binary, operator_permutation, operator_fix_label
@@ -43,8 +43,8 @@ class ALGORITHM(object):
     score_types = ['HV', 'GD', 'IGD', 'GD+', 'IGD+']
 
     def __init__(self,
-                 num_pop: Union[int, None] = None,
-                 num_iter: Union[int, None] = None,
+                 pop_size: Union[int, None] = None,
+                 max_iter: Union[int, None] = None,
                  cross_prob: Union[float, None] = None,
                  mutate_prob: Union[float, None] = None,
                  educate_prob: Union[float, None] = None,
@@ -52,16 +52,16 @@ class ALGORITHM(object):
         """
         算法父类
         *Code Author: LuChen Wang
-        :param num_pop: 种群大小
-        :param num_iter: 迭代次数
+        :param pop_size: 种群大小
+        :param max_iter: 迭代次数
         :param cross_prob: 交叉概率
         :param mutate_prob: 变异概率
         :param educate_prob: 教育概率
         :param show_mode: 绘图模式
         """
         # 初始化给定参数
-        self.num_pop = num_pop
-        self.num_iter = num_iter
+        self.pop_size = pop_size
+        self.max_iter = max_iter
         self.show_mode = show_mode
         # 初始化交叉、变异和教育概率
         self.cross_prob = cross_prob
@@ -121,8 +121,8 @@ class ALGORITHM(object):
         # 初始化评价指标类型(单目标为适应度, 多目标默认为超体积指标)
         self.score_type = 'Fitness' if self.num_obj == 1 else 'HV'
         # 初始化算法参数
-        self.num_pop = 100 if self.num_pop is None else self.num_pop
-        self.num_iter = 100 if self.num_iter is None else self.num_iter
+        self.pop_size = 100 if self.pop_size is None else self.pop_size
+        self.max_iter = 100 if self.max_iter is None else self.max_iter
         self.cross_prob = 1.0 if self.cross_prob is None else self.cross_prob
         self.educate_prob = 0.5 if self.educate_prob is None else self.educate_prob
         self.mutate_prob = 1 / self.num_dec if self.mutate_prob is None else self.mutate_prob
@@ -137,7 +137,7 @@ class ALGORITHM(object):
     def init_and_eval(self, pop=None):
         """初始化种群并对种群中解进行评价"""
         # 若给定种群中个体数量太多则进行裁剪
-        pop = pop[:self.num_pop] if pop is not None else None
+        pop = pop[:self.pop_size] if pop is not None else None
         # 初始化种群(随机初始化或给定种群初始化)
         self.pop = self.init_pop() if pop is None else pop
         # 对种群中解进行评价(求目标值/约束值/适应度)
@@ -148,9 +148,9 @@ class ALGORITHM(object):
     def get_iterator(self):
         """构建迭代器"""
         if self.show_mode == 0:
-            return tqdm(range(self.num_iter))
+            return tqdm(range(self.max_iter))
         else:
-            return range(self.num_iter)
+            return range(self.max_iter)
 
     def solve(self, problem: PROBLEM):
         """算法求解问题(主入口函数)"""
@@ -174,13 +174,13 @@ class ALGORITHM(object):
         """运行算法单步"""
         self.record()
 
-    def cal_objs(self, decs):
+    def cal_objs(self, pop):
         """计算目标值"""
-        return self.problem.cal_objs(decs)
+        return self.problem.cal_objs(pop)
 
-    def cal_cons(self, decs):
+    def cal_cons(self, pop):
         """计算约束值"""
-        return self.problem.cal_cons(decs)
+        return self.problem.cal_cons(pop)
 
     @staticmethod
     def cal_objs_based_cons(objs, cons):
@@ -261,10 +261,10 @@ class ALGORITHM(object):
                      ALGORITHM.BIN: self.init_pop_binary,
                      ALGORITHM.PMU: self.init_pop_permutation,
                      ALGORITHM.FIX: self.init_pop_fix_label}
-        pop = np.zeros((self.num_pop, self.num_dec))
+        pop = np.zeros((self.pop_size, self.num_dec))
         # 若没有实数或整数部分则直接初始化为整型
         if np.all(self.unique_type > 1):
-            pop = np.zeros((self.num_pop, self.num_dec), dtype=int)
+            pop = np.zeros((self.pop_size, self.num_dec), dtype=int)
         # 遍历所有问题类型
         for t in self.unique_type:
             pop[:, self.type_indices[t]] = init_dict.get(t)()
@@ -274,25 +274,25 @@ class ALGORITHM(object):
         """初始化求解实数或整数问题的种群"""
         pop = np.random.uniform(self.lower[self.type_indices[ALGORITHM.REAL]],
                                 self.upper[self.type_indices[ALGORITHM.REAL]],
-                                size=(self.num_pop, len(self.type_indices[ALGORITHM.REAL])))
+                                size=(self.pop_size, len(self.type_indices[ALGORITHM.REAL])))
         return pop
 
     def init_pop_integer(self):
         """初始化求解实数或整数问题的种群"""
         pop = np.random.uniform(self.lower[self.type_indices[ALGORITHM.INT]],
                                 self.upper[self.type_indices[ALGORITHM.INT]],
-                                size=(self.num_pop, len(self.type_indices[ALGORITHM.INT])))
+                                size=(self.pop_size, len(self.type_indices[ALGORITHM.INT])))
         return pop
 
     def init_pop_binary(self):
         """初始化求解二进制问题的种群"""
-        pop = np.random.randint(2, size=(self.num_pop, len(self.type_indices[ALGORITHM.BIN])))
+        pop = np.random.randint(2, size=(self.pop_size, len(self.type_indices[ALGORITHM.BIN])))
         return pop
 
     def init_pop_permutation(self):
         """初始化求解序列问题的种群"""
         pop = np.argsort(np.random.uniform(0, 1,
-                                           size=(self.num_pop, len(self.type_indices[ALGORITHM.PMU]))), axis=1)
+                                           size=(self.pop_size, len(self.type_indices[ALGORITHM.PMU]))), axis=1)
         return pop
 
     def init_pop_fix_label(self):
@@ -303,7 +303,7 @@ class ALGORITHM(object):
         # 确定初始向量
         pop = self.example_dec.copy()
         # 初始化种群向量
-        pop = np.repeat(pop.reshape(1, -1), self.num_pop, axis=0)
+        pop = np.repeat(pop.reshape(1, -1), self.pop_size, axis=0)
         # 打乱每行的个体向量
         shuffle_matrix_in_row(pop)
         # 确保为整型
@@ -343,7 +343,7 @@ class ALGORITHM(object):
     def mating_pool_selection(self, num_next=None, k=2):
         """交配池选择"""
         if num_next is None:
-            num_next = self.num_pop
+            num_next = self.pop_size
         if k >= 2:
             # 使用锦标赛选择获取交配池
             return tournament_selection(self.fits, num_next, k)
@@ -369,7 +369,7 @@ class ALGORITHM(object):
         # 将当前种群与其子代合并
         new_pop, new_objs, new_cons, new_fits = self.pop_merge(offspring)
         # 使用选择策略(默认精英选择)选择进入下一代新种群的个体
-        best_indices = elitist_selection(new_fits, self.num_pop)
+        best_indices = elitist_selection(new_fits, self.pop_size)
         self.pop = new_pop[best_indices]
         self.objs = new_objs[best_indices]
         self.cons = new_cons[best_indices]
@@ -454,11 +454,11 @@ class ALGORITHM(object):
         elif self.show_mode == self.OBJ:
             self.plot_objs(n_iter, pause)
         elif self.show_mode == self.DEC:
-            self.plot_pop(n_iter, pause)
+            self.plot_decs(n_iter, pause)
         elif self.show_mode == self.OAD2:
-            self.plot_decs_objs(n_iter, pause)
+            self.plot_objs_decs(n_iter, pause)
         elif self.show_mode == self.OAD3:
-            self.plot_decs_objs(n_iter, pause, contour=False)
+            self.plot_objs_decs(n_iter, pause, contour=False)
         elif self.show_mode == self.SCORE:
             self.plot_scores(n_iter, pause)
         elif self.show_mode == self.PRB:
@@ -472,7 +472,7 @@ class ALGORITHM(object):
         """提供算法自定义绘图的接口"""
         pass
 
-    def plot_pop(self, n_iter=None, pause=False, pause_time=0.06):
+    def plot_decs(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制种群个体决策向量"""
         if pause or n_iter is None:
             plot_data(self.pop, n_iter, pause, pause_time)
@@ -487,13 +487,13 @@ class ALGORITHM(object):
         else:
             plot_objs(self.objs, n_iter, pause, pause_time, self.problem.pareto_front)
 
-    def plot_decs_objs(self, n_iter=None, pause=False, pause_time=0.06, contour=True, sym=True):
-        """在特定条件下可同时绘制决策向量与目标值"""
+    def plot_objs_decs(self, n_iter=None, pause=False, pause_time=0.06, contour=True, sym=True):
+        """在特定条件下可将目标空间与决策空间绘制到同一空间中"""
         if pause or n_iter is None:
-            plot_decs_objs(self.problem, self.pop, self.objs,
+            plot_objs_decs(self.problem, self.pop, self.objs,
                            n_iter, pause, pause_time, contour=contour, sym=sym)
         else:
-            plot_decs_objs(self.problem, self.pop_history[n_iter], self.objs_history[n_iter],
+            plot_objs_decs(self.problem, self.pop_history[n_iter], self.objs_history[n_iter],
                            n_iter, pause, pause_time, contour=contour, sym=sym)
 
     def get_scores(self):

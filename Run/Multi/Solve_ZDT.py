@@ -7,10 +7,10 @@ from Algorithms.Comparator import Comparator
 if __name__ == '__main__':
     problem = ZDT1()
     algorithms = dict()
-    num_pop, num_iter = 100, 100
-    algorithms['NSGA-II'] = NSGAII(num_pop, num_iter)
-    algorithms['MOEA/D'] = MOEAD(num_pop, num_iter)
-    algorithms['SPEA2'] = SPEA2(num_pop, num_iter)
+    pop_size, max_iter = 100, 100
+    algorithms['NSGA-II'] = NSGAII(pop_size, max_iter)
+    algorithms['MOEA/D'] = MOEAD(pop_size, max_iter)
+    algorithms['SPEA2'] = SPEA2(pop_size, max_iter)
     comparator = Comparator(problem, algorithms, show_mode=Comparator.OBJ, same_init=True)
     comparator.set_score_type('IGD')  # 设置评价指标为IGD
     comparator.run()

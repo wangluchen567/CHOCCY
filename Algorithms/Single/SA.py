@@ -3,17 +3,17 @@ from Algorithms.Utility.Mutations import *
 
 
 class SA(ALGORITHM):
-    def __init__(self, num_pop=1, num_iter=10000, init_temp=1e4, alpha=0.99, perturb_prob=0.5, show_mode=0):
+    def __init__(self, pop_size=1, max_iter=10000, init_temp=1e4, alpha=0.99, perturb_prob=0.5, show_mode=0):
         """
         模拟退火算法
         *Code Author: Luchen Wang
-        :param num_iter: 迭代次数
+        :param max_iter: 迭代次数
         :param init_temp: 初始温度
         :param alpha: 温度衰减系数
         :param perturb_prob: 扰动概率(变异概率)
         :param show_mode: 绘图模式
         """
-        super().__init__(num_pop, num_iter, None, perturb_prob, None, show_mode)
+        super().__init__(pop_size, max_iter, None, perturb_prob, None, show_mode)
         self.only_solve_single = True
         self.init_temp = init_temp
         self.temp = self.init_temp

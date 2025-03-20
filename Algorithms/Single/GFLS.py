@@ -3,17 +3,16 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 
 class GFLS(ALGORITHM):
-    def __init__(self, num_iter=1000, alpha=1 / 4, active_all=True, show_mode=0):
+    def __init__(self, max_iter=1000, alpha=1 / 4, active_all=True, show_mode=0):
         """
         引导快速局部搜索(Guided Fast Local Search)
         *Code Author: Luchen Wang
-        :param problem: 问题对象(TSP类型)
-        :param num_iter: 迭代次数
+        :param max_iter: 迭代次数
         :param alpha: 用于更新lambda的超参数
         :param active_all: 是否激活全部子邻域
         :param show_mode: 绘图模式
         """
-        super().__init__(num_pop=1, num_iter=num_iter, show_mode=show_mode)
+        super().__init__(pop_size=1, max_iter=max_iter, show_mode=show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.PMU]
         self.alpha = alpha

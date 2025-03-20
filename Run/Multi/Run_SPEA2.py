@@ -6,7 +6,7 @@ import cProfile
 
 if __name__ == '__main__':
     problem = ZDT1()
-    alg = SPEA2(num_pop=100, num_iter=100, show_mode=1)
+    alg = SPEA2(pop_size=100, max_iter=100, show_mode=1)
     cProfile.run("alg.solve(problem)", sort='cumulative')
     print("HV: ", alg.cal_score('HV'))
     print("GD: ", alg.cal_score('GD'))

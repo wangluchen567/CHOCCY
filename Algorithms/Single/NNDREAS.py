@@ -1,20 +1,19 @@
 import numpy as np
-from tqdm import tqdm
 from Algorithms.ALGORITHM import ALGORITHM
 from Algorithms.Utility.Selections import elitist_selection
 from Algorithms.Utility.Operators import operator_real, operator_binary
 
 
 class NNDREAS(ALGORITHM):
-    def __init__(self, num_pop=None, num_iter=None, structure=None, search_range=None, delta=0.5,
+    def __init__(self, pop_size=None, max_iter=None, structure=None, search_range=None, delta=0.5,
                  cross_prob=None, mutate_prob=None, show_mode=0):
         """
         This code is based on the research presented in
         "Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimization With Millions of Variables"
         by Ye Tian, Luchen Wang, Shangshang Yang, Jinliang Ding, Yaochu Jin, Xingyi Zhang
         *Code Author: Luchen Wang
-        :param num_pop: 种群大小
-        :param num_iter: 迭代次数
+        :param pop_size: 种群大小
+        :param max_iter: 迭代次数
         :param structure: 神经网络结构
         :param search_range: 权重搜索范围
         :param delta: 第一阶段搜索占比
@@ -22,7 +21,7 @@ class NNDREAS(ALGORITHM):
         :param mutate_prob: 变异概率
         :param show_mode: 绘图模式
         """
-        super().__init__(num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
+        super().__init__(pop_size, max_iter, cross_prob, mutate_prob, None, show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.BIN]
         self.structure = structure
@@ -79,10 +78,10 @@ class NNDREAS(ALGORITHM):
         # 记录当前种群信息
         self.record()
         # 按照delta占比分为两个阶段
-        self.delta_iter = self.delta * self.num_iter
+        self.delta_iter = self.delta * self.max_iter
 
     def init_pop_weights(self):
-        pop_weights = np.random.uniform(self.upper, self.lower, size=(self.num_pop, self.num_dec))
+        pop_weights = np.random.uniform(self.upper, self.lower, size=(self.pop_size, self.num_dec))
         return pop_weights
 
     @ALGORITHM.record_time
@@ -127,7 +126,7 @@ class NNDREAS(ALGORITHM):
         # 重新计算合并种群的的等价适应度值
         new_fits = self.cal_fits(new_objs, new_cons)
         # 使用选择策略(默认精英选择)选择进入下一代新种群的个体
-        best_indices = elitist_selection(new_fits, self.num_pop)
+        best_indices = elitist_selection(new_fits, self.pop_size)
         # 取目标值最优的个体组成新的种群
         self.pop = new_pop[best_indices]
         self.objs = new_objs[best_indices]

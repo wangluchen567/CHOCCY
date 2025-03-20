@@ -3,18 +3,18 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 
 class PSO(ALGORITHM):
-    def __init__(self, num_pop=None, num_iter=None, w=0.7298, c1=2.0, c2=2.0, show_mode=0):
+    def __init__(self, pop_size=None, max_iter=None, w=0.7298, c1=2.0, c2=2.0, show_mode=0):
         """
         粒子群优化算法
         *Code Author: Luchen Wang
-        :param num_pop: 种群大小
-        :param num_iter: 迭代次数
+        :param pop_size: 种群大小
+        :param max_iter: 迭代次数
         :param w: 惯性权重
         :param c1: 个体学习权重
         :param c2: 社会学习权重
         :param show_mode: 绘图模式
         """
-        super().__init__(num_pop, num_iter, None, None, None, show_mode)
+        super().__init__(pop_size, max_iter, None, None, None, show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.REAL, self.INT]
         self.w = w  # 惯性权重
@@ -41,10 +41,10 @@ class PSO(ALGORITHM):
 
     def operator_pso(self):
         """重写算子为粒子群优化算子"""
-        num_pop, num_dec = self.pop.shape
+        pop_size, num_dec = self.pop.shape
         # 得到两个随机矩阵以引入随机性
-        r1 = np.random.uniform(size=(num_pop, num_dec))
-        r2 = np.random.uniform(size=(num_pop, num_dec))
+        r1 = np.random.uniform(size=(pop_size, num_dec))
+        r2 = np.random.uniform(size=(pop_size, num_dec))
         # 计算下一代粒子群速度
         self.velocity = (self.w * self.velocity +
                          r1 * self.c1 * (self.pop - self.particle) +
@@ -53,11 +53,11 @@ class PSO(ALGORITHM):
         self.particle = self.particle + self.velocity
         # 对上下界进行裁剪
         if isinstance(self.lower, int) or isinstance(self.lower, float):
-            lower_ = np.ones((num_pop, num_dec)) * self.lower
-            upper_ = np.ones((num_pop, num_dec)) * self.upper
+            lower_ = np.ones((pop_size, num_dec)) * self.lower
+            upper_ = np.ones((pop_size, num_dec)) * self.upper
         else:
-            lower_ = self.lower.reshape(1, -1).repeat(num_pop, 0)
-            upper_ = self.upper.reshape(1, -1).repeat(num_pop, 0)
+            lower_ = self.lower.reshape(1, -1).repeat(pop_size, 0)
+            upper_ = self.upper.reshape(1, -1).repeat(pop_size, 0)
         self.particle[self.particle < lower_] = lower_[self.particle < lower_]
         self.particle[self.particle > upper_] = upper_[self.particle > upper_]
 

@@ -5,19 +5,19 @@ from Algorithms.Utility.Utils import get_dom_between
 
 
 class SPEA2(ALGORITHM):
-    def __init__(self, num_pop=None, num_iter=None, cross_prob=None, mutate_prob=None, show_mode=0):
+    def __init__(self, pop_size=None, max_iter=None, cross_prob=None, mutate_prob=None, show_mode=0):
         """
         This code is based on the research presented in
         "SPEA2: Improving the strength Pareto evolutionary algorithm"
         by E. Zitzler, M. Laumanns, and L. Thiele
         *Code Author: Luchen Wang
-        :param num_pop: 种群大小
-        :param num_iter: 迭代次数
+        :param pop_size: 种群大小
+        :param max_iter: 迭代次数
         :param cross_prob: 交叉概率
         :param mutate_prob: 变异概率
         :param show_mode: 绘图模式
         """
-        super().__init__(num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
+        super().__init__(pop_size, max_iter, cross_prob, mutate_prob, None, show_mode)
 
     @ALGORITHM.record_time
     def run_step(self, i):
@@ -33,7 +33,7 @@ class SPEA2(ALGORITHM):
 
     def cal_fits(self, objs, cons):
         """根据给定目标值和约束值得到适应度值"""
-        num_pop = len(objs)
+        pop_size = len(objs)
         # 检查是否均满足约束，若均满足约束则无需考虑约束
         if np.all(cons <= 0):
             objs_ = objs
@@ -44,8 +44,8 @@ class SPEA2(ALGORITHM):
         # 得到 每个个体i支配的个体数 S
         s_values = np.sum(dom_between, axis=1)
         # 得到 支配i的每个个体j支配的所有个体数之和 R
-        r_values = np.zeros(num_pop)
-        for i in range(num_pop):
+        r_values = np.zeros(pop_size)
+        for i in range(pop_size):
             r_values[i] = np.sum(s_values[dom_between[:, i] == 1])
         # 当多个个体不相互支配时需要使用k邻近估算密度
         # 计算每个个体目标值之间的距离
@@ -53,7 +53,7 @@ class SPEA2(ALGORITHM):
         np.fill_diagonal(dist_mat, np.inf)  # 对角线设置为inf
         # 将距离按照递增排序并选第k=sqrt(N+N)个作为指标(N+N:父代+子代)
         dist_sort = np.sort(dist_mat, axis=1)
-        d_values = 1.0 / (dist_sort[:, int(np.sqrt(num_pop))] + 2)
+        d_values = 1.0 / (dist_sort[:, int(np.sqrt(pop_size))] + 2)
         # 计算个体适应度值
         fits = r_values + d_values
         return fits
@@ -67,13 +67,13 @@ class SPEA2(ALGORITHM):
         # 使用SPEA2选择策略进行选择
         chosen = np.array(new_fits < 1)
         num_chosen = np.sum(chosen)
-        if num_chosen < self.num_pop:
+        if num_chosen < self.pop_size:
             # 默认可选数量过少则进行补充
             ranking = np.argsort(new_fits)
-            chosen[ranking[:self.num_pop]] = True
-        elif num_chosen > self.num_pop:
+            chosen[ranking[:self.pop_size]] = True
+        elif num_chosen > self.pop_size:
             # 若可选数量过多则进行裁剪
-            del_indices = self.truncation(new_objs_[chosen], num_chosen - self.num_pop)
+            del_indices = self.truncation(new_objs_[chosen], num_chosen - self.pop_size)
             chosen_indices = np.where(chosen)[0]
             chosen[chosen_indices[del_indices]] = False
         else:

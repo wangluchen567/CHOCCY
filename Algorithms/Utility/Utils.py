@@ -59,15 +59,15 @@ def get_dom_between_(objs):
 
 def fast_nd_sort_(objs):
     """快速非支配排序(非jit加速版)"""
-    num_pop = len(objs)  # 获取种群数量
+    pop_size = len(objs)  # 获取种群数量
     objs = np.array(objs)  # 将目标转换为numpy数组
     fronts = []  # 初始化各前沿面列表
-    ranks = np.zeros(num_pop, dtype=int)  # 每个个体所在的前沿数
-    num_dom = np.zeros(num_pop, dtype=int)  # 每一个解被支配的次数初始化为0
-    sol_dom = [[] for _ in range(num_pop)]  # 每一个解所支配的解列表
+    ranks = np.zeros(pop_size, dtype=int)  # 每个个体所在的前沿数
+    num_dom = np.zeros(pop_size, dtype=int)  # 每一个解被支配的次数初始化为0
+    sol_dom = [[] for _ in range(pop_size)]  # 每一个解所支配的解列表
 
     # 创建比较矩阵以确定支配关系
-    for i in range(num_pop):
+    for i in range(pop_size):
         # 判断解 i 是否支配其他解
         dominates = np.all(objs[i] <= objs, axis=1) & np.any(objs[i] < objs, axis=1)
         # 记录被解 i 支配的解
@@ -99,8 +99,8 @@ def fast_nd_sort_(objs):
 
 def cal_crowd_dist(objs, fronts):
     """求拥挤度距离"""
-    num_pop, num_dim = objs.shape
-    crowd_dist = np.zeros(num_pop)
+    pop_size, num_dim = objs.shape
+    crowd_dist = np.zeros(pop_size)
     for f in fronts:
         # 获取当前前沿面中解的目标值
         objs_f = objs[f, :]
@@ -253,16 +253,16 @@ try:
     @jit(nopython=True)
     def fast_nd_sort_jit(objs):
         """快速非支配排序(jit加速版)"""
-        num_pop = objs.shape[0]  # 获取种群数量
-        fronts = np.zeros((num_pop, num_pop), dtype=np.int16)  # 初始化各前沿面的索引数组
-        fronts_trunc = np.zeros(num_pop, dtype=np.int16)  # 各前沿面的索引数组的索引截断
-        ranks = np.zeros(num_pop, dtype=np.int16)  # 每个个体所在的前沿数
-        num_dom = np.zeros(num_pop, dtype=np.int16)  # 每一个解被支配的次数初始化为0
-        sol_dom = np.zeros((num_pop, num_pop), dtype=np.int16)  # 每一个解所支配的解的索引数组
-        sol_trunc = np.zeros(num_pop, dtype=np.int16)  # 所支配解的索引截断
+        pop_size = objs.shape[0]  # 获取种群数量
+        fronts = np.zeros((pop_size, pop_size), dtype=np.int16)  # 初始化各前沿面的索引数组
+        fronts_trunc = np.zeros(pop_size, dtype=np.int16)  # 各前沿面的索引数组的索引截断
+        ranks = np.zeros(pop_size, dtype=np.int16)  # 每个个体所在的前沿数
+        num_dom = np.zeros(pop_size, dtype=np.int16)  # 每一个解被支配的次数初始化为0
+        sol_dom = np.zeros((pop_size, pop_size), dtype=np.int16)  # 每一个解所支配的解的索引数组
+        sol_trunc = np.zeros(pop_size, dtype=np.int16)  # 所支配解的索引截断
 
         # 创建比较矩阵以确定支配关系
-        for i in range(num_pop):
+        for i in range(pop_size):
             # 判断解 i 是否支配其他解
             dominates = dominates_loop(objs, i)
             # 得到被解 i 支配的解的索引
@@ -284,7 +284,7 @@ try:
         i = 0
         # 迭代处理每一个前沿面
         while True:
-            next_front = np.zeros(num_pop, dtype=np.int16)  # 初始化下一个前沿面
+            next_front = np.zeros(pop_size, dtype=np.int16)  # 初始化下一个前沿面
             next_count = 0
             for p in fronts[i][:front_count]:  # 遍历当前前沿面的每一个解
                 for q in sol_dom[p][:sol_trunc[p]]:  # 遍历每一个被当前解支配的解

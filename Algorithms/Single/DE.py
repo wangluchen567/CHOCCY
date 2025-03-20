@@ -8,20 +8,20 @@ class DE(ALGORITHM):
     BEST1 = 2  # (DE/best/1)
     BEST2 = 4  # (DE/best/2)
 
-    def __init__(self, num_pop=None, num_iter=None, cross_prob=None, mutate_prob=None,
+    def __init__(self, pop_size=None, max_iter=None, cross_prob=None, mutate_prob=None,
                  factor=0.5, operator_type=BEST1, show_mode=0):
         """
         差分进化算法
         *Code Author: Luchen Wang
-        :param num_pop: 种群大小
-        :param num_iter: 迭代次数
+        :param pop_size: 种群大小
+        :param max_iter: 迭代次数
         :param cross_prob: 交叉概率
         :param mutate_prob: 变异概率
         :param factor: 缩放因子
         :param operator_type: 算子类型
         :param show_mode: 绘图模式
         """
-        super().__init__(num_pop, num_iter, cross_prob, mutate_prob, None, show_mode)
+        super().__init__(pop_size, max_iter, cross_prob, mutate_prob, None, show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.REAL, self.INT]
         self.factor = factor
@@ -33,7 +33,7 @@ class DE(ALGORITHM):
     def run_step(self, i):
         """运行算法单步"""
         # 获取交配池
-        mating_pools = [self.mating_pool_selection(self.num_pop) for _ in range(self.num_parents)]
+        mating_pools = [self.mating_pool_selection(self.pop_size) for _ in range(self.num_parents)]
         # 交叉变异生成子代
         offspring = self.operator(mating_pools)
         # 进行环境选择

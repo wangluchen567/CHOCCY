@@ -8,14 +8,14 @@ from Algorithms.Evaluator import Evaluator
 if __name__ == '__main__':
     problems = [Ackley(num_dec=30)]
     algorithms = dict()
-    num_pop, num_iter = 100, 100
-    algorithms['GA'] = GA(num_pop, num_iter)
-    algorithms['SA'] = SA(num_pop, num_iter)
-    algorithms['PSO'] = PSO(num_pop, num_iter)
-    algorithms['DE/rand/1'] = DE(num_pop, num_iter, operator_type=DE.RAND1)
-    algorithms['DE/rand/2'] = DE(num_pop, num_iter, operator_type=DE.RAND2)
-    algorithms['DE/best/1'] = DE(num_pop, num_iter, operator_type=DE.BEST1)
-    algorithms['DE/best/2'] = DE(num_pop, num_iter, operator_type=DE.BEST2)
+    pop_size, max_iter = 100, 100
+    algorithms['GA'] = GA(pop_size, max_iter)
+    algorithms['SA'] = SA(pop_size, max_iter)
+    algorithms['PSO'] = PSO(pop_size, max_iter)
+    algorithms['DE/rand/1'] = DE(pop_size, max_iter, operator_type=DE.RAND1)
+    algorithms['DE/rand/2'] = DE(pop_size, max_iter, operator_type=DE.RAND2)
+    algorithms['DE/best/1'] = DE(pop_size, max_iter, operator_type=DE.BEST1)
+    algorithms['DE/best/2'] = DE(pop_size, max_iter, operator_type=DE.BEST2)
     evaluator = Evaluator(problems, algorithms, num_run=30, same_init=True)
     evaluator.run()
     # 打印结果对比

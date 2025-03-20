@@ -10,7 +10,7 @@ class DPKP(ALGORITHM):
         *Code Author: Luchen Wang
         :param show_mode: 绘图模式
         """
-        super().__init__(num_pop=1, num_iter=None, show_mode=show_mode)
+        super().__init__(pop_size=1, max_iter=None, show_mode=show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.BIN]
         self.weights = None
@@ -21,7 +21,7 @@ class DPKP(ALGORITHM):
     def init_algorithm(self, problem, pop=None):
         super().init_algorithm(problem, pop)
         # 初始化迭代次数
-        self.num_iter = self.num_dec
+        self.max_iter = self.num_dec
         # 问题必须为背包问题
         if hasattr(self.problem, 'weights') and hasattr(self.problem, 'values') and hasattr(self.problem, 'capacity'):
             self.weights = self.problem.weights.astype(int).flatten()

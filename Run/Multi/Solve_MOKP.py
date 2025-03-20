@@ -8,11 +8,11 @@ from Algorithms.Comparator import Comparator
 if __name__ == '__main__':
     problem = MOKP(10000)
     algorithms = dict()
-    num_pop, num_iter = 100, 100
-    algorithms['NSGA-II'] = NSGAII(num_pop, num_iter)
-    algorithms['MOEA/D'] = MOEAD(num_pop, num_iter)
-    algorithms['SPEA2'] = SPEA2(num_pop, num_iter)
-    algorithms['NNDREA'] = NNDREA(num_pop, num_iter)
+    pop_size, max_iter = 100, 100
+    algorithms['NSGA-II'] = NSGAII(pop_size, max_iter)
+    algorithms['MOEA/D'] = MOEAD(pop_size, max_iter)
+    algorithms['SPEA2'] = SPEA2(pop_size, max_iter)
+    algorithms['NNDREA'] = NNDREA(pop_size, max_iter)
     comparator = Comparator(problem, algorithms, show_mode=Comparator.OBJ)
     comparator.run()
     comparator.plot(show_mode=Comparator.SCORE)

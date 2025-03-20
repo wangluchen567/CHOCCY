@@ -28,8 +28,8 @@ class Comparator(ALGORITHM):
     def __init__(self,
                  problem: PROBLEM,
                  algorithms: Union[list, dict],
-                 num_pop: Union[int, None] = None,
-                 num_iter: Union[int, None] = None,
+                 pop_size: Union[int, None] = None,
+                 max_iter: Union[int, None] = None,
                  same_init: bool = False,
                  show_colors: Union[list, None] = None,
                  show_mode: int = 0):
@@ -37,13 +37,13 @@ class Comparator(ALGORITHM):
         算法比较器(用于对比多个算法效果)
         :param problem: 问题对象
         :param algorithms: 需要对比的算法集合(字典或列表)
-        :param num_pop: 每种算法初始化的种群大小
-        :param num_iter: 每种算法的迭代次数
+        :param pop_size: 每种算法初始化的种群大小
+        :param max_iter: 每种算法的迭代次数
         :param same_init: 所有算法是否初始化相同
         :param show_colors: 指定每种算法的展示颜色(名称或HEX)
         :param show_mode: 绘图模式(与ALGORITHM相同)
         """
-        super().__init__(num_pop, num_iter)
+        super().__init__(pop_size, max_iter)
         self.problem = problem
         self.same_init = same_init
         self.show_mode = show_mode
@@ -52,7 +52,7 @@ class Comparator(ALGORITHM):
         # 初始化评价指标类型(单目标为适应度, 多目标默认为超体积指标)
         self.score_type = 'Fitness' if self.problem.num_obj == 1 else 'HV'
         # 若没有指定种群大小则默认使用算法集合中第一个算法的种群大小(可能会有bug)
-        self.num_pop = next(iter(self.algorithms.values())).num_pop if self.num_pop is None else self.num_pop
+        self.pop_size = next(iter(self.algorithms.values())).pop_size if self.pop_size is None else self.pop_size
 
     @staticmethod
     def _format(value):
@@ -87,12 +87,12 @@ class Comparator(ALGORITHM):
                 alg.run()
             else:
                 # 得到最大迭代次数
-                max_iter = max(max_iter, alg.num_iter)
+                max_iter = max(max_iter, alg.max_iter)
             if self.show_mode == self.SCORE:
                 # 若展示指标值则需每步计算指标值
                 alg.record_score()
         # 迭代次数若为空则根据给定算法最大迭代次数
-        self.num_iter = max_iter if self.num_iter is None else self.num_iter
+        self.max_iter = max_iter if self.max_iter is None else self.max_iter
 
     def run(self):
         """运行多个算法的实时比较"""
@@ -102,7 +102,7 @@ class Comparator(ALGORITHM):
         self.plot(n_iter=0, pause=True)
         for i in self.get_iterator():
             for alg in self.algorithms.values():
-                if i < alg.num_iter:
+                if i < alg.max_iter:
                     # 若算法未结束迭代
                     alg.run_step(i)
                 else:

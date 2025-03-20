@@ -18,11 +18,11 @@ if __name__ == '__main__':
         ZDT5(),
         ZDT6(),
     ]
-    num_pop, num_iter = 100, 100
+    pop_size, max_iter = 100, 100
     algorithms = {
-        "NSGA-II": NSGAII(num_pop, num_iter),
-        "MOEA/D": MOEAD(num_pop, num_iter),
-        "SPEA2": SPEA2(num_pop, num_iter),
+        "NSGA-II": NSGAII(pop_size, max_iter),
+        "MOEA/D": MOEAD(pop_size, max_iter),
+        "SPEA2": SPEA2(pop_size, max_iter),
     }
     evaluator = Evaluator(problems, algorithms, num_run=10, same_init=True)
     evaluator.run()

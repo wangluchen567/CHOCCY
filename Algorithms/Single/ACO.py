@@ -5,19 +5,19 @@ from Algorithms.ALGORITHM import ALGORITHM
 
 
 class ACO(ALGORITHM):
-    def __init__(self, num_pop=None, num_iter=None, alpha=1, beta=4, rho=0.2, q_value=100, show_mode=0):
+    def __init__(self, pop_size=None, max_iter=None, alpha=1, beta=4, rho=0.2, q_value=100, show_mode=0):
         """
         蚁群算法 (蚁周模型 Ant-Cycle)
         *Code Author: Luchen Wang
-        :param num_pop: 种群大小(蚁群大小)
-        :param num_iter: 迭代次数
+        :param pop_size: 种群大小(蚁群大小)
+        :param max_iter: 迭代次数
         :param alpha: 信息素因子，反映信息素的重要程度，一般取值[1~4]
         :param beta: 启发函数因子，反映了启发式信息的重要程度，一般取值[3~5]
         :param rho: 信息素挥发因子，一般取值[0.1~0.5]
         :param q_value: 信息素常量，一般取值[10, 1000]
         :param show_mode: 绘图模式
         """
-        super().__init__(num_pop, num_iter, None, None, None, show_mode)
+        super().__init__(pop_size, max_iter, None, None, None, show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.PMU]
         self.alpha = alpha
@@ -49,14 +49,14 @@ class ACO(ALGORITHM):
         # 路径上的信息素矩阵，初始化为1
         self.tau_mat = np.ones((self.num_dec, self.num_dec))
         # 蚁群路径(路径记录表, 记录已经访问过的节点)
-        self.pop = np.zeros((self.num_pop, self.num_dec), dtype=int)
+        self.pop = np.zeros((self.pop_size, self.num_dec), dtype=int)
 
     @ALGORITHM.record_time
     def run_step(self, i):
         # 清空路径记录表
-        self.pop = np.zeros((self.num_pop, self.num_dec), dtype=int)
+        self.pop = np.zeros((self.pop_size, self.num_dec), dtype=int)
         # 随机生成各个蚂蚁的起点
-        start_node = np.random.randint(self.num_dec, size=self.num_pop)
+        start_node = np.random.randint(self.num_dec, size=self.pop_size)
         # 将第一列赋值为当前的起点
         self.pop[:, 0] = start_node
         # 获取所有蚂蚁当前的行动路线
@@ -65,8 +65,8 @@ class ACO(ALGORITHM):
             tau_mat_ = self.tau_mat[self.pop[:, j - 1]]
             eta_mat_ = self.eta_mat[self.pop[:, j - 1]]
             # 对访问过的节点进行mask
-            tau_mat_[np.arange(self.num_pop), self.pop[:, 0:j].T] = 0
-            eta_mat_[np.arange(self.num_pop), self.pop[:, 0:j].T] = 0
+            tau_mat_[np.arange(self.pop_size), self.pop[:, 0:j].T] = 0
+            eta_mat_[np.arange(self.pop_size), self.pop[:, 0:j].T] = 0
             # 根据信息素和启发式信息计算下个节点的访问概率
             prob_mat = tau_mat_ ** self.alpha * eta_mat_ ** self.beta
             # 对访问概率按行(每个蚂蚁个体)归一化

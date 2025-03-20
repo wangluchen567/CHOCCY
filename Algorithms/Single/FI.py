@@ -9,7 +9,7 @@ class FI(ALGORITHM):
         *Code Author: Luchen Wang
         :param show_mode: 绘图模式
         """
-        super().__init__(num_pop=1, num_iter=None, show_mode=show_mode)
+        super().__init__(pop_size=1, max_iter=None, show_mode=show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.PMU]
         self.dist_mat = None
@@ -21,7 +21,7 @@ class FI(ALGORITHM):
         if not hasattr(self.problem, 'dist_mat'):
             raise ValueError("The problem must provide the distance matrix")
         # 初始化迭代次数
-        self.num_iter = self.num_dec
+        self.max_iter = self.num_dec
         # 获取问题的距离矩阵
         self.dist_mat = self.problem.dist_mat  # type: ignore
 

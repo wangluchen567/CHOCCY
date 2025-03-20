@@ -120,8 +120,8 @@ def plot_objs(objs, n_iter=None, pause=False, pause_time=0.06, pareto_front=None
         plt.show()
 
 
-def plot_decs_objs(problem, decs, objs, n_iter=None, pause=False, pause_time=0.06, contour=True, sym=True):
-    """绘制混合图像方便展示"""
+def plot_objs_decs(problem, decs, objs, n_iter=None, pause=False, pause_time=0.06, contour=True, sym=True):
+    """绘制目标空间与决策空间的混合图像方便展示"""
     decs_dim = decs.shape[1]
     if objs.ndim == 1:
         objs = objs.reshape(-1, 1)

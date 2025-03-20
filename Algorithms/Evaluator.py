@@ -28,8 +28,8 @@ class Evaluator(object):
                  problems: Union[list, dict],
                  algorithms: Union[list, dict],
                  num_run: int = 3,
-                 num_pop: Union[int, None] = None,
-                 num_iter: Union[int, None] = None,
+                 pop_size: Union[int, None] = None,
+                 max_iter: Union[int, None] = None,
                  same_init: bool = False,
                  score_types: Union[str, dict, None] = None,
                  show_colors: Union[list, None] = None):
@@ -38,16 +38,16 @@ class Evaluator(object):
         :param problems: 问题集合(字典或列表)
         :param algorithms: 算法集合(字典或列表)
         :param num_run: 每种算法的运行次数
-        :param num_pop: 每种算法初始化的种群大小
-        :param num_iter: 每种算法的迭代次数
+        :param pop_size: 每种算法初始化的种群大小
+        :param max_iter: 每种算法的迭代次数
         :param same_init: 所有算法是否初始化相同
         :param score_types: 每个问题的评价指标分数
         :param show_colors: 指定每种算法的展示颜色
         """
         # 初始化给定参数
         self.num_run = num_run
-        self.num_pop = num_pop
-        self.num_iter = num_iter
+        self.pop_size = pop_size
+        self.max_iter = max_iter
         self.same_init = same_init
         self.show_colors = show_colors
         self.problems = self._format(problems)
@@ -60,7 +60,7 @@ class Evaluator(object):
         # 指定绘图颜色(名称或HEX)
         self.colors = self.get_colors() if show_colors is None else show_colors
         # 若没有指定种群大小则默认使用算法集合中第一个算法的种群大小(可能会有bug)
-        self.num_pop = next(iter(self.algorithms.values())).num_pop if self.num_pop is None else self.num_pop
+        self.pop_size = next(iter(self.algorithms.values())).pop_size if self.pop_size is None else self.pop_size
 
     @staticmethod
     def _format(value):
@@ -83,7 +83,7 @@ class Evaluator(object):
             if self.same_init:
                 # 若需要相同初始化则
                 # 创建一个算法对象用于初始化种群
-                alg_temp = ALGORITHM(self.num_pop)
+                alg_temp = ALGORITHM(self.pop_size)
                 alg_temp.init_algorithm(problem)
                 pop = alg_temp.pop  # 得到种群
             for (alg_name, alg) in self.algorithms.items():
@@ -220,7 +220,6 @@ class Evaluator(object):
         plt.xlabel('Algorithms')
         plt.ylabel(self.score_types[problem_name])
         plt.xticks(ticks, labels)
-        plt.savefig('violin.png', dpi=160)
         # 显示图形
         plt.show()
 
@@ -275,5 +274,4 @@ class Evaluator(object):
         plt.grid()
         plt.legend()
         # 显示图形
-        plt.savefig('kde.png', dpi=160)
         plt.show()

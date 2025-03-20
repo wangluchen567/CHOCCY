@@ -3,20 +3,19 @@ from Algorithms.Utility.Educations import educate_tsp
 
 
 class HGATSP(ALGORITHM):
-    def __init__(self, num_pop=None, num_iter=None,
+    def __init__(self, pop_size=None, max_iter=None,
                  cross_prob=None, mutate_prob=None, educate_prob=None, show_mode=0):
         """
         混合遗传算法(求解TSP问题)
         *Code Author: Luchen Wang
-        :param problem: 问题对象
-        :param num_pop: 种群大小
-        :param num_iter: 迭代次数
+        :param pop_size: 种群大小
+        :param max_iter: 迭代次数
         :param cross_prob: 交叉概率
         :param mutate_prob: 变异概率
         :param educate_prob: 教育概率
         :param show_mode: 绘图模式
         """
-        super().__init__(num_pop, num_iter, cross_prob, mutate_prob, educate_prob, show_mode)
+        super().__init__(pop_size, max_iter, cross_prob, mutate_prob, educate_prob, show_mode)
         self.only_solve_single = True
         self.solvable_type = [self.PMU]
 

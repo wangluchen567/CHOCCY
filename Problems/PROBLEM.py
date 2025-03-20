@@ -102,9 +102,9 @@ class PROBLEM(object):
 
     def _cal_objs(self, X):
         """计算整个种群变量的目标值(建议覆写)"""
-        num_pop = len(X)
-        objs = np.zeros((num_pop, self.num_obj))
-        for i in range(num_pop):
+        pop_size = len(X)
+        objs = np.zeros((pop_size, self.num_obj))
+        for i in range(pop_size):
             objs[i] = self._cal_obj(X[i])
         return objs
 

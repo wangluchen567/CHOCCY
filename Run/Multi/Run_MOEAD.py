@@ -4,7 +4,7 @@ from Algorithms.Multi.MOEAD import MOEAD
 
 if __name__ == '__main__':
     problem = DTLZ2()
-    algorithm = MOEAD(num_pop=100, num_iter=100, func_type=1, show_mode=1)
+    algorithm = MOEAD(pop_size=100, max_iter=100, agg_type=1, show_mode=1)
     algorithm.solve(problem)
     print("HV: ", algorithm.cal_score('HV'))
     print("GD: ", algorithm.cal_score('GD'))
