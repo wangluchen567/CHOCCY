@@ -25,9 +25,6 @@ from .DTLZ.DTLZ1 import DTLZ1
 from .DTLZ.DTLZ2 import DTLZ2
 from .DTLZ.DTLZ3 import DTLZ3
 from .DTLZ.DTLZ4 import DTLZ4
-from .DTLZ.DTLZ5 import DTLZ5
-from .DTLZ.DTLZ6 import DTLZ6
-from .DTLZ.DTLZ7 import DTLZ7
 
 # MOKP
 from .Practical.MOKP import MOKP
