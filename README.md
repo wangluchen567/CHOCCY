@@ -43,11 +43,13 @@ pip install numpy scipy matplotlib seaborn tqdm networkx numba
 CHOCCY/
 ├── Algorithms/                 # 算法集——优化器核心
 │   ├── Multi/                  # 多目标优化算法
+│   │   ├── __init__.py         # 包初始化文件
 │   │   ├── MOEAD.py            # 基于分解的经典进化算法
 │   │   ├── NNDREA.py           # 特殊二进制问题进化算法
 │   │   ├── NSGAII.py           # 经典多目标进化算法
 │   │   └── SPEA2.py            # 经典多目标进化算法
 │   ├── Single/                 # 单目标优化算法
+│   │   ├── __init__.py         # 包初始化文件
 │   │   ├── ACO.py              # 蚁群算法(TSP)
 │   │   ├── DE.py               # 差分进化算法(实数)
 │   │   ├── DP_KP.py            # 动态规划算法(KP)
@@ -68,6 +70,7 @@ CHOCCY/
 │   │   ├── PlotUtils.py        # 绘图工具函数
 │   │   ├── Selections.py       # 选择算子函数
 │   │   └── Utils.py            # 各种工具函数
+│   ├── __init__.py             # 包初始化文件
 │   ├── ALGORITHM               # 算法函数父类
 │   ├── Comparator.py           # 算法比较器封装类
 │   └── Comparator.py           # 算法评估器封装类
@@ -113,8 +116,8 @@ Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimizatio
 假设已经定义了一个问题，以Ackley为例，问题如何定义的详细内容请参见[使用指南](./References/GUIDE.md)<br>
 那么我们就可以直接实例化问题，并使用合适的算法进行优化：
 ```python
-from Problems.Single.Ackley import Ackley  # 定义问题后导入问题
-from Algorithms.Single.DE import DE  # 导入求解该问题的算法
+from Problems.Single import Ackley  # 定义问题后导入问题
+from Algorithms.Single import DE  # 导入求解该问题的算法
 
 problem = Ackley(num_dec=2)  # 实例化问题，并指定决策向量大小
 # 实例化算法并设置种群大小为100，迭代次数为100，优化过程展示为目标值变化情况
@@ -144,10 +147,10 @@ print("算法运行时间(秒)：", algorithm.run_time)
 #### 算法优化实时对比
 仍然以Ackley为例，我们可以实例化该问题，并使用多种算法进行实时优化与对比：
 ```python
-from Problems.Single.Ackley import Ackley  # 导入问题
-from Algorithms.Single.GA import GA  # 导入GA算法
-from Algorithms.Single.DE import DE  # 导入DE算法
-from Algorithms.Comparator import Comparator  # 导入比较器类
+from Problems.Single import Ackley  # 导入问题
+from Algorithms.Single import GA  # 导入GA算法
+from Algorithms.Single import DE  # 导入DE算法
+from Algorithms import Comparator  # 导入比较器类
 
 problem = Ackley(num_dec=2)  # 实例化问题，并指定决策向量大小 
 algorithms = dict()  # 将多个算法放入字典
