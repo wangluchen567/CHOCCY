@@ -2,7 +2,6 @@ from Problems.Multi import DTLZ1
 from Problems.Multi import DTLZ2
 from Problems.Multi import DTLZ3
 from Problems.Multi import DTLZ4
-from Problems.Multi import DTLZ5
 from Algorithms.Multi import NSGAII
 from Algorithms.Multi import MOEAD
 from Algorithms.Multi import SPEA2
@@ -13,8 +12,7 @@ if __name__ == '__main__':
         DTLZ1(),
         DTLZ2(),
         DTLZ3(),
-        DTLZ4(),
-        DTLZ5(),
+        DTLZ4()
     ]
     pop_size, max_iter = 100, 100
     algorithms = {
