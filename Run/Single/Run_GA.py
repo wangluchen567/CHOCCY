@@ -1,10 +1,10 @@
-from Algorithms.Single.GA import GA
-from Problems.Single.KP import KP
-from Problems.Single.TSP import TSP
-from Problems.Single.Ackley import Ackley
-from Problems.Single.Square import Square
-from Problems.Single.FixLabelCluster import FixLabelCluster
-from Problems.Single.MixFixLabelCluster import MixFixLabelCluster
+from Algorithms.Single import GA
+from Problems.Single import KP
+from Problems.Single import TSP
+from Problems.Single import Ackley
+from Problems.Single import Square
+from Problems.Single import FixLabelCluster
+from Problems.Single import MixFixLabelCluster
 
 
 def Solve_Ackley():

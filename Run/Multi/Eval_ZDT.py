@@ -1,22 +1,22 @@
-from Problems.Multi.ZDT.ZDT1 import ZDT1
-from Problems.Multi.ZDT.ZDT2 import ZDT2
-from Problems.Multi.ZDT.ZDT3 import ZDT3
-from Problems.Multi.ZDT.ZDT4 import ZDT4
-from Problems.Multi.ZDT.ZDT5 import ZDT5
-from Problems.Multi.ZDT.ZDT6 import ZDT6
-from Algorithms.Multi.NSGAII import NSGAII
-from Algorithms.Multi.MOEAD import MOEAD
-from Algorithms.Multi.SPEA2 import SPEA2
-from Algorithms.Evaluator import Evaluator
+from Problems.Multi import ZDT1
+from Problems.Multi import ZDT2
+from Problems.Multi import ZDT3
+from Problems.Multi import ZDT4
+from Problems.Multi import ZDT5
+from Problems.Multi import ZDT6
+from Algorithms.Multi import NSGAII
+from Algorithms.Multi import MOEAD
+from Algorithms.Multi import SPEA2
+from Algorithms import Evaluator
 
 if __name__ == '__main__':
     problems = [
         ZDT1(),
         ZDT2(),
         ZDT3(),
-        ZDT4(),
-        ZDT5(),
-        ZDT6(),
+        # ZDT4(),
+        # ZDT5(),
+        # ZDT6(),
     ]
     pop_size, max_iter = 100, 100
     algorithms = {

@@ -1,7 +1,7 @@
-from Problems.Multi.ZDT.ZDT1 import ZDT1
-from Problems.Multi.DTLZ.DTLZ2 import DTLZ2
-from Problems.Multi.Practical.MOKP import MOKP
-from Algorithms.Multi.SPEA2 import SPEA2
+from Problems.Multi import ZDT1
+from Problems.Multi import DTLZ2
+from Problems.Multi import MOKP
+from Algorithms.Multi import SPEA2
 import cProfile
 
 if __name__ == '__main__':

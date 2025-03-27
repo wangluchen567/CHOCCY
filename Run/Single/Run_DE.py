@@ -1,5 +1,5 @@
-from Problems.Single.Ackley import Ackley  # 定义问题后导入问题
-from Algorithms.Single.DE import DE  # 导入求解该问题的算法
+from Problems.Single import Ackley  # 定义问题后导入问题
+from Algorithms.Single import DE  # 导入求解该问题的算法
 
 problem = Ackley(num_dec=2)  # 实例化问题，并指定决策向量大小
 # 实例化算法并设置种群大小为100，迭代次数为100，优化过程展示为目标值变化情况

@@ -1,6 +1,6 @@
-from Problems.Multi.ZDT.ZDT1 import ZDT1
-from Problems.Multi.DTLZ.DTLZ2 import DTLZ2
-from Algorithms.Multi.MOEAD import MOEAD
+from Problems.Multi import ZDT1
+from Problems.Multi import DTLZ2
+from Algorithms.Multi import MOEAD
 
 if __name__ == '__main__':
     problem = DTLZ2()

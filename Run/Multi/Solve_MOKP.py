@@ -1,9 +1,9 @@
-from Problems.Multi.Practical.MOKP import MOKP
-from Algorithms.Multi.NNDREA import NNDREA
-from Algorithms.Multi.NSGAII import NSGAII
-from Algorithms.Multi.MOEAD import MOEAD
-from Algorithms.Multi.SPEA2 import SPEA2
-from Algorithms.Comparator import Comparator
+from Problems.Multi import MOKP
+from Algorithms.Multi import NNDREA
+from Algorithms.Multi import NSGAII
+from Algorithms.Multi import MOEAD
+from Algorithms.Multi import SPEA2
+from Algorithms import Comparator
 
 if __name__ == '__main__':
     problem = MOKP(10000)

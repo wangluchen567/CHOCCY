@@ -1,12 +1,12 @@
 import numpy as np
 import seaborn as sns
-from Problems.Single.KP import KP
-from Algorithms.Single.SA import SA
-from Algorithms.Single.GA import GA
-from Algorithms.Single.DP_KP import DPKP
-from Algorithms.Single.NNDREAS import NNDREAS
-from Algorithms.Single.Greedy_KP import GreedyKP
-from Algorithms.Comparator import Comparator
+from Problems.Single import KP
+from Algorithms.Single import SA
+from Algorithms.Single import GA
+from Algorithms.Single import DPKP
+from Algorithms.Single import NNDREAS
+from Algorithms.Single import GreedyKP
+from Algorithms import Comparator
 
 if __name__ == '__main__':
     problem = KP(num_dec=100)

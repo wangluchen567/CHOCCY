@@ -1,4 +1,4 @@
-from Problems.Multi.ZDT.ZDT1 import ZDT1
+from Problems.Multi import ZDT1
 from Algorithms.Utility.PlotUtils import plot_objs
 from Algorithms.Utility.PerfMetrics import cal_GD, cal_GDPlus, cal_IGD, cal_IGDPlus, cal_HV
 """计算评价指标分数测试"""

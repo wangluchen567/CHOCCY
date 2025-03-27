@@ -1,5 +1,5 @@
-from Problems.Multi.Practical.MOKP import MOKP
-from Algorithms.Multi.NNDREA import NNDREA
+from Problems.Multi import MOKP
+from Algorithms.Multi import NNDREA
 
 if __name__ == '__main__':
     problem = MOKP(10000)

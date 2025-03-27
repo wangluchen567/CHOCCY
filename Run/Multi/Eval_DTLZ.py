@@ -1,12 +1,12 @@
-from Problems.Multi.DTLZ.DTLZ1 import DTLZ1
-from Problems.Multi.DTLZ.DTLZ2 import DTLZ2
-from Problems.Multi.DTLZ.DTLZ3 import DTLZ3
-from Problems.Multi.DTLZ.DTLZ4 import DTLZ4
-from Problems.Multi.DTLZ.DTLZ5 import DTLZ5
-from Algorithms.Multi.NSGAII import NSGAII
-from Algorithms.Multi.MOEAD import MOEAD
-from Algorithms.Multi.SPEA2 import SPEA2
-from Algorithms.Evaluator import Evaluator
+from Problems.Multi import DTLZ1
+from Problems.Multi import DTLZ2
+from Problems.Multi import DTLZ3
+from Problems.Multi import DTLZ4
+from Problems.Multi import DTLZ5
+from Algorithms.Multi import NSGAII
+from Algorithms.Multi import MOEAD
+from Algorithms.Multi import SPEA2
+from Algorithms import Evaluator
 
 if __name__ == '__main__':
     problems = [

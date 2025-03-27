@@ -12,32 +12,26 @@ See the Mulan PSL v2 for more details.
 """
 import numpy as np
 from Problems import PROBLEM
-from Algorithms.Utility.Utils import get_uniform_vectors
 
-class DTLZ1(PROBLEM):
+
+class DTLZ6(PROBLEM):
     def __init__(self, num_dec=None, num_obj=None, lower=0, upper=1):
         problem_type = PROBLEM.REAL
         if num_obj is None:
             num_obj = 3
         if num_dec is None:
-            num_dec = num_obj + 4
+            num_dec = num_obj + 9
         super().__init__(problem_type, num_dec, num_obj, lower, upper)
 
-    def _cal_objs(self, X):
-        D = self.num_dec
+    def _cal_objs(self, X_):
+        X = X_.copy()
         M = self.num_obj
-        g = 100 * (D - M + 1 + np.sum(
-            (X[:, M - 1:] - 0.5) ** 2 - np.cos(20 * np.pi * (X[:, M - 1:] - 0.5)), axis=1))
-        objs = 0.5 * np.tile(1 + g, (M, 1)).T * np.fliplr(
-            np.cumprod(np.hstack((np.ones((X.shape[0], 1)), X[:, :M - 1])), axis=1)) * np.hstack(
-            (np.ones((X.shape[0], 1)), 1 - X[:, M - 2::-1]))
+        g = np.sum(np.clip(X[:, M - 1:], a_min=0, a_max=None) ** 0.1, axis=1)
+        Temp = np.tile(g[:, np.newaxis], (1, M - 2))
+        X[:, 1:M - 1] = (1 + 2 * Temp * X[:, 1:M - 1]) / (2 + 2 * Temp)
+        objs = np.tile(1 + g[:, np.newaxis], (1, M))
+        cumprod_part = np.fliplr(
+            np.cumprod(np.hstack((np.ones((g.shape[0], 1)), np.cos(X[:, :M - 1] * np.pi / 2))), axis=1))
+        sin_part = np.hstack((np.ones((g.shape[0], 1)), np.sin(X[:, M - 2::-1] * np.pi / 2)))
+        objs = objs * cumprod_part * sin_part
         return objs
-
-    def get_optimum(self, N=1000):
-        """获取理论最优目标值"""
-        optimums = get_uniform_vectors(N, self.num_obj) / 2
-        return optimums
-
-    def get_pareto_front(self, N=1000):
-        """获取帕累托最优前沿"""
-        return self.get_optimum(N)

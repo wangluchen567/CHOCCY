@@ -14,7 +14,7 @@ import warnings
 import numpy as np
 from tqdm import tqdm
 from typing import Union
-from Problems.PROBLEM import PROBLEM
+from Problems import PROBLEM
 from Algorithms.Utility.Utils import fast_nd_sort, shuffle_matrix_in_row, record_time
 from Algorithms.Utility.PlotUtils import plot_scores, plot_data, plot_objs, plot_objs_decs
 from Algorithms.Utility.PerfMetrics import cal_GD, cal_IGD, cal_GDPlus, cal_IGDPlus, cal_HV

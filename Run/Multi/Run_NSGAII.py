@@ -1,7 +1,7 @@
-from Problems.Multi.ZDT.ZDT3 import ZDT3
-from Problems.Multi.DTLZ.DTLZ2 import DTLZ2
-from Problems.Multi.Practical.MOKP import MOKP
-from Algorithms.Multi.NSGAII import NSGAII
+from Problems.Multi import ZDT3
+from Problems.Multi import DTLZ2
+from Problems.Multi import MOKP
+from Algorithms.Multi import NSGAII
 
 if __name__ == '__main__':
     problem = ZDT3()

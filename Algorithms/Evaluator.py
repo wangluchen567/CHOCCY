@@ -19,7 +19,7 @@ import matplotlib.colors as mcolors
 
 from tqdm import tqdm
 from typing import Union
-from Algorithms.ALGORITHM import ALGORITHM
+from Algorithms import ALGORITHM
 
 
 class Evaluator(object):

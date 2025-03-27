@@ -1,7 +1,7 @@
-from Problems.Multi.ZDT.ZDT1 import ZDT1
-from Algorithms.Multi.MOEAD import MOEAD
-from Algorithms.Multi.NSGAII import NSGAII
-from Algorithms.Multi.SPEA2 import SPEA2
+from Problems.Multi import ZDT1
+from Algorithms.Multi import MOEAD
+from Algorithms.Multi import NSGAII
+from Algorithms.Multi import SPEA2
 from Algorithms.Comparator import Comparator
 
 if __name__ == '__main__':

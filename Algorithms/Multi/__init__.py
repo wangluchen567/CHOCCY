@@ -10,16 +10,9 @@ KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
-import numpy as np
-from Problems import PROBLEM
 
-
-class Square(PROBLEM):
-    def __init__(self, num_dec=30, lower=-10, upper=10):
-        problem_type = PROBLEM.REAL
-        num_obj = 1
-        super().__init__(problem_type, num_dec, num_obj, lower, upper)
-
-    def _cal_objs(self, X):
-        objs = np.sum(X**2, axis=-1)
-        return objs
+# 导入所有算法模块
+from .NSGAII import NSGAII
+from .MOEAD import MOEAD
+from .SPEA2 import SPEA2
+from .NNDREA import NNDREA

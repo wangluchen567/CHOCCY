@@ -1,9 +1,9 @@
-from Algorithms.Single.GA import GA
-from Algorithms.Single.SA import SA
-from Algorithms.Single.DE import DE
-from Algorithms.Single.PSO import PSO
-from Problems.Single.Ackley import Ackley
-from Algorithms.Comparator import Comparator
+from Algorithms.Single import GA
+from Algorithms.Single import SA
+from Algorithms.Single import DE
+from Algorithms.Single import PSO
+from Problems.Single import Ackley
+from Algorithms import Comparator
 
 if __name__ == '__main__':
     problem = Ackley(num_dec=2)

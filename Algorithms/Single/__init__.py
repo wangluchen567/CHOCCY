@@ -10,16 +10,26 @@ KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
-import numpy as np
-from Problems import PROBLEM
+# 导入所有算法模块
+
+# 通用问题算法
+from .GA import GA
+from .SA import SA
+
+# 实数问题算法
+from .DE import DE
+from .PSO import PSO
+
+# KP问题算法
+from .DP_KP import DPKP
+from .Greedy_KP import GreedyKP
+from .NNDREAS import NNDREAS
+
+# TSP问题算法
+from .ACO import ACO
+from .FI import FI
+from .GFLS import GFLS
+from .HGA_TSP import HGATSP
 
 
-class Square(PROBLEM):
-    def __init__(self, num_dec=30, lower=-10, upper=10):
-        problem_type = PROBLEM.REAL
-        num_obj = 1
-        super().__init__(problem_type, num_dec, num_obj, lower, upper)
 
-    def _cal_objs(self, X):
-        objs = np.sum(X**2, axis=-1)
-        return objs

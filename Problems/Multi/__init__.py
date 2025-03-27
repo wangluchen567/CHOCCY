@@ -10,16 +10,24 @@ KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
-import numpy as np
-from Problems import PROBLEM
+# 导入所有多目标问题模块
 
+# ZDT问题系列
+from .ZDT.ZDT1 import ZDT1
+from .ZDT.ZDT2 import ZDT2
+from .ZDT.ZDT3 import ZDT3
+from .ZDT.ZDT4 import ZDT4
+from .ZDT.ZDT5 import ZDT5
+from .ZDT.ZDT6 import ZDT6
 
-class Square(PROBLEM):
-    def __init__(self, num_dec=30, lower=-10, upper=10):
-        problem_type = PROBLEM.REAL
-        num_obj = 1
-        super().__init__(problem_type, num_dec, num_obj, lower, upper)
+# DTLZ问题系列
+from .DTLZ.DTLZ1 import DTLZ1
+from .DTLZ.DTLZ2 import DTLZ2
+from .DTLZ.DTLZ3 import DTLZ3
+from .DTLZ.DTLZ4 import DTLZ4
+from .DTLZ.DTLZ5 import DTLZ5
+from .DTLZ.DTLZ6 import DTLZ6
+from .DTLZ.DTLZ7 import DTLZ7
 
-    def _cal_objs(self, X):
-        objs = np.sum(X**2, axis=-1)
-        return objs
+# MOKP
+from .Practical.MOKP import MOKP

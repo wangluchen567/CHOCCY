@@ -17,10 +17,10 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
 from typing import Union
+from Algorithms import ALGORITHM
 from Problems.PROBLEM import PROBLEM
 from scipy.interpolate import griddata
 from mpl_toolkits.mplot3d import Axes3D
-from Algorithms.ALGORITHM import ALGORITHM
 
 
 class Comparator(ALGORITHM):
