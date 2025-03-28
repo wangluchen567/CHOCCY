@@ -47,20 +47,19 @@ CHOCCY/
 │   │   ├── MOEAD.py            # 基于分解的经典进化算法
 │   │   ├── NNDREA.py           # 特殊二进制问题进化算法
 │   │   ├── NSGAII.py           # 经典多目标进化算法
-│   │   └── SPEA2.py            # 经典多目标进化算法
+│   │   └── ...                 # 其他算法(见IMPLES清单)
 │   ├── Single/                 # 单目标优化算法
 │   │   ├── __init__.py         # 包初始化文件
 │   │   ├── ACO.py              # 蚁群算法(TSP)
 │   │   ├── DE.py               # 差分进化算法(实数)
-│   │   ├── DP_KP.py            # 动态规划算法(KP)
-│   │   ├── FI.py               # 最远插入算法(TSP)
 │   │   ├── GA.py               # 遗传算法(进化算法)
 │   │   ├── GFLS.py             # 引导快速局部搜索算法(TSP)
 │   │   ├── Greedy_KP.py        # 贪婪算法(KP)
 │   │   ├── HGA_TSP.py          # 混合启发式遗传算法(TSP)
 │   │   ├── NNDREAS.py          # 特殊二进制问题算法(单目标)
 │   │   ├── PSO.py              # 粒子群算法(实数)
-│   │   └── SA.py               # 模拟退火算法
+│   │   ├── SA.py               # 模拟退火算法
+│   │   └── ...                 # 其他算法(见IMPLES清单)
 │   ├── Utility/                # 工具和功能函数
 │   │   ├── Crossovers.py       # 交叉算子函数
 │   │   ├── Educations.py       # 教育算子函数
@@ -80,30 +79,26 @@ CHOCCY/
 ├── Problems/                   # 问题集
 │   ├── Multi/                  # 多目标问题集
 │   └── Single/                 # 单目标问题集
+│   ├── __init__.py             # 包初始化文件
 │   └── PROBLEM.py              # 问题父类
 ├── Run/                        # 算法优化问题实例
 │   ├── Multi/                  # 多目标问题的优化实例
 │   │   ├── Cal_Scores.py       # 计算评价指标示例
-│   │   ├── Eval_DTLZ.py        # 多种算法优化与评估DTLZ示例
 │   │   ├── Eval_ZDT.py         # 多种算法优化与评估ZDT示例
-│   │   ├── Run_MOEAD.py        # 运行MOEA/D算法实例
-│   │   ├── Run_NNDREA.py       # 运行NNDREA算法实例
 │   │   ├── Run_NSGAII.py       # 运行NSGAII算法实例
-│   │   ├── Run_SPEA2.py        # 运行SPEA2算法实例
 │   │   ├── Solve_MOKP.py       # 多种算法求解MOKP问题对比实例
-│   │   └── Solve_ZDT.py        # 多种算法求解ZDT问题对比实例
+│   │   ├── Solve_ZDT.py        # 多种算法求解ZDT问题对比实例
+│   │   └── ...                 # 其他实例可自行查看
 │   └── Single/                 # 单目标问题的优化实例
 │   │   ├── Eval_Ackley.py      # 多种算法优化与评估Ackley示例
-│   │   ├── Eval_TSP.py         # 多种算法优化与评估TSP示例
 │   │   ├── Run_DE.py           # 运行差分进化算法实例
-│   │   ├── Run_SA.py           # 运行模拟退火算法实例
 │   │   ├── Run_GA.py           # 运行遗传算法实例
-│   │   ├── Run_SA.py           # 运行模拟退火算法实例
 │   │   ├── Solve_Ackley.py     # 多种算法求解Ackley问题对比实例
-│   │   ├── Solve_KP.py         # 多种算法求解KP问题对比实例
-│   │   └── Solve_TSP.py        # 多种算法求解TSP问题对比实例
+│   │   ├── Solve_TSP.py        # 多种算法求解TSP问题对比实例
+│   │   └── ...                 # 其他实例可自行查看
 └── README.md                   # 项目文档
 ```
+**支持的算法集与问题集** 请参见[实现清单](./References/IMPLES.md)<br>
 
 **PS: 项目中包含本人研究工作**<br>
 Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimization with Millions of Variables (NNDREA), IEEE Transactions on Evolutionary Computation <br>
