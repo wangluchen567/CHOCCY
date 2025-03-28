@@ -31,11 +31,11 @@ Chen's Heuristic Optimizer Constructed with Core numpY
 conda create --name my_env python=3.9
 conda activate my_env
 ```
-**注意**：本项目支持 Python 3.7 及以上版本，建议使用 Python 3.9 以获得最佳兼容性。请确保已安装 Python 3.7 或更高版本。<br>
+**注意**：本项目支持 Python 3.7 及以上版本，建议使用 Python 3.9 以获得最佳兼容性。<br>
 **2. 安装必要包**<br>
-本项目依赖以下包: `numpy`、`scipy`、`matplotlib`、`seaborn`、`tqdm`、`networkx`、`numba`。请确保已安装 Python 3.7 或更高版本，运行以下命令一键安装必要包：<br>
+本项目依赖以下包: `numpy`、`scipy`、`matplotlib`、`seaborn`、`tqdm`、`networkx`、`numba`、`tbb`。请确保已安装 Python 3.7 或更高版本，运行以下命令一键安装必要包：<br>
 ```bash
-pip install numpy scipy matplotlib seaborn tqdm networkx numba
+pip install numpy scipy matplotlib seaborn tqdm networkx numba tbb
 ```
 
 ## 项目结构
@@ -184,11 +184,11 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 - [x] 更新项目文档
 - [ ] 更新使用指南
 - [ ] 更新算法笔记
-- [ ] 优化超体积的计算
 - [x] 加入其他评价指标
 - [ ] 加入约束相关算法
-- [ ] 实现多核CPU并行计算
+- [ ] 实现多核CPU并行计算与对比
 - [x] 加入多问题多算法对比评估器
+- [x] 使用numba加速超体积指标的计算
 
 ## 效果展示
 ### 单目标问题优化
