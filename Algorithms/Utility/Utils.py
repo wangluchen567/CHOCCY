@@ -219,7 +219,7 @@ try:
     from numba import jit, boolean
 
 
-    @jit(nopython=True)
+    @jit(nopython=True, cache=True)
     def get_dom_between_jit(objs):
         """得到每对解的支配关系"""
         n = len(objs)
@@ -237,7 +237,7 @@ try:
         return get_dom_between_jit(objs)
 
 
-    @jit(nopython=True)
+    @jit(nopython=True, cache=True)
     def dominates_loop(objs, i):
         n = objs.shape[0]
         m = objs.shape[1]
@@ -259,7 +259,7 @@ try:
         return dominates
 
 
-    @jit(nopython=True)
+    @jit(nopython=True, cache=True)
     def fast_nd_sort_jit(objs):
         """快速非支配排序(jit加速版)"""
         pop_size = objs.shape[0]  # 获取种群数量
@@ -320,13 +320,13 @@ try:
         return fronts, ranks
 
 
-    @jit(nopython=True)
+    @jit(nopython=True, cache=True)
     def cost_change_jit(dist_mat, n1, n2, n3, n4):
         """计算2-opt的"""
         return dist_mat[n1, n3] + dist_mat[n2, n4] - dist_mat[n1, n2] - dist_mat[n3, n4]
 
 
-    @jit(nopython=True)
+    @jit(nopython=True, cache=True)
     def two_opt_i_jit(tour, dist_mat, i):
         """搜索第i个城市的邻域"""
         improved = False
@@ -341,7 +341,7 @@ try:
         return tour, improved
 
 
-    @jit(nopython=True)
+    @jit(nopython=True, cache=True)
     def two_opt_jit(tour, dist_mat):
         """进行2-opt搜索"""
         improved = False
