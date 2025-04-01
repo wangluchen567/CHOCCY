@@ -45,6 +45,7 @@ class Comparator(ALGORITHM):
         """
         super().__init__(pop_size, max_iter)
         self.problem = problem
+        self.max_iter_ = max_iter
         self.same_init = same_init
         self.show_mode = show_mode
         self.algorithms = self._format(algorithms)
@@ -91,8 +92,8 @@ class Comparator(ALGORITHM):
             if self.show_mode == self.SCORE:
                 # 若展示指标值则需每步计算指标值
                 alg.record_score()
-        # 迭代次数若为空则根据给定算法最大迭代次数
-        self.max_iter = max_iter if self.max_iter is None else self.max_iter
+        # 迭代次数若为空则根据给定算法最大迭代次数(max_iter_防止初始化干扰)
+        self.max_iter = max_iter if self.max_iter_ is None else self.max_iter_
 
     def run(self):
         """运行多个算法的实时比较"""

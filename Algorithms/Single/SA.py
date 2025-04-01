@@ -133,7 +133,7 @@ class SA(ALGORITHM):
         elif problem_type == ALGORITHM.BIN:
             return bit_mutation(solutions, mutate_prob)
         elif problem_type == ALGORITHM.PMU:
-            return exchange_mutation(solutions, mutate_prob)
+            return flip_mutation(solutions, mutate_prob)
         elif problem_type == ALGORITHM.FIX:
             return fix_label_mutation(solutions, mutate_prob)
         else:
