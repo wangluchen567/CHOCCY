@@ -12,7 +12,7 @@ if __name__ == '__main__':
     algorithms = dict()
     pop_size, max_iter = 100, 100
     algorithms['GA'] = GA(pop_size, max_iter)
-    algorithms['SA'] = SA(pop_size, max_iter, perturb_prob=0.5)
+    algorithms['SA'] = SA(pop_size, max_iter)
     algorithms['ACO'] = ACO(pop_size, max_iter)
     algorithms['HGA-TSP'] = HGATSP(pop_size, max_iter)
     algorithms['FI'] = FI()
@@ -22,8 +22,8 @@ if __name__ == '__main__':
     # 打印结果对比
     print('*** Obj ***')
     evaluator.prints()
-    # 绘制小提琴图
-    evaluator.plot_violin()
+    # 绘制小提琴图(设置为准确绘制)
+    evaluator.plot_violin(cut=0)
     # 绘制箱线图
     evaluator.plot_box()
     # 打印时间对比

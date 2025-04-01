@@ -197,8 +197,8 @@ class Evaluator(object):
         colors = [mcolors.to_hex(c) for c in raw_colors]
         return colors
 
-    def plot_violin(self, problem_name=None, default_color=True):
-        """绘制指定问题的小提琴图以对比算法"""
+    def plot_violin(self, problem_name=None, default_color=True, cut=2):
+        """绘制指定问题的小提琴图以对比算法(cut=0时准确绘制)"""
         plt.figure()
         if problem_name is None:
             # 若指定问题为空则默认第一个问题
@@ -212,9 +212,9 @@ class Evaluator(object):
             labels.append(alg_name)
         # 创建小提琴图
         if default_color:
-            sns.violinplot(data=datas, inner="quartile")
+            sns.violinplot(data=datas, inner="quartile", cut=cut)
         else:
-            sns.violinplot(data=datas, inner="quartile", palette=self.colors)
+            sns.violinplot(data=datas, inner="quartile", cut=cut, palette=self.colors)
         # 添加标题和标签
         plt.title(problem_name)
         plt.xlabel('Algorithms')
