@@ -186,7 +186,7 @@ def shuffle(x):
 
 
 def cost_change(dist_mat, n1, n2, n3, n4):
-    """计算2-opt的"""
+    """计算2-opt的距离成本变化值"""
     return dist_mat[n1, n3] + dist_mat[n2, n4] - dist_mat[n1, n2] - dist_mat[n3, n4]
 
 
@@ -314,6 +314,7 @@ try:
 
 
     def fast_nd_sort(objs):
+        """对使用jit加速的快速非支配排序进行格式调整"""
         fronts_mat, fronts_trunc, ranks = fast_nd_sort_jit(objs)
         fronts_trunc = fronts_trunc[fronts_trunc > 0]
         fronts = [fronts_mat[i][:fronts_trunc[i]].tolist() for i in range(len(fronts_trunc))]
@@ -322,7 +323,7 @@ try:
 
     @jit(nopython=True, cache=True)
     def cost_change_jit(dist_mat, n1, n2, n3, n4):
-        """计算2-opt的"""
+        """计算2-opt的距离成本变化值"""
         return dist_mat[n1, n3] + dist_mat[n2, n4] - dist_mat[n1, n2] - dist_mat[n3, n4]
 
 

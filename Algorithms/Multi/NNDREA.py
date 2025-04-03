@@ -42,7 +42,7 @@ class NNDREA(ALGORITHM):
         self.delta = delta
         # 初始化参数
         self.instance = None
-        self.slist = None
+        self.shapes = None
         self.pop_weights = None
         self.delta_iter = None
 
@@ -67,12 +67,12 @@ class NNDREA(ALGORITHM):
         # 需要提供神经网络的结构信息(否则默认为[D, 4, 1])
         if self.structure is None:
             self.structure = [self.instance.shape[1], 4, 1]
-        # 根据结构信息得到结构列表和权重数量以方便计算
-        self.slist = []
+        # 根据结构信息得到每层权重形状(包含偏置)和权重数量以方便计算
+        self.shapes = []
         self.num_dec = 0
         for i in range(len(self.structure) - 1):
-            self.slist.append([self.structure[i], self.structure[i + 1]])
-            self.slist.append([self.structure[i + 1]])
+            self.shapes.append([self.structure[i], self.structure[i + 1]])
+            self.shapes.append([self.structure[i + 1]])
             self.num_dec += self.structure[i] * self.structure[i + 1]
             self.num_dec += self.structure[i + 1]
         # 由于问题转换为了实数问题，所以需要重新初始化算法相关参数
@@ -169,16 +169,16 @@ class NNDREA(ALGORITHM):
         ins_size = len(self.instance)
         output = np.array([self.instance]).repeat(num_weights, 0)
         pointer = 0
-        for i in range(len(self.slist)):
-            if len(self.slist[i]) > 1:
-                weight = weights[:, pointer: pointer + self.slist[i][0] * self.slist[i][1]]
-                pointer = pointer + self.slist[i][0] * self.slist[i][1]
-                output = np.matmul(output, weight.reshape(num_weights, self.slist[i][0], self.slist[i][1]))
+        for i in range(len(self.shapes)):
+            if len(self.shapes[i]) > 1:
+                weight = weights[:, pointer: pointer + self.shapes[i][0] * self.shapes[i][1]]
+                pointer = pointer + self.shapes[i][0] * self.shapes[i][1]
+                output = np.matmul(output, weight.reshape(num_weights, self.shapes[i][0], self.shapes[i][1]))
             else:
-                bias = weights[:, pointer: pointer + self.slist[i][0]]
-                pointer = pointer + self.slist[i][0]
+                bias = weights[:, pointer: pointer + self.shapes[i][0]]
+                pointer = pointer + self.shapes[i][0]
                 output = output + bias.reshape(num_weights, 1, -1).repeat(ins_size, 1)
-                if i == len(self.slist) - 1:
+                if i == len(self.shapes) - 1:
                     output = self.step(output)
                 else:
                     output = self.leaky_relu(output)
