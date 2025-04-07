@@ -115,8 +115,7 @@ class ACO(ALGORITHM):
         """绘制优化过程中信息素变化情况"""
         if n_iter == 0:
             return
-        if not pause:
-            plt.figure()
+        plt.clf()
         if not hasattr(self.problem, 'points'):
             raise ValueError("The drawing must provide the location of the points!")
         points = self.problem.points  # type: ignore
@@ -126,7 +125,6 @@ class ACO(ALGORITHM):
         weights = self.tau_mat[rows, cols]
         # 对权重归一化（透明度必须在[0,1]之间）
         weights = (weights - np.min(weights)) / (np.max(weights) - np.min(weights))
-        plt.clf()
         graph = nx.Graph()
         # 添加节点信息
         graph.add_nodes_from(np.arange(num_points))
@@ -143,7 +141,7 @@ class ACO(ALGORITHM):
         else:
             node_size = 100
         # 画图
-        if pause and n_iter is not None:
+        if n_iter is not None:
             plt.title("iter: " + str(n_iter))
         # 绘制节点
         nx.draw_networkx_nodes(graph, pos, node_size=node_size)

@@ -18,9 +18,8 @@ from scipy.interpolate import griddata
 from mpl_toolkits.mplot3d import Axes3D
 
 
-def plot_data(X, n_iter=None, pause=False, pause_time=0.06):
+def plot_decs(X, n_iter=None, pause=False, pause_time=0.06):
     """对任意维度数据进行绘图"""
-    if not pause: plt.figure()
     plt.clf()
     X_dim = X.shape[1]
     if X_dim == 1:
@@ -53,10 +52,12 @@ def plot_data(X, n_iter=None, pause=False, pause_time=0.06):
             plt.plot(np.arange(1, X_dim + 1), X[i, :])
         plt.xlabel('dim')
         plt.ylabel('x')
-    plt.grid()
+    plt.grid(True)
+    if n_iter is None:
+        plt.title("Decisions")
+    else:
+        plt.title("iter: " + str(n_iter))
     if pause:
-        if n_iter is not None:
-            plt.title("iter: " + str(n_iter))
         plt.pause(pause_time)
     else:
         plt.show()
@@ -69,7 +70,6 @@ def plot_objs(objs, n_iter=None, pause=False, pause_time=0.06, pareto_front=None
         obj_dim = 1
     else:
         obj_dim = objs.shape[1]
-    if not pause: plt.figure()
     plt.clf()
     if obj_dim == 1:
         plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
@@ -120,10 +120,12 @@ def plot_objs(objs, n_iter=None, pause=False, pause_time=0.06, pareto_front=None
             plt.plot(x, objs[i, :])
         plt.xlabel('dim')
         plt.ylabel('obj')
-    plt.grid()
+    plt.grid(True)
+    if n_iter is None:
+        plt.title("Objectives")
+    else:
+        plt.title("iter: " + str(n_iter))
     if pause:
-        if n_iter is not None:
-            plt.title("iter: " + str(n_iter))
         plt.pause(pause_time)
     else:
         plt.show()
@@ -136,8 +138,7 @@ def plot_objs_decs(problem, decs, objs, n_iter=None, pause=False, pause_time=0.0
         objs = objs.reshape(-1, 1)
     objs_dim = objs.shape[1]
     if objs_dim > 1:
-        raise ValueError("The target value dimension must be 1 dimension")
-    if not pause: plt.figure()
+        raise ValueError("The objective vector dimension must be 1 dimension")
     plt.clf()
     if decs_dim == 1:
         plt.scatter(decs, objs, marker="o", c="red")
@@ -188,10 +189,12 @@ def plot_objs_decs(problem, decs, objs, n_iter=None, pause=False, pause_time=0.0
             ax.set_zlabel('obj')
     else:
         raise ValueError("The decision vector dimension must be less than 3 dimensions")
-    plt.grid()
+    plt.grid(True)
+    if n_iter is None:
+        plt.title("Objs-Decs")
+    else:
+        plt.title("iter: " + str(n_iter))
     if pause:
-        if n_iter is not None:
-            plt.title("iter: " + str(n_iter))
         plt.pause(pause_time)
     else:
         plt.show()
@@ -199,18 +202,18 @@ def plot_objs_decs(problem, decs, objs, n_iter=None, pause=False, pause_time=0.0
 
 def plot_scores(scores, score_type=None, n_iter=None, pause=False, pause_time=0.06):
     """绘制评价指标情况"""
-    if not pause: plt.figure()
     plt.clf()
     plt.plot(np.arange(len(scores)), scores, marker=".", c="red")
     plt.xlabel('n_iter')
     if score_type is not None:
         plt.ylabel(score_type)
-    plt.grid()
-    if pause:
-        if n_iter is not None:
-            plt.title("iter: " + str(n_iter))
-        plt.pause(pause_time)
-    else:
+    plt.grid(True)
+    if n_iter is None:
         if score_type is not None:
             plt.title(score_type + " Scores")
+    else:
+        plt.title("iter: " + str(n_iter))
+    if pause:
+        plt.pause(pause_time)
+    else:
         plt.show()

@@ -211,6 +211,9 @@ class Comparator(ALGORITHM):
         (-1:不绘制, 0:进度条, 1:目标空间, 2:决策空间,
         3:混合模式(等高线), 4:混合模式(三维空间))
         """
+        if n_iter == self.max_iter:
+            # 最后一次迭代不再使用停顿展示
+            pause = False
         if show_mode is not None:
             self.show_mode = show_mode
         if show_mode == self.SCORE:
@@ -223,20 +226,18 @@ class Comparator(ALGORITHM):
         elif self.show_mode == self.OBJ:
             self.plot_objs(n_iter, pause)
         elif self.show_mode == self.DEC:
-            self.plot_pop(n_iter, pause)
+            self.plot_decs(n_iter, pause)
         elif self.show_mode == self.OAD2:
-            self.plot_decs_objs(n_iter, pause)
+            self.plot_objs_decs(n_iter, pause)
         elif self.show_mode == self.OAD3:
-            self.plot_decs_objs(n_iter, pause, contour=False)
+            self.plot_objs_decs(n_iter, pause, contour=False)
         elif self.show_mode == self.SCORE:
             self.plot_scores(n_iter, pause)
         else:
             raise ValueError("There is no such plotting mode")
 
-    def plot_pop(self, n_iter=None, pause=False, pause_time=0.06):
+    def plot_decs(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制种群个体决策向量"""
-        if not pause:
-            plt.figure()
         plt.clf()
         if self.problem.num_dec == 1:
             plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
@@ -277,19 +278,19 @@ class Comparator(ALGORITHM):
                              c=self.colors[idx], alpha=0.5)
             plt.xlabel('dim')
             plt.ylabel('x')
-        plt.grid()
+        plt.grid(True)
         plt.legend()
+        if n_iter is None:
+            plt.title("Decisions")
+        else:
+            plt.title("iter: " + str(n_iter))
         if pause:
-            if n_iter is not None:
-                plt.title("iter: " + str(n_iter))
             plt.pause(pause_time)
         else:
             plt.show()
 
     def plot_objs(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制种群目标值"""
-        if not pause:
-            plt.figure()
         plt.clf()
         if self.problem.num_obj == 1:
             plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
@@ -348,20 +349,22 @@ class Comparator(ALGORITHM):
                              c=self.colors[idx], alpha=0.6)
             plt.xlabel('dim')
             plt.ylabel('obj')
-        plt.grid()
+        plt.grid(True)
         plt.legend()
+        if n_iter is None:
+            plt.title("Objectives")
+        else:
+            plt.title("iter: " + str(n_iter))
         if pause:
-            if n_iter is not None:
-                plt.title("iter: " + str(n_iter))
             plt.pause(pause_time)
         else:
             plt.show()
 
-    def plot_decs_objs(self, n_iter=None, pause=False, pause_time=0.06, contour=True, sym=True):
+    def plot_objs_decs(self, n_iter=None, pause=False, pause_time=0.06, contour=True, sym=True):
         """在特定条件下可同时绘制决策向量与目标值"""
-        if not pause:
-            plt.figure()
         plt.clf()
+        if self.problem.num_obj > 1:
+            raise ValueError("The objective vector dimension must be 1 dimension")
         if self.problem.num_dec == 1:
             all_pop = np.empty(shape=(0, 1))
             for idx, (name, alg) in enumerate(self.algorithms.items()):
@@ -419,19 +422,19 @@ class Comparator(ALGORITHM):
                 ax.set_zlabel('obj')
         else:
             raise ValueError("The decision vector dimension must be less than 3 dimensions")
-        plt.grid()
+        plt.grid(True)
         plt.legend()
+        if n_iter is None:
+            plt.title("Objs-Decs")
+        else:
+            plt.title("iter: " + str(n_iter))
         if pause:
-            if n_iter is not None:
-                plt.title("iter: " + str(n_iter))
             plt.pause(pause_time)
         else:
             plt.show()
 
     def plot_scores(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制种群目标值"""
-        if not pause:
-            plt.figure()
         plt.clf()
         plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
         for idx, (name, alg) in enumerate(self.algorithms.items()):
@@ -439,13 +442,13 @@ class Comparator(ALGORITHM):
                      marker=".", c=self.colors[idx], label=name, alpha=0.6)
         plt.xlabel('n_iter')
         plt.ylabel(self.score_type)
-        plt.grid()
+        plt.grid(True)
         plt.legend()
+        if n_iter is None:
+            plt.title(self.score_type + " Scores")
+        else:
+            plt.title("iter: " + str(n_iter))
         if pause:
-            if n_iter is not None:
-                plt.title("iter: " + str(n_iter))
             plt.pause(pause_time)
         else:
-            plt.title(self.score_type + " Scores")
-            plt.savefig("D:/MOKP100k_Scores.png", dpi=160)
             plt.show()

@@ -16,7 +16,7 @@ from tqdm import tqdm
 from typing import Union
 from Problems import PROBLEM
 from Algorithms.Utility.Utils import fast_nd_sort, shuffle_matrix_in_row, record_time
-from Algorithms.Utility.PlotUtils import plot_scores, plot_data, plot_objs, plot_objs_decs
+from Algorithms.Utility.PlotUtils import plot_scores, plot_decs, plot_objs, plot_objs_decs
 from Algorithms.Utility.PerfMetrics import cal_GD, cal_IGD, cal_GDPlus, cal_IGDPlus, cal_HV
 from Algorithms.Utility.Selections import elitist_selection, tournament_selection, roulette_selection
 from Algorithms.Utility.Operators import operator_real, operator_binary, operator_permutation, operator_fix_label
@@ -447,6 +447,9 @@ class ALGORITHM(object):
         (-1:不绘制, 0:进度条, 1:目标空间, 2:决策空间, 3:混合模式(等高线),
         4:混合模式(三维空间), 5:问题提供, 6:算法提供)
         """
+        if n_iter == self.max_iter:
+            # 最后一次迭代不再使用停顿展示
+            pause = False
         if show_mode is not None:
             self.show_mode = show_mode
         if self.show_mode == self.NULL or self.show_mode == self.BAR:
@@ -468,16 +471,16 @@ class ALGORITHM(object):
         else:
             raise ValueError("There is no such plotting mode")
 
-    def plot_(self, n_iter, pause):
+    def plot_(self, *args, **kwargs):
         """提供算法自定义绘图的接口"""
         pass
 
     def plot_decs(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制种群个体决策向量"""
         if pause or n_iter is None:
-            plot_data(self.pop, n_iter, pause, pause_time)
+            plot_decs(self.pop, n_iter, pause, pause_time)
         else:
-            plot_data(self.pop_history[n_iter], n_iter, pause, pause_time)
+            plot_decs(self.pop_history[n_iter], n_iter, pause, pause_time)
 
     def plot_objs(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制种群目标值"""

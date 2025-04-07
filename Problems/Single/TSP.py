@@ -58,7 +58,7 @@ class TSP(PROBLEM):
         return objs
 
     def plot(self, best, n_iter=None, pause=False, pause_time=0.06):
-        if not pause: plt.figure()
+        plt.clf()
         if self.points is None:
             raise ValueError("Not given the position of each point")
         num_points = len(self.points)
@@ -73,7 +73,7 @@ class TSP(PROBLEM):
         else:
             node_size = 100
         # 画图
-        if pause and n_iter is not None:
+        if n_iter is not None:
             plt.title("iter: " + str(n_iter))
         nx.draw(graph, pos, node_size=node_size)
         if pause:

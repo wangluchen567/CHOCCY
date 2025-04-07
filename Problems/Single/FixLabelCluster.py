@@ -41,13 +41,12 @@ class FixLabelCluster(PROBLEM):
         return objs
 
     def plot(self, best, n_iter=None, pause=False, pause_time=0.06):
-        if not pause: plt.figure()
         plt.clf()
         plt.scatter(self.points[:, 0], self.points[:, 1], c=best, cmap='rainbow')
-        plt.grid()
+        plt.grid(True)
+        if n_iter is not None:
+            plt.title("iter: " + str(n_iter))
         if pause:
-            if n_iter is not None:
-                plt.title("iter: " + str(n_iter))
             plt.pause(pause_time)
         else:
             plt.show()

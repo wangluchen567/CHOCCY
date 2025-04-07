@@ -58,16 +58,15 @@ class MixFixLabelCluster(PROBLEM):
         return objs
 
     def plot(self, best, n_iter=None, pause=False, pause_time=0.06):
-        if not pause: plt.figure()
         plt.clf()
         best_types = best[:self.num_points]
         best_centroids = best[self.num_points:].reshape(-1, 2)
         plt.scatter(self.points[:, 0], self.points[:, 1], c=best_types, cmap='rainbow')
         plt.scatter(best_centroids[:, 0], best_centroids[:, 1], c='black', marker='x')
-        plt.grid()
+        plt.grid(True)
+        if n_iter is not None:
+            plt.title("iter: " + str(n_iter))
         if pause:
-            if n_iter is not None:
-                plt.title("iter: " + str(n_iter))
             plt.pause(pause_time)
         else:
             plt.show()
