@@ -16,6 +16,6 @@ if __name__ == '__main__':
     algorithms['DE/rand/2'] = DE(pop_size, max_iter, operator_type=DE.RAND2)
     algorithms['DE/best/1'] = DE(pop_size, max_iter, operator_type=DE.BEST1)
     algorithms['DE/best/2'] = DE(pop_size, max_iter, operator_type=DE.BEST2)
-    comparator = Comparator(problem, algorithms, show_mode=Comparator.DEC, same_init=True)
+    comparator = Comparator(problem, algorithms, show_mode=Comparator.OBJ, same_init=True)
     comparator.run()
     comparator.plot(show_mode=Comparator.OBJ)

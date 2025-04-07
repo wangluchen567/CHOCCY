@@ -34,8 +34,8 @@ class PROBLEM(object):
         :param problem_type: 问题类型 (0:实数, 1:整数, 2:二进制, 3:序列, 4:固定标签)(可混合)
         :param num_dec: 决策变量个数(维度)
         :param num_obj: 目标个数
-        :param lower: 变量下界(包含下界)(可混合)
-        :param upper: 变量上界(包含上界)(整数问题不包含)(可混合)
+        :param lower: 决策变量下界(包含下界)(可混合)
+        :param upper: 决策变量上界(包含上界)(整数问题不包含)(可混合)
         """
         self.problem_type = problem_type  # 问题类型
         self.num_dec = num_dec  # 决策变量个数(维度)
@@ -60,9 +60,15 @@ class PROBLEM(object):
 
     def format_range(self):
         """重整决策变量取值范围"""
-        if isinstance(self.lower, int) or isinstance(self.lower, float):
+        if isinstance(self.lower, np.ndarray):
+            assert self.lower.ndim == 1
+            assert self.lower.shape[0] == self.num_dec
+        else:
             self.lower = np.zeros(self.num_dec) + self.lower
-        if isinstance(self.upper, int) or isinstance(self.upper, float):
+        if isinstance(self.upper, np.ndarray):
+            assert self.upper.ndim == 1
+            assert self.upper.shape[0] == self.num_dec
+        else:
             self.upper = np.zeros(self.num_dec) + self.upper
         # 整数问题不包含上界
         if PROBLEM.INT in self.type_indices:
