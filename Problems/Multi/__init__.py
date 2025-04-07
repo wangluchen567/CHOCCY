@@ -12,6 +12,9 @@ See the Mulan PSL v2 for more details.
 """
 # 导入所有多目标问题模块
 
+# MOP问题系列
+from .MOP.MOP1 import MOP1
+
 # ZDT问题系列
 from .ZDT.ZDT1 import ZDT1
 from .ZDT.ZDT2 import ZDT2
