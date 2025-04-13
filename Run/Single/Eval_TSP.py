@@ -21,11 +21,11 @@ if __name__ == '__main__':
     evaluator.run()
     # 打印结果对比
     print('*** Obj ***')
-    evaluator.prints()
+    evaluator.prints(stats_test=True)
     # 绘制小提琴图(设置为准确绘制)
     evaluator.plot_violin(cut=0)
     # 绘制箱线图
     evaluator.plot_box()
     # 打印时间对比
     print('*** Time ***')
-    evaluator.prints('time')
+    evaluator.prints(score_types='time', stats_test=True)

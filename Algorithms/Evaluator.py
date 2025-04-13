@@ -20,6 +20,7 @@ import matplotlib.colors as mcolors
 from tqdm import tqdm
 from typing import Union
 from Algorithms import ALGORITHM
+from scipy.stats import mannwhitneyu
 
 
 class Evaluator(object):
@@ -54,6 +55,8 @@ class Evaluator(object):
         self.algorithms = self._format(algorithms)
         # 初始化要使用的参数
         self.pairs = dict()  # 初始化'问题-算法'对
+        self.scores = dict()  # 初始化'问题-算法'结果对
+        self.test_marks = dict()  # 初始化'问题-算法'统计检验结果对
         # 初始化评价分数类型(支持每个问题独立指定不同类型)
         self.score_types = None
         self.set_score_types(score_types)
@@ -132,11 +135,23 @@ class Evaluator(object):
                 for i in tqdm(range(self.num_run)):
                     alg_repeats[i].run()
 
-    def prints(self, score_types=None, dec=6):
-        """打印最终结果"""
+    def prints(self, score_types=None, stats_test=False, dec=6):
+        """
+        打印最终结果
+        :param score_types: 指定每种问题的分数类型
+        :param stats_test: 是否使用统计检验进行算法比较
+        :param dec: 精确到小数点后的位数
+        :return: None
+        """
         if score_types is not None:
             # 若指定打印分数类型则重新对类型设置
             self.set_score_types(score_types)
+        # 计算并记录每种算法指定类型的所有分数值
+        self.record_scores()
+        # 若使用统计检验比较算法
+        if stats_test:
+            self.compare_with_test()
+        # 初始化每列的宽度
         col_widths = np.zeros(len(self.algorithms) + 1, dtype=int)
         # 第一行是算法的名称
         title_list = ["Algorithm"]
@@ -149,8 +164,11 @@ class Evaluator(object):
             score_list = [problem_name]
             col_widths[0] = max(col_widths[0], len(problem_name) + 3)
             for idx, (alg_name, alg_repeats) in enumerate(pair.items()):
-                scores = self.get_scores(alg_repeats, self.score_types[problem_name])
-                score_list.append(f"{scores.mean():.{dec}e}({scores.var():.{dec}e})")
+                alg_scores = self.scores[problem_name][alg_name]
+                print_res = f"{alg_scores.mean():.{dec}e}({alg_scores.var():.{dec}e})"
+                if stats_test:
+                    print_res += self.test_marks[problem_name][alg_name]
+                score_list.append(print_res)
                 col_widths[idx + 1] = max(col_widths[idx + 1], len(score_list[idx + 1]) + 3)
             score_lists.append(score_list)
         # 打印结果
@@ -159,6 +177,14 @@ class Evaluator(object):
         for score_list in score_lists:
             scores_format = " ".join(f"{s:<{w}}" for s, w in zip(score_list, col_widths))
             print(scores_format)
+
+    def record_scores(self):
+        """计算并记录每种算法指定类型的所有分数值"""
+        for (problem_name, pair) in self.pairs.items():
+            self.scores[problem_name] = dict()
+            for idx, (alg_name, alg_repeats) in enumerate(pair.items()):
+                self.scores[problem_name][alg_name] \
+                    = self.get_scores(alg_repeats, self.score_types[problem_name])
 
     @staticmethod
     def get_scores(alg_repeats, score_type):
@@ -177,6 +203,49 @@ class Evaluator(object):
             for i in range(len(alg_repeats)):
                 scores[i] = alg_repeats[i].cal_score(score_type, best_obj=alg_repeats[i].best_obj)
         return scores
+
+    def compare_with_test(self):
+        """使用统计检验来比较算法优劣（与最后一个算法相比）"""
+        for (problem_name, pair) in self.pairs.items():
+            self.test_marks[problem_name] = dict()
+            # 取最后一个算法的分数
+            last_name = list(self.scores[problem_name].keys())[-1]
+            last_scores = list(self.scores[problem_name].values())[-1]
+            for idx, (alg_name, alg_repeats) in enumerate(pair.items()):
+                if last_name == alg_name:
+                    # 每个算法不与自己进行比较
+                    self.test_marks[problem_name][alg_name] = ''
+                else:
+                    # 进行统计检验比较最后一个算法与当前算法的优劣
+                    self.test_marks[problem_name][alg_name] \
+                        = self.stats_test_scores(last_scores,
+                                                 self.scores[problem_name][alg_name],
+                                                 self.score_types[problem_name])
+
+    @staticmethod
+    def stats_test_scores(scores1, scores2, score_type, alpha=0.05):
+        """
+        使用秩和检验比较两组分数值的优劣
+        :param scores1: 分数组1
+        :param scores2: 分数组2
+        :param score_type: 分数类型
+        :param alpha: 显著性水平，默认0.05
+        :return: 优劣比较
+        """
+        # 返回的是相较于组1，组2的优劣情况
+        res = ['-', '+', '=']
+        if score_type.lower() in ['HV']:
+            res = ['+', '-', '=']
+        stats, p = mannwhitneyu(scores1, scores2, alternative='two-sided')
+        if p < alpha:
+            # 显著性水平小于alpha则说明两组数据存在明显差异
+            if stats < len(scores1) * len(scores2) / 2:
+                return res[0]
+            else:
+                return res[1]
+        else:
+            # 否则两者水平不存在差异
+            return res[2]
 
     def get_colors(self):
         """绘图颜色设置"""
