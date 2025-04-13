@@ -129,7 +129,12 @@ class Comparator(ALGORITHM):
             alg.set_score_type(score_type)
 
     def prints(self, dec=6, show_con=False):
-        """格式化打印多个算法的对比结果"""
+        """
+        格式化打印多个算法的对比结果
+        :param dec: 精确到小数点后的位数
+        :param show_con: 是否展示约束结果
+        :return: None
+        """
         if self.problem.num_obj == 1:
             self.print_single(dec, show_con)
         else:
