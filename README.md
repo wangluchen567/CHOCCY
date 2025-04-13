@@ -172,11 +172,10 @@ comparator.run()  # 运行所有算法进行比较，实时对比算法运行情
 # 绘制优化结果图，展示目标值变化情况
 comparator.plot(show_mode=Comparator.OBJ)
 ```
+
 运行代码后可以看到优化过程动图，并给出最终结果如下：<br>
-
 <img src="./References/Pictures/Compare_OAD.gif" width="288" height="220"/>
-<img src="./References/Pictures/Compare_OBJ.png" width="288" height="220"/><br/>
-
+<img src="./References/Pictures/Compare_OBJ.png" width="288" height="220"/>
 ```
 Algorithm    GA              DE/rand/1       DE/best/1      
 Ackley       5.228867e-03    1.713851e-06    2.176037e-14   
