@@ -138,12 +138,15 @@ print("算法运行时间(秒)：", algorithm.run_time)
 算法运行时间(秒)： 0.058713674545288086
 ```
 下面给出不同参数下的效果动图：<br>
-- 左图：`num_dec=2`, `show_mode=DE.OBJ`; 右图：`num_dec=1`, `show_mode=DE.OAD2`<br>
-<img src="./References/Pictures/DE_Ackley.gif" width="288" height="220"/>
-<img src="./References/Pictures/DE_Ackley1.gif" width="288" height="220"/>
-- 左图：`num_dec=2`, `show_mode=DE.OAD2`; 右图：`num_dec=2`, `show_mode=DE.OAD3`<br>
-<img src="./References/Pictures/DE_Ackley2.gif" width="288" height="220"/>
-<img src="./References/Pictures/DE_Ackley3.gif" width="288" height="220"/>
+- 左图：`num_dec=2`, `show_mode=DE.OBJ`; 右图：`num_dec=1`, `show_mode=DE.OAD2`
+
+    <img src="./References/Pictures/DE_Ackley.gif" width="288" height="220"/>
+    <img src="./References/Pictures/DE_Ackley1.gif" width="288" height="220"/>
+
+- 左图：`num_dec=2`, `show_mode=DE.OAD2`; 右图：`num_dec=2`, `show_mode=DE.OAD3`
+
+    <img src="./References/Pictures/DE_Ackley2.gif" width="288" height="220"/>
+    <img src="./References/Pictures/DE_Ackley3.gif" width="288" height="220"/>
 
 ### 多种算法优化问题对比
 
@@ -169,9 +172,11 @@ comparator.run()  # 运行所有算法进行比较，实时对比算法运行情
 # 绘制优化结果图，展示目标值变化情况
 comparator.plot(show_mode=Comparator.OBJ)
 ```
-运行代码后可以看到优化过程动图，并给出最终结果如下：<br>
+运行代码后可以看到优化过程动图，并给出最终结果如下：
+
 <img src="./References/Pictures/Compare_OAD.gif" width="288" height="220"/>
 <img src="./References/Pictures/Compare_OBJ.png" width="288" height="220"/>
+
 ```
 Algorithm    GA              DE/rand/1       DE/best/1      
 Ackley       5.228867e-03    1.713851e-06    2.176037e-14   
@@ -193,7 +198,8 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 - [x] 加入其他评价指标
 - [ ] 加入约束相关算法
 - [ ] 加入梯度优化相关算法
-- [ ] 规范化注释与输入参数类型 
+- [ ] 加入保存优多化结果功能
+- [ ] 规范化注释与输入参数类型
 - [ ] 实现多核CPU并行计算与对比
 - [x] 加入多问题多算法对比评估器
 - [x] 使用numba加速超体积指标的计算
@@ -205,69 +211,75 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 #### 算法优化不同类型问题
 
 - 实数问题参考[快速开始](#快速开始)
-- 运行`Run_GA`中的`Solve_TSP()`优化`TSP`问题; 运行`Solve_MixFixLabelCluster()`优化`混合`问题(`实数`+`标签`)<br>
-<img src="./References/Pictures/TSP30.gif" width="288" height="230"/>
-<img src="./References/Pictures/MFLC.gif" width="288" height="230"/>
+- 运行`Run_GA`中的`Solve_TSP()`优化`TSP`问题; 运行`Solve_MixFixLabelCluster()`优化`混合`问题(`实数`+`标签`)
+
+    <img src="./References/Pictures/TSP30.gif" width="288" height="230"/>
+    <img src="./References/Pictures/MFLC.gif" width="288" height="230"/>
 
 #### 多种算法优化相同问题对比
 
-- 运行`Solve_Ackley`对比`实数`问题(Ackley)优化; 运行`Solve_TSP`对比`TSP`问题优化<br>
-<img src="./References/Pictures/Compares_Ackley.gif" width="288" height="230"/>
-<img src="./References/Pictures/Compares_TSP.gif" width="288" height="230"/>
+- 运行`Solve_Ackley`对比`实数`问题(Ackley)优化; 运行`Solve_TSP`对比`TSP`问题优化
 
-```
-Solve_Ackley.py
-Algorithm    GA              SA              PSO             DE/rand/1       DE/rand/2       DE/best/1       DE/best/2      
-Ackley       3.296624e-03    7.433576e-03    6.715419e-05    1.235109e-06    9.501386e-06    4.440892e-16    1.128765e-09   
-time(s)      4.106760e-02    5.498104e-01    2.985716e-03    2.389169e-02    2.673411e-02    2.406955e-02    1.493549e-02   
-```
+    <img src="./References/Pictures/Compares_Ackley.gif" width="288" height="230"/>
+    <img src="./References/Pictures/Compares_TSP.gif" width="288" height="230"/>
 
-```
-Solve_TSP.py
-Algorithm    GA              SA              ACO             HGA-TSP         FI              GFLS           
-TSP          4.917393e+00    5.295691e+00    4.726050e+00    4.726050e+00    4.819092e+00    4.716354e+00   
-time(s)      2.190208e-01    4.163930e-01    2.879641e+00    1.294901e+00    1.273990e-02    3.392506e-02  
-```
+    ```
+    Solve_Ackley.py
+    Algorithm    GA              SA              PSO             DE/rand/1       DE/rand/2       DE/best/1       DE/best/2      
+    Ackley       3.296624e-03    7.433576e-03    6.715419e-05    1.235109e-06    9.501386e-06    4.440892e-16    1.128765e-09   
+    time(s)      4.106760e-02    5.498104e-01    2.985716e-03    2.389169e-02    2.673411e-02    2.406955e-02    1.493549e-02   
+    ```
+    
+    ```
+    Solve_TSP.py
+    Algorithm    GA              SA              ACO             HGA-TSP         FI              GFLS           
+    TSP          4.917393e+00    5.295691e+00    4.726050e+00    4.726050e+00    4.819092e+00    4.716354e+00   
+    time(s)      2.190208e-01    4.163930e-01    2.879641e+00    1.294901e+00    1.273990e-02    3.392506e-02  
+    ```
 
 ### 多目标问题优化
 
 #### 算法优化不同目标数问题
 
-- 运行`Multi`下的`Run_NSGAII`对`ZDT3`问题优化; 运行`Run_MOEAD`对`DTLZ2`问题优化<br>
-<img src="./References/Pictures/ZDT3.gif" width="288" height="230"/>
-<img src="./References/Pictures/DTLZ2_MOEAD.gif" width="288" height="230"/><br/>
+- 运行`Multi`下的`Run_NSGAII`对`ZDT3`问题优化; 运行`Run_MOEAD`对`DTLZ2`问题优化
+
+    <img src="./References/Pictures/ZDT3.gif" width="288" height="230"/>
+    <img src="./References/Pictures/DTLZ2_MOEAD.gif" width="288" height="230"/><br/>
 
 #### 多种算法优化相同问题对比
 
-- 运行`Solve_ZDT`对比`ZDT1`问题优化<br>
-<img src="./References/Pictures/Compares_ZDT1.gif" width="288" height="230"/>
-<img src="./References/Pictures/ZDT1_Scores.png" width="288" height="230"/><br/>
+- 运行`Solve_ZDT`对比`ZDT1`问题优化
 
-```
-Algorithm    NSGA-II         MOEA/D          SPEA2          
-ZDT1         9.736895e-03    2.963049e-02    1.147498e-02   
-time(s)      1.519827e+00    1.510509e+00    1.585913e+00   
-```
+    <img src="./References/Pictures/Compares_ZDT1.gif" width="288" height="230"/>
+    <img src="./References/Pictures/ZDT1_Scores.png" width="288" height="230"/><br/>
 
-- 运行`Solve_MOKP`对比`MOKP`问题(10000维)优化<br>
-<img src="./References/Pictures/Compares_MOKP10k.gif" width="288" height="230"/>
-<img src="./References/Pictures/MOKP10k_Scores.png" width="288" height="230"/><br/>
+    ```
+    Algorithm    NSGA-II         MOEA/D          SPEA2          
+    ZDT1         9.736895e-03    2.963049e-02    1.147498e-02   
+    time(s)      1.519827e+00    1.510509e+00    1.585913e+00   
+    ```
 
-```
-Algorithm    NSGA-II         MOEA/D          SPEA2           NNDREA         
-MOKP         3.705192e-01    4.011776e-01    3.729958e-01    6.052205e-01   
-time(s)      5.749037e+00    1.060391e+01    5.286980e+00    1.019342e+01   
-```
+- 运行`Solve_MOKP`对比`MOKP`问题(10000维)优化
 
-- 运行`Solve_MOKP`对比`MOKP`问题(100000维)优化<br>
-<img src="./References/Pictures/Compares_MOKP100k.gif" width="288" height="230"/>
-<img src="./References/Pictures/MOKP100k_Scores.png" width="288" height="230"/><br/>
+    <img src="./References/Pictures/Compares_MOKP10k.gif" width="288" height="230"/>
+    <img src="./References/Pictures/MOKP10k_Scores.png" width="288" height="230"/><br/>
 
-```
-Algorithm    NSGA-II         MOEA/D          SPEA2           NNDREA         
-MOKP         3.196409e-01    3.172811e-01    3.202622e-01    6.076854e-01   
-time(s)      4.570414e+01    8.844192e+01    4.248132e+01    9.847076e+01  
-```
+    ```
+    Algorithm    NSGA-II         MOEA/D          SPEA2           NNDREA         
+    MOKP         3.705192e-01    4.011776e-01    3.729958e-01    6.052205e-01   
+    time(s)      5.749037e+00    1.060391e+01    5.286980e+00    1.019342e+01   
+    ```
+
+- 运行`Solve_MOKP`对比`MOKP`问题(100000维)优化
+
+    <img src="./References/Pictures/Compares_MOKP100k.gif" width="288" height="230"/>
+    <img src="./References/Pictures/MOKP100k_Scores.png" width="288" height="230"/><br/>
+
+    ```
+    Algorithm    NSGA-II         MOEA/D          SPEA2           NNDREA         
+    MOKP         3.196409e-01    3.172811e-01    3.202622e-01    6.076854e-01   
+    time(s)      4.570414e+01    8.844192e+01    4.248132e+01    9.847076e+01  
+    ```
 
 (PS: 可以看到即使问题扩大十倍，NNDREA的效果几乎不变，仍然是收敛快且效果好)
 
