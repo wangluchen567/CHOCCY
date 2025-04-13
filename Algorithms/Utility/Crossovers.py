@@ -12,6 +12,7 @@ KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
+import warnings
 import numpy as np
 
 
@@ -114,9 +115,23 @@ def fix_label_crossover(parents1, parents2, cross_prob):
         raise ValueError("The size of the two parent populations is not equal")
     if parents1.shape[1] != parents2.shape[1]:
         raise ValueError("The dim of the two parent populations is not equal")
-    N, D = parents1.shape
     # 得到每种标签的类型和数量
     labels_type, labels_num = np.unique(parents1[0], return_counts=True)
+    offspring = fix_label_cx(parents1, parents2, labels_type, labels_num, cross_prob)
+    return offspring
+
+
+def fix_label_cx_(parents1, parents2, labels_type, labels_num, cross_prob):
+    """
+    固定类型数的标签的均匀交叉(子函数)
+    :param parents1: 父代种群1
+    :param parents2: 父代种群2
+    :param labels_type: 每种标签的类型
+    :param labels_num: 每种标签的数量
+    :param cross_prob: 交叉概率
+    :return: 子代种群
+    """
+    N, D = parents1.shape
     # 初始化子代
     offspring1 = np.zeros(parents1.shape, dtype=int)
     offspring2 = np.zeros(parents2.shape, dtype=int)
@@ -143,14 +158,12 @@ def fix_label_crossover(parents1, parents2, cross_prob):
                 r2 = (parents2[i][j] if np.random.random() < 0.5 else parents1[i][
                     j]) if np.random.random() < cross_prob else offspring2[i][j]
                 k1, k2 = np.where(labels_type == r1)[0], np.where(labels_type == r2)[0]
-
                 # 判断是否可继承，若无法继承，则直接随机从剩余的类型中选择一个
                 if last_labels1[k1] <= 0:
                     k1 = np.random.choice(np.where(last_labels1 > 0)[0])
                     r1 = labels_type[k1]
                 offspring1[i][j] = r1
                 last_labels1[k1] -= 1
-
                 # 判断是否可继承，若无法继承，则直接随机从剩余的类型中选择一个
                 if last_labels2[k2] <= 0:
                     k2 = np.random.choice(np.where(last_labels2 > 0)[0])
@@ -283,3 +296,113 @@ def de_best_2(best, parents1, parents2, parents3, parents4, lower, upper, cross_
     offspring[offspring < Lower] = Lower[offspring < Lower]
     offspring[offspring > Upper] = Upper[offspring > Upper]
     return offspring
+
+
+try:
+    # 尝试导入numba
+    from numba import jit
+
+
+    @jit(nopython=True, cache=True)
+    def fix_label_cx_jit(parents1, parents2, labels_type, labels_num, cross_prob):
+        """
+        固定类型数的标签的均匀交叉(子函数)(Numba加速版本)
+        :param parents1: 父代种群1
+        :param parents2: 父代种群2
+        :param labels_type: 每种标签的类型
+        :param labels_num: 每种标签的数量
+        :param cross_prob: 交叉概率
+        :return: 子代种群
+        """
+        N, D = parents1.shape
+        # 初始化子代
+        offspring1 = np.zeros(parents1.shape, dtype=np.int32)
+        offspring2 = np.zeros(parents2.shape, dtype=np.int32)
+        # 两父代相同位保持不变，不同位均匀交叉，并且需要保证标签等量约束
+        # 使用显式循环代替布尔数组索引
+        for i in range(N):
+            for j in range(D):
+                if parents1[i, j] == parents2[i, j]:
+                    offspring1[i, j] = parents1[i, j]
+                    offspring2[i, j] = parents2[i, j]
+
+        # 这里需要遍历以满足固定数量的约束
+        for i in range(N):
+            # 统计剩余标签数量
+            last_labels1 = labels_num.copy()
+            last_labels2 = labels_num.copy()
+            for j in range(len(labels_type)):
+                count1 = 0
+                count2 = 0
+                for k in range(D):
+                    if offspring1[i, k] == labels_type[j]:
+                        count1 += 1
+                    if offspring2[i, k] == labels_type[j]:
+                        count2 += 1
+                last_labels1[j] -= count1
+                last_labels2[j] -= count2
+
+            # 根据现存数量在考虑约束的情况下得到子代
+            for j in range(D):
+                if parents1[i, j] != parents2[i, j]:
+                    # 随机从父代中选择继承点
+                    if np.random.random() < cross_prob:
+                        r1 = parents1[i, j] if np.random.random() < 0.5 else parents2[i, j]
+                    else:
+                        r1 = offspring1[i, j]
+
+                    if np.random.random() < cross_prob:
+                        r2 = parents2[i, j] if np.random.random() < 0.5 else parents1[i, j]
+                    else:
+                        r2 = offspring2[i, j]
+
+                    # 找到对应的标签类型索引
+                    k1 = -1
+                    k2 = -1
+                    for idx in range(len(labels_type)):
+                        if labels_type[idx] == r1:
+                            k1 = idx
+                        if labels_type[idx] == r2:
+                            k2 = idx
+
+                    # 判断是否可继承，若无法继承，则直接随机从剩余的类型中选择一个
+                    if last_labels1[k1] <= 0:
+                        available = np.where(last_labels1 > 0)[0]
+                        if len(available) > 0:
+                            k1 = np.random.choice(available)
+                            r1 = labels_type[k1]
+
+                    offspring1[i, j] = r1
+                    last_labels1[k1] -= 1
+
+                    # 判断是否可继承，若无法继承，则直接随机从剩余的类型中选择一个
+                    if last_labels2[k2] <= 0:
+                        available = np.where(last_labels2 > 0)[0]
+                        if len(available) > 0:
+                            k2 = np.random.choice(available)
+                            r2 = labels_type[k2]
+
+                    offspring2[i, j] = r2
+                    last_labels2[k2] -= 1
+
+        offspring = np.vstack((offspring1, offspring2))
+        return offspring
+
+
+    def fix_label_cx(parents1, parents2, labels_type, labels_num, cross_prob):
+        """
+        包装函数，保持原始接口不变，内部调用Numba加速版本
+        """
+        # 确保输入数组是Numba兼容的类型
+        parents1 = np.asarray(parents1, dtype=np.int32)
+        parents2 = np.asarray(parents2, dtype=np.int32)
+        labels_type = np.asarray(labels_type, dtype=np.int32)
+        labels_num = np.asarray(labels_num, dtype=np.int32)
+
+        return fix_label_cx_jit(parents1, parents2, labels_type, labels_num, cross_prob)
+
+
+except ImportError:
+    # 如果导入numba加速库失败，使用原始的函数
+    warnings.warn("Optimizing problems without using numba acceleration...")
+    fix_label_cx = fix_label_cx_
