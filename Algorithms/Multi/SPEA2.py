@@ -19,7 +19,7 @@ from Algorithms.Utility.Utils import get_dom_between
 class SPEA2(ALGORITHM):
     def __init__(self, pop_size=None, max_iter=None, cross_prob=None, mutate_prob=None, show_mode=0):
         """
-        SPEA2：改进强度帕累托进化算法
+        改进的基于优势的帕累托进化算法
 
         References:
             SPEA2: Improving the strength Pareto evolutionary algorithm,

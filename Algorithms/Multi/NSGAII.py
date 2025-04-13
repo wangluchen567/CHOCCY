@@ -18,7 +18,7 @@ from Algorithms.Utility.Utils import fast_nd_sort, cal_crowd_dist, cal_ranking
 class NSGAII(ALGORITHM):
     def __init__(self, pop_size=None, max_iter=None, cross_prob=None, mutate_prob=None, show_mode=0):
         """
-        一种快速基于精英策略的多目标遗传算法 NSGA-II
+        基于快速非支配排序多目标遗传算法
 
         References:
             A fast and elitist multi-objective genetic algorithm: NSGA-II,
