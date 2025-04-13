@@ -1,10 +1,12 @@
 # CHOCCY
 
 ## 项目名称
+
 基于NumPy构建的启发式优化器框架<br>
 Chen's Heuristic Optimizer Constructed with Core numpY
 
 ## 项目简介
+
 本项目是一个完全免费且开源的启发式优化器框架，致力于打造一个简单易用、绘图形式丰富且便于进行算法分析的启发式优化器框架。
 本项目提供了大量启发式算法的实现细节，支持对`实数`、`整数`、`序列`、`(固定)标签`以及`混合`等类型问题的优化，
 旨在为对优化领域感兴趣的伙伴们提供易于理解的算法学习资源和有力的研究支持。<br>
@@ -15,6 +17,7 @@ Chen's Heuristic Optimizer Constructed with Core numpY
 **特别说明：`本代码仅供参考学习、竞赛和科学研究等非商业用途，在复制核心代码时请注明出处`**
 
 ## 主要特点
+
 - 支持多种`启发式`和`元启发式`优化算法，适用于广泛的问题类型求解
 - 支持对多种问题的优化，包括但不限于`实数`、`整数`、`序列`、`(固定)标签`问题
 - 支持对混合问题的优化，即问题的不同部分可以是不同类型的问题
@@ -24,6 +27,7 @@ Chen's Heuristic Optimizer Constructed with Core numpY
 - 使用`numba`对算法的核心部分进行优化，显著提高优化速度
 
 ## 安装教程
+
 **1. 建议使用 `Anaconda` 创建 `Python` 环境**<br>
 使用 Anaconda 创建环境可以方便地管理依赖包，避免版本冲突。建议从 [Anaconda 官网](https://www.anaconda.com/download/success) 下载并安装 Anaconda。如果需要特定版本，可以访问 [Anaconda所有版本下载地址](https://repo.anaconda.com/archive/)。<br>
 安装完成后，运行以下命令创建 Python 环境：
@@ -39,6 +43,7 @@ pip install numpy scipy matplotlib seaborn tqdm networkx numba tbb
 ```
 
 ## 项目结构
+
 ```
 CHOCCY/
 ├── Algorithms/                 # 算法集——优化器核心
@@ -98,6 +103,7 @@ CHOCCY/
 │   │   └── ...                 # 其他实例可自行查看
 └── README.md                   # 项目文档
 ```
+
 **支持的算法集与问题集** 请参见[实现清单](./References/IMPLES.md)<br>
 
 **PS: 项目中包含本人研究工作**<br>
@@ -108,6 +114,7 @@ Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimizatio
 ## 快速开始
 
 ### 算法优化指定问题
+
 假设已经定义了一个问题，以Ackley为例，问题如何定义的详细内容请参见[使用指南](./References/GUIDE.md)<br>
 那么我们就可以直接实例化问题，并使用合适的算法进行优化：
 ```python
@@ -139,7 +146,9 @@ print("算法运行时间(秒)：", algorithm.run_time)
 <img src="./References/Pictures/DE_Ackley3.gif" width="288" height="220"/>
 
 ### 多种算法优化问题对比
+
 #### 算法优化实时对比
+
 仍然以Ackley为例，我们可以实例化该问题，并使用多种算法进行实时优化与对比：
 ```python
 from Problems.Single import Ackley  # 导入问题
@@ -168,58 +177,72 @@ Algorithm    GA              DE/rand/1       DE/best/1
 Ackley       5.228867e-03    1.713851e-06    2.176037e-14   
 time(s)      3.272367e-02    2.751327e-02    2.319741e-02   
 ```
+
 #### 算法优化结果对比
+
 仍然以Ackley为例(决策变量维度为30)，运行`Eval_Ackley`可实现对算法结果的对比，并支持绘制`小提琴图`、`箱型图`、`核密度估计图`等，
 运行代码后可以得到算法的结果对比，并绘制图像，下面给出绘制的小提琴图与核密度估计图：<br>
 <img src="./References/Pictures/violin.png" width="288" height="220"/>
 <img src="./References/Pictures/kde.png" width="288" height="220"/>
 
-
 ## 更新计划
+
 - [x] 更新项目文档
 - [ ] 更新使用指南
 - [ ] 更新算法笔记
 - [x] 加入其他评价指标
 - [ ] 加入约束相关算法
 - [ ] 加入梯度优化相关算法
+- [ ] 规范化注释与输入参数类型 
 - [ ] 实现多核CPU并行计算与对比
 - [x] 加入多问题多算法对比评估器
 - [x] 使用numba加速超体积指标的计算
 
 ## 效果展示
+
 ### 单目标问题优化
+
 #### 算法优化不同类型问题
+
 - 实数问题参考[快速开始](#快速开始)
 - 运行`Run_GA`中的`Solve_TSP()`优化`TSP`问题; 运行`Solve_MixFixLabelCluster()`优化`混合`问题(`实数`+`标签`)<br>
 <img src="./References/Pictures/TSP30.gif" width="288" height="230"/>
 <img src="./References/Pictures/MFLC.gif" width="288" height="230"/>
 
 #### 多种算法优化相同问题对比
+
 - 运行`Solve_Ackley`对比`实数`问题(Ackley)优化; 运行`Solve_TSP`对比`TSP`问题优化<br>
 <img src="./References/Pictures/Compares_Ackley.gif" width="288" height="230"/>
 <img src="./References/Pictures/Compares_TSP.gif" width="288" height="230"/>
+
 ```
 Solve_Ackley.py
 Algorithm    GA              SA              PSO             DE/rand/1       DE/rand/2       DE/best/1       DE/best/2      
 Ackley       3.296624e-03    7.433576e-03    6.715419e-05    1.235109e-06    9.501386e-06    4.440892e-16    1.128765e-09   
 time(s)      4.106760e-02    5.498104e-01    2.985716e-03    2.389169e-02    2.673411e-02    2.406955e-02    1.493549e-02   
 ```
+
 ```
 Solve_TSP.py
 Algorithm    GA              SA              ACO             HGA-TSP         FI              GFLS           
 TSP          4.917393e+00    5.295691e+00    4.726050e+00    4.726050e+00    4.819092e+00    4.716354e+00   
 time(s)      2.190208e-01    4.163930e-01    2.879641e+00    1.294901e+00    1.273990e-02    3.392506e-02  
 ```
+
 ### 多目标问题优化
+
 #### 算法优化不同目标数问题
+
 - 运行`Multi`下的`Run_NSGAII`对`ZDT3`问题优化; 运行`Run_MOEAD`对`DTLZ2`问题优化<br>
 <img src="./References/Pictures/ZDT3.gif" width="288" height="230"/>
 <img src="./References/Pictures/DTLZ2_MOEAD.gif" width="288" height="230"/><br/>
 
 #### 多种算法优化相同问题对比
+
 - 运行`Solve_ZDT`对比`ZDT1`问题优化<br>
 <img src="./References/Pictures/Compares_ZDT1.gif" width="288" height="230"/>
 <img src="./References/Pictures/ZDT1_Scores.png" width="288" height="230"/><br/>
+
 ```
 Algorithm    NSGA-II         MOEA/D          SPEA2          
 ZDT1         9.736895e-03    2.963049e-02    1.147498e-02   
@@ -229,19 +252,23 @@ time(s)      1.519827e+00    1.510509e+00    1.585913e+00
 - 运行`Solve_MOKP`对比`MOKP`问题(10000维)优化<br>
 <img src="./References/Pictures/Compares_MOKP10k.gif" width="288" height="230"/>
 <img src="./References/Pictures/MOKP10k_Scores.png" width="288" height="230"/><br/>
+
 ```
 Algorithm    NSGA-II         MOEA/D          SPEA2           NNDREA         
 MOKP         3.705192e-01    4.011776e-01    3.729958e-01    6.052205e-01   
 time(s)      5.749037e+00    1.060391e+01    5.286980e+00    1.019342e+01   
 ```
+
 - 运行`Solve_MOKP`对比`MOKP`问题(100000维)优化<br>
 <img src="./References/Pictures/Compares_MOKP100k.gif" width="288" height="230"/>
 <img src="./References/Pictures/MOKP100k_Scores.png" width="288" height="230"/><br/>
+
 ```
 Algorithm    NSGA-II         MOEA/D          SPEA2           NNDREA         
 MOKP         3.196409e-01    3.172811e-01    3.202622e-01    6.076854e-01   
 time(s)      4.570414e+01    8.844192e+01    4.248132e+01    9.847076e+01  
 ```
+
 (PS: 可以看到即使问题扩大十倍，NNDREA的效果几乎不变，仍然是收敛快且效果好)
 
 ## 参与贡献
