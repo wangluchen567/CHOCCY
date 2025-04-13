@@ -24,7 +24,8 @@ class DE(ALGORITHM):
                  factor=0.5, operator_type=BEST1, show_mode=0):
         """
         差分进化算法
-        *Code Author: Luchen Wang
+
+        Code Author: Luchen Wang
         :param pop_size: 种群大小
         :param max_iter: 迭代次数
         :param cross_prob: 交叉概率

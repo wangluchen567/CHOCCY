@@ -18,7 +18,8 @@ class PSO(ALGORITHM):
     def __init__(self, pop_size=None, max_iter=None, w=0.7298, c1=2.0, c2=2.0, show_mode=0):
         """
         粒子群优化算法
-        *Code Author: Luchen Wang
+
+        Code Author: Luchen Wang
         :param pop_size: 种群大小
         :param max_iter: 迭代次数
         :param w: 惯性权重

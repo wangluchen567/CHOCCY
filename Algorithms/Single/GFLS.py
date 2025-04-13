@@ -18,7 +18,12 @@ class GFLS(ALGORITHM):
     def __init__(self, max_iter=1000, alpha=1 / 4, active_all=True, show_mode=0):
         """
         引导快速局部搜索(Guided Fast Local Search)
-        *Code Author: Luchen Wang
+
+        References:
+            GUIDED LOCAL SEARCH,
+            Christos Voudouris, Edward P. K. Tsang and Abdullah Alsheddy
+        Code Author:
+            Luchen Wang
         :param max_iter: 迭代次数
         :param alpha: 用于更新lambda的超参数
         :param active_all: 是否激活全部子邻域

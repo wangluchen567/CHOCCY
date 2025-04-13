@@ -18,10 +18,13 @@ from Algorithms.Utility.Utils import fast_nd_sort, cal_crowd_dist, cal_ranking
 class NSGAII(ALGORITHM):
     def __init__(self, pop_size=None, max_iter=None, cross_prob=None, mutate_prob=None, show_mode=0):
         """
-        This code is based on the research presented in
-        "A fast and elitist multi-objective genetic algorithm: NSGA-II"
-        by K. Deb, A. Pratap, S. Agarwal, and T. Meyarivan
-        *Code Author: Luchen Wang
+        一种快速基于精英策略的多目标遗传算法 NSGA-II
+
+        References:
+            A fast and elitist multi-objective genetic algorithm: NSGA-II,
+            K. Deb, A. Pratap, S. Agarwal, and T. Meyarivan
+        Code Author:
+            Luchen Wang
         :param pop_size: 种群大小
         :param max_iter: 迭代次数
         :param cross_prob: 交叉概率

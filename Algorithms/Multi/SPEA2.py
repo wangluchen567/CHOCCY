@@ -19,10 +19,13 @@ from Algorithms.Utility.Utils import get_dom_between
 class SPEA2(ALGORITHM):
     def __init__(self, pop_size=None, max_iter=None, cross_prob=None, mutate_prob=None, show_mode=0):
         """
-        This code is based on the research presented in
-        "SPEA2: Improving the strength Pareto evolutionary algorithm"
-        by E. Zitzler, M. Laumanns, and L. Thiele
-        *Code Author: Luchen Wang
+        SPEA2：改进强度帕累托进化算法
+
+        References:
+            SPEA2: Improving the strength Pareto evolutionary algorithm,
+            E. Zitzler, M. Laumanns, and L. Thiele
+        Code Author:
+            Luchen Wang
         :param pop_size: 种群大小
         :param max_iter: 迭代次数
         :param cross_prob: 交叉概率
@@ -97,7 +100,15 @@ class SPEA2(ALGORITHM):
 
     @staticmethod
     def truncation(objs, k):
-        """截断选择(选择k个个体进行删除)"""
+        """
+        截断选择(选择k个个体进行删除)
+
+        Code References:
+            PlatEMO(https://github.com/BIMK/PlatEMO)
+        :param objs: 种群的目标值向量
+        :param k: 选择删除的个体数量
+        :return: 个体是否被删除的标签向量
+        """
         # 计算每个个体目标值之间的距离
         dist_mat = distance_matrix(objs, objs)
         np.fill_diagonal(dist_mat, np.inf)  # 对角线设置为inf

@@ -67,7 +67,7 @@ def get_dom_between_(objs):
 
 
 def fast_nd_sort_(objs):
-    """快速非支配排序(非jit加速版)"""
+    """快速非支配排序(非numba加速版)"""
     pop_size = len(objs)  # 获取种群数量
     objs = np.array(objs)  # 将目标转换为numpy数组
     fronts = []  # 初始化各前沿面列表
@@ -261,7 +261,7 @@ try:
 
     @jit(nopython=True, cache=True)
     def fast_nd_sort_jit(objs):
-        """快速非支配排序(jit加速版)"""
+        """快速非支配排序(numba加速版)"""
         pop_size = objs.shape[0]  # 获取种群数量
         fronts = np.zeros((pop_size, pop_size), dtype=np.int16)  # 初始化各前沿面的索引数组
         fronts_trunc = np.zeros(pop_size, dtype=np.int16)  # 各前沿面的索引数组的索引截断

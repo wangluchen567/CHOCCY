@@ -157,7 +157,16 @@ def cal_HV(objs, optimum=None):
 
 
 def cal_HV_estimated_(objs_norm, ref_point, sample_num=1e6):
-    """使用蒙特卡罗方法估计HV值"""
+    """
+    使用蒙特卡罗方法估计HV值
+
+    Code References:
+        PlatEMO(https://github.com/BIMK/PlatEMO)
+    :param objs_norm: 规范化后的目标向量
+    :param ref_point: 参考点向量
+    :param sample_num: 采样点个数
+    :return:  HV分数值
+    """
     sample_num = int(sample_num)
     max_value = ref_point
     min_value = np.min(objs_norm, axis=0)
@@ -177,9 +186,15 @@ def cal_HV_estimated_(objs_norm, ref_point, sample_num=1e6):
 def cal_HV_accurate_(objs_norm, ref_point):
     """
     计算精确的HV值
-    This code is based on the research presented in
-    "A Faster Algorithm for Calculating Hypervolume"
-    by Lyndon While, Philip Hingston, Luigi Barone, and Simon Huband
+
+    References:
+        A Faster Algorithm for Calculating Hypervolume,
+        Lyndon While, Philip Hingston, Luigi Barone, and Simon Huband
+    Code References:
+        PlatEMO(https://github.com/BIMK/PlatEMO)
+    :param objs_norm: 规范化后的目标向量
+    :param ref_point: 参考点向量
+    :return: HV分数值
     """
     pl = np.unique(objs_norm, axis=0)
     s = [[1, pl]]
@@ -411,9 +426,15 @@ try:
     def cal_HV_accurate(objs_norm, ref_point):
         """
         精确计算HV值(使用numba加速)
-        This code is based on the research presented in
-        "A Faster Algorithm for Calculating Hypervolume"
-        by Lyndon While, Philip Hingston, Luigi Barone, and Simon Huband
+
+        References:
+            A Faster Algorithm for Calculating Hypervolume,
+            Lyndon While, Philip Hingston, Luigi Barone, and Simon Huband
+        Code References:
+            PlatEMO(https://github.com/BIMK/PlatEMO)
+        :param objs_norm: 规范化后的目标向量
+        :param ref_point: 参考点向量
+        :return: HV分数值
         """
         # 删除重复项 Remove duplicates
         objs_norm = np.unique(objs_norm, axis=0)
@@ -457,7 +478,16 @@ try:
 
     @jit(nopython=True, parallel=True, cache=True)
     def cal_HV_estimated(objs_norm, ref_point, sample_num=1e6):
-        """使用蒙特卡罗方法估计HV值（Numba加速版）"""
+        """
+        使用蒙特卡罗方法估计HV值(numba多核并行加速)
+
+        Code References:
+            PlatEMO(https://github.com/BIMK/PlatEMO)
+        :param objs_norm: 规范化后的目标向量
+        :param ref_point: 参考点向量
+        :param sample_num: 采样点个数
+        :return:  HV分数值
+        """
         sample_num = int(sample_num)
         dim = objs_norm.shape[1]
         n_points = objs_norm.shape[0]

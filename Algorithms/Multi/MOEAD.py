@@ -23,10 +23,13 @@ class MOEAD(ALGORITHM):
 
     def __init__(self, pop_size=100, max_iter=None, agg_type=PBI, cross_prob=None, mutate_prob=None, show_mode=0):
         """
-        This code is based on the research presented in
-        "MOEA/D: A multi-objective evolutionary algorithm based on decomposition"
-        by Q. Zhang and H. Li
-        *Code Author: Luchen Wang
+        一种基于分解的多目标进化算法
+
+        References:
+            MOEA/D: A multi-objective evolutionary algorithm based on decomposition,
+            Q. Zhang and H. Li
+        Code Author:
+            Luchen Wang
         :param pop_size: 种群大小
         :param max_iter: 迭代次数
         :param agg_type: 聚合函数类型
@@ -86,6 +89,7 @@ class MOEAD(ALGORITHM):
         self.record()
 
     def selection_single(self, j):
+        """随机选择两个个体作为父代"""
         return np.random.choice(self.indexes[j], size=2, replace=False)
 
     def environmental_selection_single(self, offspring, j):
@@ -107,6 +111,12 @@ class MOEAD(ALGORITHM):
         self.cons[neighbors[better]] = offspring_con
 
     def aggregate(self, vectors, objs):
+        """
+        聚合函数
+        :param vectors:
+        :param objs:
+        :return:
+        """
         # 改变形状方便矩阵运算
         if objs.ndim == 1:
             objs = objs.reshape(1, -1)

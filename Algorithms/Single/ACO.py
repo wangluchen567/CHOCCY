@@ -20,7 +20,8 @@ class ACO(ALGORITHM):
     def __init__(self, pop_size=None, max_iter=None, alpha=1, beta=4, rho=0.2, q_value=100, show_mode=0):
         """
         蚁群算法 (蚁周模型 Ant-Cycle)
-        *Code Author: Luchen Wang
+
+        Code Author: Luchen Wang
         :param pop_size: 种群大小(蚁群大小)
         :param max_iter: 迭代次数
         :param alpha: 信息素因子，反映信息素的重要程度，一般取值[1~4]

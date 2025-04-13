@@ -18,7 +18,8 @@ class FI(ALGORITHM):
     def __init__(self, show_mode=0):
         """
         最远插入启发式算法(Farthest Insertion)
-        *Code Author: Luchen Wang
+
+        Code Author: Luchen Wang
         :param show_mode: 绘图模式
         """
         super().__init__(pop_size=1, max_iter=None, show_mode=show_mode)

@@ -18,7 +18,8 @@ class SA(ALGORITHM):
     def __init__(self, pop_size=1, max_iter=10000, init_temp=1e4, alpha=0.99, perturb_prob=0.5, show_mode=0):
         """
         模拟退火算法
-        *Code Author: Luchen Wang
+
+        Code Author: Luchen Wang
         :param max_iter: 迭代次数
         :param init_temp: 初始温度
         :param alpha: 温度衰减系数

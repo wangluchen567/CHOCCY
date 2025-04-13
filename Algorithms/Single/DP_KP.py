@@ -19,7 +19,8 @@ class DPKP(ALGORITHM):
     def __init__(self, show_mode=0):
         """
         动态规划求解背包问题(KP)
-        *Code Author: Luchen Wang
+
+        Code Author: Luchen Wang
         :param show_mode: 绘图模式
         """
         super().__init__(pop_size=1, max_iter=None, show_mode=show_mode)
