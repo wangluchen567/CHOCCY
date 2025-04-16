@@ -152,7 +152,7 @@ class Sphere(PROBLEM):
 
 ```python
     def _cal_objs(self, X):
-        objs = np.sum(X**2, axis=-1)
+        objs = np.sum(X**2, axis=1)
         return objs
 ```
 
@@ -180,7 +180,7 @@ class Sphere(PROBLEM):
         super().__init__(PROBLEM.REAL, num_dec, num_obj, lower, upper)
         
     def _cal_objs(self, X):
-        objs = np.sum(X**2, axis=-1)
+        objs = np.sum(X**2, axis=1)
         return objs
     
 if __name__ == '__main__':
