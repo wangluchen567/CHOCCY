@@ -20,6 +20,6 @@ class Ackley(PROBLEM):
         super().__init__(PROBLEM.REAL, num_dec, num_obj, lower, upper)
 
     def _cal_objs(self, X):
-        objs = -20 * np.exp(-0.2 * np.sqrt(np.sum(X ** 2, -1) / self.num_dec)) - np.exp(
-            np.sum(np.cos(2 * np.pi * X), -1) / self.num_dec) + 20 + np.e
+        objs = -20 * np.exp(-0.2 * np.sqrt(np.sum(X ** 2, axis=1) / self.num_dec)) - np.exp(
+            np.sum(np.cos(2 * np.pi * X), axis=1) / self.num_dec) + 20 + np.e
         return objs

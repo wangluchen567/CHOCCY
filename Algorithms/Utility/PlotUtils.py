@@ -168,7 +168,10 @@ def plot_objs_decs(problem, decs, objs, n_iter=None, pause=False, pause_time=0.0
         x = np.linspace(x_min, x_max, 1000).reshape(-1, 1)
         y = np.linspace(y_min, y_max, 1000).reshape(-1, 1)
         X, Y = np.meshgrid(x, y)
-        Z = problem.cal_objs(np.concatenate((np.expand_dims(X, -1), np.expand_dims(Y, -1)), -1))
+        # 将输入的决策变量打包
+        decs_pack = np.concatenate((np.expand_dims(X, -1), np.expand_dims(Y, -1)), -1).reshape(-1, 2)
+        objs_pack = problem.cal_objs(decs_pack)
+        Z = objs_pack.reshape(X.shape)
         if contour:
             # 设置x轴和y轴使用科学计数法
             plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))

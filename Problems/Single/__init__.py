@@ -17,3 +17,9 @@ from .Ackley import Ackley
 from .Sphere import Sphere
 from .FixLabelCluster import FixLabelCluster
 from .MixFixLabelCluster import MixFixLabelCluster
+
+# SOP系列问题
+from .SOP.SOP1 import SOP1
+from .SOP.SOP2 import SOP2
+from .SOP.SOP3 import SOP3
+from .SOP.SOP10 import SOP10
