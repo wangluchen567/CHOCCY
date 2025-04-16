@@ -96,8 +96,8 @@ CHOCCY是一个基于 NumPy 构建的启发式优化求解器，用于解决各�
 1. **问题的类型**：该问题是单纯的`实数`问题
 2. **决策变量的个数**：不确定，但可以指定，默认为 30
 3. **优化目标的个数**：只有单个目标
-4. **决策变量下界**：不确定，但为了缩小范围，均指定为 -10
-5. **决策变量上界**：不确定，但为了缩小范围，均指定为 10
+4. **决策变量下界**：不确定，但为了缩小范围，均指定为 -100
+5. **决策变量上界**：不确定，但为了缩小范围，均指定为 100
 
 在确定问题信息时需要注意以下几点：
 - 由于给出的例子是特殊的，最终结果是求和，因此决策变量的个数可以不确定。但通常情况下，具体问题的决策变量个数是确定的。
@@ -117,8 +117,8 @@ CHOCCY是一个基于 NumPy 构建的启发式优化求解器，用于解决各�
 ```python
 import numpy as np
 from Problems import PROBLEM
-class Square(PROBLEM):
-    def __init__(self, num_dec=30, lower=-10, upper=10):
+class Sphere(PROBLEM):
+    def __init__(self, num_dec=30, lower=-100, upper=100):
         super().__init__(problem_type=PROBLEM.REAL, num_dec=num_dec, num_obj=1, lower=lower, upper=upper)
 ```
 在上述代码中，需要注意三个参数：
@@ -166,26 +166,25 @@ class Square(PROBLEM):
 ### 算法选择
 定义好问题之后，需要选择一个或多个合适的算法进行求解，具体算法适用求解问题类型可见[算法介绍](#算法介绍)。
 
-对于前面定义的`square`问题，我们可以直接调用合适的单目标算法来求解，以差分进化算法为例：
+对于前面定义的`Sphere`问题，我们可以直接调用合适的单目标算法来求解，以差分进化算法为例：
 
 ```python
 import numpy as np
 from Problems import PROBLEM
 from Algorithms.Single import DE
 
-class Square(PROBLEM):
+class Sphere(PROBLEM):
     """定义问题"""
-    def __init__(self, num_dec=30, lower=-10, upper=10):
-        problem_type = PROBLEM.REAL
+    def __init__(self, num_dec=30, lower=-100, upper=100):
         num_obj = 1
-        super().__init__(problem_type, num_dec, num_obj, lower, upper)
+        super().__init__(PROBLEM.REAL, num_dec, num_obj, lower, upper)
         
     def _cal_objs(self, X):
         objs = np.sum(X**2, axis=-1)
         return objs
     
 if __name__ == '__main__':
-    problem = Square(num_dec=10)  # 实例化问题，并指定决策向量大小
+    problem = Sphere(num_dec=10)  # 实例化问题，并指定决策向量大小
     # 实例化算法并设置种群大小为100，迭代次数为100，优化过程展示为目标值变化情况
     algorithm = DE(pop_size=100, max_iter=100, show_mode=DE.OBJ)
     algorithm.solve(problem)  # 使用该算法求解问题
