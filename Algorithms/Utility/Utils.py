@@ -1,6 +1,7 @@
 """
 工具类
 Utils
+
 Copyright (c) 2024 LuChen Wang
 CHOCCY is licensed under Mulan PSL v2.
 You can use this software according to the terms and conditions of the Mulan
@@ -114,11 +115,11 @@ def cal_crowd_dist(objs, fronts):
         # 获取当前前沿面中解的目标值
         objs_f = objs[f, :]
         # 求最大与最小值
-        FMax = np.max(objs_f, axis=0)
-        FMin = np.min(objs_f, axis=0)
+        f_max = np.max(objs_f, axis=0)
+        f_min = np.min(objs_f, axis=0)
         # 求最大与最小的差，方便归一化
-        FRange = FMax - FMin
-        FRange[FRange == 0] = np.finfo(np.float32).tiny  # 避免除零
+        f_range = f_max - f_min
+        f_range[f_range == 0] = np.finfo(np.float32).tiny  # 避免除零
 
         # 排序索引矩阵
         sorted_indices = np.argsort(objs_f, axis=0)
@@ -128,7 +129,7 @@ def cal_crowd_dist(objs, fronts):
         crowd_dist[f_sorted[-1, np.arange(num_dim)]] = float('inf')
         # 计算中间个体的拥挤度增量
         dist_increments = (objs_f[sorted_indices[2:], np.arange(num_dim)] - objs_f[
-            sorted_indices[:-2], np.arange(num_dim)]) / FRange
+            sorted_indices[:-2], np.arange(num_dim)]) / f_range
         # 累加增量到距离
         np.add.at(crowd_dist, f_sorted[1:-1], dist_increments)
 

@@ -16,12 +16,15 @@ from Algorithms.Utility.Utils import fast_nd_sort
 
 
 class ZDT3(PROBLEM):
-    def __init__(self, num_dec=None, lower=0, upper=1):
-        problem_type = PROBLEM.REAL
-        num_obj = 2
-        if num_dec is None:
-            num_dec = 30
-        super().__init__(problem_type, num_dec, num_obj, lower, upper)
+    def __init__(self, num_dec=30):
+        """
+        ZDT3
+
+        References: Comparison of multiobjective evolutionary algorithms: Empirical results,
+        E. Zitzler, K. Deb, and L. Thiele
+        :param num_dec: 决策变量个数
+        """
+        super().__init__(PROBLEM.REAL, num_dec, num_obj=2, lower=0, upper=1)
 
     def _cal_objs(self, X):
         X = np.array(X)

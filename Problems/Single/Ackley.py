@@ -1,6 +1,6 @@
 """
 Copyright (c) 2024 LuChen Wang
-[Software Name] is licensed under Mulan PSL v2.
+CHOCCY is licensed under Mulan PSL v2.
 You can use this software according to the terms and conditions of the Mulan
 PSL v2.
 You may obtain a copy of Mulan PSL v2 at:
@@ -15,11 +15,9 @@ from Problems import PROBLEM
 
 
 class Ackley(PROBLEM):
-    def __init__(self, num_dec=None, lower=-32, upper=32):
-        problem_type = PROBLEM.REAL
+    def __init__(self, num_dec=30, lower=-32, upper=32):
         num_obj = 1
-        if num_dec is None: num_dec = 30
-        super().__init__(problem_type, num_dec, num_obj, lower, upper)
+        super().__init__(PROBLEM.REAL, num_dec, num_obj, lower, upper)
 
     def _cal_objs(self, X):
         objs = -20 * np.exp(-0.2 * np.sqrt(np.sum(X ** 2, -1) / self.num_dec)) - np.exp(

@@ -15,16 +15,20 @@ from Problems import PROBLEM
 
 
 class ZDT4(PROBLEM):
-    def __init__(self, num_dec=None):
-        problem_type = PROBLEM.REAL
+    def __init__(self, num_dec=10):
+        """
+        ZDT4
+
+        References: Comparison of multiobjective evolutionary algorithms: Empirical results,
+        E. Zitzler, K. Deb, and L. Thiele
+        :param num_dec: 决策变量个数
+        """
         num_obj = 2
-        if num_dec is None:
-            num_dec = 10
         lower = np.zeros(num_dec) - 5
         lower[0] = 0
         upper = np.zeros(num_dec) + 5
         upper[0] = 1
-        super().__init__(problem_type, num_dec, num_obj, lower, upper)
+        super().__init__(PROBLEM.REAL, num_dec, num_obj, lower, upper)
 
     def _cal_objs(self, X):
         X = np.array(X)

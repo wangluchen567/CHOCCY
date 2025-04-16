@@ -1,6 +1,7 @@
 """
 教育操作(用于混合算法)
 Educations Operator
+
 Copyright (c) 2024 LuChen Wang
 CHOCCY is licensed under Mulan PSL v2.
 You can use this software according to the terms and conditions of the Mulan

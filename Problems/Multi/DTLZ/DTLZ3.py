@@ -16,13 +16,18 @@ from Algorithms.Utility.Utils import get_uniform_vectors
 
 
 class DTLZ3(PROBLEM):
-    def __init__(self, num_dec=None, num_obj=None, lower=0, upper=1):
-        problem_type = PROBLEM.REAL
-        if num_obj is None:
-            num_obj = 3
+    def __init__(self, num_dec=None, num_obj=3):
+        """
+        DTLZ3
+
+        References: Scalable test problems for evolutionary multiobjective optimization,
+        K. Deb, L. Thiele, M. Laumanns, and E. Zitzler
+        :param num_dec: 决策变量个数
+        :param num_obj: 优化目标个数
+        """
         if num_dec is None:
             num_dec = num_obj + 9
-        super().__init__(problem_type, num_dec, num_obj, lower, upper)
+        super().__init__(PROBLEM.REAL, num_dec, num_obj, lower=0, upper=1)
 
     def _cal_objs(self, X):
         D = self.num_dec

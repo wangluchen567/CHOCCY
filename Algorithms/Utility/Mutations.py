@@ -1,6 +1,7 @@
 """
 变异算子
 Mutation Operator
+
 Copyright (c) 2024 LuChen Wang
 CHOCCY is licensed under Mulan PSL v2.
 You can use this software according to the terms and conditions of the Mulan

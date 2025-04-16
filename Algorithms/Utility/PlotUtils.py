@@ -1,6 +1,7 @@
 """
 绘图工具类
 Plot Utils
+
 Copyright (c) 2024 LuChen Wang
 CHOCCY is licensed under Mulan PSL v2.
 You can use this software according to the terms and conditions of the Mulan

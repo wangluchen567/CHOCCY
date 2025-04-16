@@ -1,6 +1,6 @@
 """
 Copyright (c) 2024 LuChen Wang
-[Software Name] is licensed under Mulan PSL v2.
+CHOCCY is licensed under Mulan PSL v2.
 You can use this software according to the terms and conditions of the Mulan
 PSL v2.
 You may obtain a copy of Mulan PSL v2 at:
@@ -14,6 +14,6 @@ See the Mulan PSL v2 for more details.
 from .KP import KP
 from .TSP import TSP
 from .Ackley import Ackley
-from .Square import Square
+from .Sphere import Sphere
 from .FixLabelCluster import FixLabelCluster
 from .MixFixLabelCluster import MixFixLabelCluster
