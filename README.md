@@ -282,9 +282,9 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 
 (PS: 可以看到即使问题扩大十倍，NNDREA的效果几乎不变，仍然是收敛快且效果好)
 
-## 参与贡献
+## 项目贡献与支持
 
-**Luchen Wang**<br>
+**Author: Luchen Wang**<br>
 <small>（如在使用过程中遇到任何问题，可随时联系邮箱：wangluchen567@qq.com）</small>
 
 
