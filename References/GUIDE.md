@@ -151,7 +151,6 @@ class Sphere(PROBLEM):
 以下是一个覆写 `_cal_obj` 方法的示例：
 
 ```python
-
 def _cal_obj(self, x):
     return x ** 2
 ```
