@@ -14,6 +14,7 @@ See the Mulan PSL v2 for more details.
 
 # MOP问题系列
 from .MOP.MOP1 import MOP1
+from .MOP.MOP2 import MOP2
 
 # ZDT问题系列
 from .ZDT.ZDT1 import ZDT1
