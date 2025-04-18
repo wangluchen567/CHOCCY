@@ -115,8 +115,8 @@ CHOCCY是一个基于 NumPy 构建的启发式优化求解器，用于解决各�
 以下是示例代码：
 
 ```python
-import numpy as np
 from Problems import PROBLEM
+
 class Sphere(PROBLEM):
     def __init__(self, num_dec=30, lower=-100, upper=100):
         super().__init__(problem_type=PROBLEM.REAL, num_dec=num_dec, num_obj=1, lower=lower, upper=upper)
@@ -146,14 +146,38 @@ class Sphere(PROBLEM):
 
    这两个参数与 `problem_type` 参数类似。当输入单独的值时，指定的是所有决策变量的统一下界和上界。也可以通过输入 `np.array` 来指定每一位决策变量的下界和上界，但数组的大小必须与决策变量的个数 `num_dec` 相匹配。
 
-在初始化问题之后，必须实现问题的目标函数。为此，可以覆写 `_cal_obj` 或 `_cal_objs` 中的任意一个方法来实现目标函数。两者的区别在于 `_cal_obj` 是针对单个解计算目标值，而 `_cal_objs` 是针对多个解批量计算目标值。
+在初始化问题之后，必须实现问题的目标函数。为此，可以通过覆写 `_cal_obj` 或 `_cal_objs` 中的任意一个方法来完成目标函数的实现。两者的区别在于：`_cal_obj` 用于针对单个解计算目标值，而 `_cal_objs` 则用于批量计算多个解的目标值。
 
-如果仅覆写了 `_cal_obj` 方法，`PROBLEM` 父类会自动使用 `for` 循环逐次调用 `_cal_obj` 以逐个计算多个解的目标值（具体可参见源码）。然而，为了打破 Python 中 for 循环的效率瓶颈，建议覆写 `_cal_objs` 方法，并利用 `Numpy` 的矩阵操作来计算目标值，这样效率会更高。以下是直接使用矩阵操作实现目标值计算的示例代码：
+以下是一个覆写 `_cal_obj` 方法的示例：
 
 ```python
-    def _cal_objs(self, X):
-        objs = np.sum(X**2, axis=1)
-        return objs
+
+def _cal_obj(self, x):
+    return x ** 2
+```
+
+如果仅覆写了 `_cal_obj` 方法，`PROBLEM` 父类会自动通过 `for` 循环逐次调用 `_cal_obj` 来计算多个解的目标值。其源码实现如下：
+
+```python
+import numpy as np
+
+def _cal_objs(self, X):
+    """计算整个种群变量的目标值(建议覆写)"""
+    pop_size = len(X)
+    objs = np.zeros((pop_size, self.num_obj))
+    for i in range(pop_size):
+        objs[i] = self._cal_obj(X[i])
+    return objs
+```
+
+虽然这种实现方式在逻辑上没有问题，但运行效率可能较低。为了突破 Python 中 `for` 循环的效率瓶颈，推荐覆写 `_cal_objs` 方法，并利用 `Numpy` 的矩阵操作来计算目标值，这样计算效率会更高。以下是直接使用矩阵操作实现目标值计算的示例代码：
+
+```python
+import numpy as np
+
+def _cal_objs(self, X):
+    objs = np.sum(X**2, axis=1)
+    return objs
 ```
 
 此外，需要注意的是，输入的 `X` 变量一定是一个二维矩阵。即使决策变量的个数为 `1`，输入的形状也应为 `(n, 1)`，其中 `n` 表示解的个数。
