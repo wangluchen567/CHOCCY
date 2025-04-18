@@ -22,4 +22,10 @@ from .MixFixLabelCluster import MixFixLabelCluster
 from .SOP.SOP1 import SOP1
 from .SOP.SOP2 import SOP2
 from .SOP.SOP3 import SOP3
+from .SOP.SOP4 import SOP4
+from .SOP.SOP5 import SOP5
+from .SOP.SOP6 import SOP6
+from .SOP.SOP7 import SOP7
+from .SOP.SOP8 import SOP8
+from .SOP.SOP9 import SOP9
 from .SOP.SOP10 import SOP10

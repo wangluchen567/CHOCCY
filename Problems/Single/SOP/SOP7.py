@@ -14,21 +14,19 @@ import numpy as np
 from Problems import PROBLEM
 
 
-class SOP10(PROBLEM):
+class SOP7(PROBLEM):
     def __init__(self, num_dec=30):
         """
-        SOP10: Ackley's Function
+        SOP7: Quartic Function with Noise
 
         References: Evolutionary programming made faster,
         X. Yao, Y. Liu, and G. Lin
         :param num_dec: 决策变量个数
-        :param lower: 决策变量下界
-        :param upper: 决策变量上界
         """
         num_obj = 1
-        super().__init__(PROBLEM.REAL, num_dec, num_obj, lower=-32, upper=32)
+        super().__init__(PROBLEM.REAL, num_dec, num_obj, lower=-1.28, upper=1.28)
 
     def _cal_objs(self, X):
-        objs = -20 * np.exp(-0.2 * np.sqrt(np.sum(X ** 2, axis=1) / self.num_dec)) - np.exp(
-            np.sum(np.cos(2 * np.pi * X), axis=1) / self.num_dec) + 20 + np.e
+        objs = (np.sum(np.arange(1, self.num_dec + 1)[np.newaxis, :].repeat(len(X), axis=0) * X ** 4, axis=1) +
+                np.random.rand(X.shape[0]))
         return objs

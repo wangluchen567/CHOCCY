@@ -14,10 +14,10 @@ import numpy as np
 from Problems import PROBLEM
 
 
-class SOP10(PROBLEM):
-    def __init__(self, num_dec=30):
+class SOP6(PROBLEM):
+    def __init__(self, num_dec=30, lower=-100, upper=100):
         """
-        SOP10: Ackley's Function
+        SOP6: Step Function
 
         References: Evolutionary programming made faster,
         X. Yao, Y. Liu, and G. Lin
@@ -26,9 +26,8 @@ class SOP10(PROBLEM):
         :param upper: 决策变量上界
         """
         num_obj = 1
-        super().__init__(PROBLEM.REAL, num_dec, num_obj, lower=-32, upper=32)
+        super().__init__(PROBLEM.REAL, num_dec, num_obj, lower, upper)
 
     def _cal_objs(self, X):
-        objs = -20 * np.exp(-0.2 * np.sqrt(np.sum(X ** 2, axis=1) / self.num_dec)) - np.exp(
-            np.sum(np.cos(2 * np.pi * X), axis=1) / self.num_dec) + 20 + np.e
+        objs = np.sum(np.floor(X + 0.5) ** 2, axis=1)
         return objs
