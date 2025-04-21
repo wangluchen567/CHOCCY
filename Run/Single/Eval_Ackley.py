@@ -18,6 +18,8 @@ if __name__ == '__main__':
     algorithms['DE/best/2'] = DE(pop_size, max_iter, operator_type=DE.BEST2)
     evaluator = Evaluator(problems, algorithms, num_run=30, same_init=True)
     evaluator.run()
+    # # 使用多核CPU并行优化
+    # evaluator.run_parallel(num_processes=10)
     # 打印结果对比
     print('*** Obj ***')
     evaluator.prints()

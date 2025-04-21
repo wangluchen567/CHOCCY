@@ -14,6 +14,7 @@ import copy
 import matplotlib
 import numpy as np
 import seaborn as sns
+import multiprocessing
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
@@ -21,6 +22,7 @@ from tqdm import tqdm
 from typing import Union
 from Algorithms import ALGORITHM
 from scipy.stats import mannwhitneyu
+from concurrent.futures import ProcessPoolExecutor
 
 
 class Evaluator(object):
@@ -134,6 +136,27 @@ class Evaluator(object):
                 print(f"{alg_name} solve {problem_name}...")
                 for i in tqdm(range(self.num_run)):
                     alg_repeats[i].run()
+
+    def run_parallel(self, num_processes=None):
+        """
+        使用多进程并行运行评估任务(请谨慎使用,可能会造成卡顿)
+        :param num_processes: 使用并行运行的CPU个数(默认使用CPU核心数)
+        :return: None
+        """
+        if num_processes is None:
+            num_processes = multiprocessing.cpu_count()  # 默认使用 CPU 核心数
+            print(f'Using {num_processes} cpu parallel evaluate...')
+        self.init_evaluator()
+        # 逐个问题求解
+        for (problem_name, pair) in self.pairs.items():
+            for (alg_name, alg_repeats) in pair.items():
+                print(f"{alg_name} solve {problem_name}...")
+
+                # 使用进程池加速
+                with ProcessPoolExecutor(max_workers=num_processes) as executor:
+                    futures = [executor.submit(self.worker, alg_repeats[i]) for i in range(self.num_run)]
+                    for i, future in enumerate(futures):
+                        alg_repeats[i] = future.result()  # 获取运行后的对象
 
     def prints(self, score_types=None, stats_test=False, dec=6):
         """
@@ -344,3 +367,9 @@ class Evaluator(object):
         plt.legend()
         # 显示图形
         plt.show()
+
+    @staticmethod
+    def worker(alg):
+        """工作器"""
+        alg.run()
+        return alg

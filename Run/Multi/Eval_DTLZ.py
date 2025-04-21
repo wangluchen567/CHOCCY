@@ -22,6 +22,8 @@ if __name__ == '__main__':
     }
     evaluator = Evaluator(problems, algorithms, num_run=10, same_init=True)
     evaluator.run()
+    # # 使用多核CPU并行优化
+    # evaluator.run_parallel(num_processes=10)
     print('*** HV ***')
     evaluator.prints()
     print('*** GD ***')
