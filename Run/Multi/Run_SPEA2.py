@@ -11,6 +11,8 @@ if __name__ == '__main__':
     print("HV: ", algorithm.cal_score('HV'))
     print("GD: ", algorithm.cal_score('GD'))
     print("IGD: ", algorithm.cal_score('IGD'))
+    print("GD+: ", algorithm.cal_score('GD+'))
+    print("IGD+: ", algorithm.cal_score('IGD+'))
     print("time(s): ", algorithm.run_time)
     algorithm.plot(show_mode=1)
     algorithm.plot_scores()

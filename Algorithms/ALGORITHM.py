@@ -17,7 +17,7 @@ from typing import Union
 from Problems import PROBLEM
 from Algorithms.Utility.Utils import fast_nd_sort, shuffle_matrix_in_row, record_time
 from Algorithms.Utility.PlotUtils import plot_scores, plot_decs, plot_objs, plot_objs_decs
-from Algorithms.Utility.PerfMetrics import cal_GD, cal_IGD, cal_GDPlus, cal_IGDPlus, cal_HV
+from Algorithms.Utility.PerfMetrics import cal_gd, cal_igd, cal_gd_plus, cal_igd_plus, cal_hv
 from Algorithms.Utility.Selections import elitist_selection, tournament_selection, roulette_selection
 from Algorithms.Utility.Operators import operator_real, operator_binary, operator_permutation, operator_fix_label
 
@@ -231,15 +231,15 @@ class ALGORITHM(object):
         if optimums is None:
             optimums = self.problem.optimums
         if score_type == 'HV':
-            return cal_HV(best_obj, optimums)
+            return cal_hv(best_obj, optimums)
         elif score_type == 'GD':
-            return cal_GD(best_obj, optimums)
+            return cal_gd(best_obj, optimums)
         elif score_type == 'IGD':
-            return cal_IGD(best_obj, optimums)
+            return cal_igd(best_obj, optimums)
         elif score_type == 'GD+':
-            return cal_GDPlus(best_obj, optimums)
+            return cal_gd_plus(best_obj, optimums)
         elif score_type == 'IGD+':
-            return cal_IGDPlus(best_obj, optimums)
+            return cal_igd_plus(best_obj, optimums)
         else:
             raise ValueError(f"There is no {self.score_type} score type")
 

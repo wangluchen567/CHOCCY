@@ -30,25 +30,25 @@ def simulated_binary_crossover(parents1, parents2, lower, upper, cross_prob, eta
     """
     if parents1.shape != parents2.shape:
         raise ValueError("The shape of the two parent populations is not equal")
-    N, D = parents1.shape
-    beta = np.zeros((N, D))
-    mu = np.random.random((N, D))
+    p_size, num_dec = parents1.shape
+    beta = np.zeros((p_size, num_dec))
+    mu = np.random.random((p_size, num_dec))
     beta[mu <= 0.5] = np.power((2 * mu[mu <= 0.5]), 1 / (eta + 1))
     beta[mu > 0.5] = np.power((2 - 2 * mu[mu > 0.5]), -1 / (eta + 1))
-    beta = beta * np.power(-1, np.random.randint(2, size=(N, D)))
-    beta[np.random.random((N, 1)).repeat(D, 1) > cross_prob] = 1
+    beta = beta * np.power(-1, np.random.randint(2, size=(p_size, num_dec)))
+    beta[np.random.random((p_size, 1)).repeat(num_dec, 1) > cross_prob] = 1
     offspring = np.concatenate((
         (parents1 + parents2) / 2 + beta * (parents1 - parents2) / 2,
         (parents1 + parents2) / 2 - beta * (parents1 - parents2) / 2
     ))
     if isinstance(lower, int) or isinstance(lower, float):
-        Lower = np.ones((2 * N, D)) * lower
-        Upper = np.ones((2 * N, D)) * upper
+        lowers = np.ones((2 * p_size, num_dec)) * lower
+        uppers = np.ones((2 * p_size, num_dec)) * upper
     else:
-        Lower = lower.reshape(1, -1).repeat(2 * N, 0)
-        Upper = upper.reshape(1, -1).repeat(2 * N, 0)
-    offspring[offspring < Lower] = Lower[offspring < Lower]
-    offspring[offspring > Upper] = Upper[offspring > Upper]
+        lowers = lower.reshape(1, -1).repeat(2 * p_size, 0)
+        uppers = upper.reshape(1, -1).repeat(2 * p_size, 0)
+    offspring[offspring < lowers] = lowers[offspring < lowers]
+    offspring[offspring > uppers] = uppers[offspring > uppers]
     return offspring
 
 
@@ -62,9 +62,9 @@ def binary_crossover(parents1, parents2, cross_prob):
     """
     if parents1.shape != parents2.shape:
         raise ValueError("The shape of the two parent populations is not equal")
-    N, D = parents1.shape
+    p_size, num_dec = parents1.shape
     # 维度方面均匀交叉，个数方面按照交叉概率交叉
-    mask = (np.random.rand(N, D) < 0.5) & (np.random.rand(N, 1) < cross_prob)
+    mask = (np.random.rand(p_size, num_dec) < 0.5) & (np.random.rand(p_size, 1) < cross_prob)
     # 若mask为true则取第一个矩阵元素,否则取第二个矩阵中元素
     offspring1 = np.where(mask, parents2, parents1)
     offspring2 = np.where(mask, parents1, parents2)
@@ -82,16 +82,16 @@ def order_crossover(parents1, parents2, cross_prob):
     """
     if parents1.shape != parents2.shape:
         raise ValueError("The shape of the two parent populations is not equal")
-    N, D = parents1.shape
+    p_size, num_dec = parents1.shape
     offspring1 = parents1.copy()
     offspring2 = parents2.copy()
     # 生成所有需要的随机数
-    crossover_mask = np.random.random(N) < cross_prob
-    starts1 = np.random.randint(0, D, size=N)
-    ends1 = np.random.randint(starts1 + 1, D + 1, size=N)
-    starts2 = np.random.randint(0, D, size=N)
-    ends2 = np.random.randint(starts2 + 1, D + 1, size=N)
-    for i in range(N):
+    crossover_mask = np.random.random(p_size) < cross_prob
+    starts1 = np.random.randint(0, num_dec, size=p_size)
+    ends1 = np.random.randint(starts1 + 1, num_dec + 1, size=p_size)
+    starts2 = np.random.randint(0, num_dec, size=p_size)
+    ends2 = np.random.randint(starts2 + 1, num_dec + 1, size=p_size)
+    for i in range(p_size):
         if crossover_mask[i]:
             # 进行顺序交叉
             offspring1_ = list(dict.fromkeys(np.concatenate((parents1[i][starts1[i]:ends1[i]],
@@ -132,7 +132,7 @@ def fix_label_cx_(parents1, parents2, labels_type, labels_num, cross_prob):
     :param cross_prob: 交叉概率
     :return: 子代种群
     """
-    N, D = parents1.shape
+    p_size, num_dec = parents1.shape
     # 初始化子代
     offspring1 = np.zeros(parents1.shape, dtype=int)
     offspring2 = np.zeros(parents2.shape, dtype=int)
@@ -141,7 +141,7 @@ def fix_label_cx_(parents1, parents2, labels_type, labels_num, cross_prob):
     offspring1[equals] = parents1[equals]
     offspring2[equals] = parents2[equals]
     # 这里需要遍历以满足固定数量的约束
-    for i in range(N):
+    for i in range(p_size):
         # 统计剩余标签数量
         last_labels1 = labels_num.copy()
         last_labels2 = labels_num.copy()
@@ -149,7 +149,7 @@ def fix_label_cx_(parents1, parents2, labels_type, labels_num, cross_prob):
             last_labels1[j] -= np.sum(offspring1[i] == labels_type[j])
             last_labels2[j] -= np.sum(offspring2[i] == labels_type[j])
         # 根据现存数量在考虑约束的情况下得到子代
-        for j in range(D):
+        for j in range(num_dec):
             if equals[i][j]:
                 pass
             else:
@@ -189,18 +189,18 @@ def de_rand_1(offspring, parents1, parents2, lower, upper, cross_prob, factor):
     """
     if not (offspring.shape == parents1.shape == parents2.shape):
         raise ValueError("The shape of the two parent populations is not equal")
-    N, D = offspring.shape
-    site = np.random.random((N, D)) < cross_prob
+    p_size, num_dec = parents1.shape
+    site = np.random.random((p_size, num_dec)) < cross_prob
     offspring[site] = offspring[site] + factor * (parents1[site] - parents2[site])
     # 上下界裁剪
     if isinstance(lower, int) or isinstance(lower, float):
-        Lower = np.ones((N, D)) * lower
-        Upper = np.ones((N, D)) * upper
+        lowers = np.ones((p_size, num_dec)) * lower
+        uppers = np.ones((p_size, num_dec)) * upper
     else:
-        Lower = lower.reshape(1, -1).repeat(N, 0)
-        Upper = upper.reshape(1, -1).repeat(N, 0)
-    offspring[offspring < Lower] = Lower[offspring < Lower]
-    offspring[offspring > Upper] = Upper[offspring > Upper]
+        lowers = lower.reshape(1, -1).repeat(p_size, 0)
+        uppers = upper.reshape(1, -1).repeat(p_size, 0)
+    offspring[offspring < lowers] = lowers[offspring < lowers]
+    offspring[offspring > uppers] = uppers[offspring > uppers]
     return offspring
 
 
@@ -220,19 +220,19 @@ def de_rand_2(offspring, parents1, parents2, parents3, parents4, lower, upper, c
     """
     if not (offspring.shape == parents1.shape == parents2.shape == parents3.shape == parents4.shape):
         raise ValueError("The shape of the two parent populations is not equal")
-    N, D = offspring.shape
-    site = np.random.random((N, D)) < cross_prob
+    p_size, num_dec = parents1.shape
+    site = np.random.random((p_size, num_dec)) < cross_prob
     offspring[site] = (offspring[site] + factor * (parents1[site] - parents2[site]) +
                        factor * (parents3[site] - parents4[site]))
     # 上下界裁剪
     if isinstance(lower, int) or isinstance(lower, float):
-        Lower = np.ones((N, D)) * lower
-        Upper = np.ones((N, D)) * upper
+        lowers = np.ones((p_size, num_dec)) * lower
+        uppers = np.ones((p_size, num_dec)) * upper
     else:
-        Lower = lower.reshape(1, -1).repeat(N, 0)
-        Upper = upper.reshape(1, -1).repeat(N, 0)
-    offspring[offspring < Lower] = Lower[offspring < Lower]
-    offspring[offspring > Upper] = Upper[offspring > Upper]
+        lowers = lower.reshape(1, -1).repeat(p_size, 0)
+        uppers = upper.reshape(1, -1).repeat(p_size, 0)
+    offspring[offspring < lowers] = lowers[offspring < lowers]
+    offspring[offspring > uppers] = uppers[offspring > uppers]
     return offspring
 
 
@@ -250,19 +250,19 @@ def de_best_1(best, parents1, parents2, lower, upper, cross_prob, factor):
     """
     if not (parents1.shape == parents2.shape):
         raise ValueError("The shape of the two parent populations is not equal")
-    N, D = parents1.shape
-    site = np.random.random((N, D)) < cross_prob
-    offspring = np.repeat(best[np.newaxis, :], N, axis=0)
+    p_size, num_dec = parents1.shape
+    site = np.random.random((p_size, num_dec)) < cross_prob
+    offspring = np.repeat(best[np.newaxis, :], p_size, axis=0)
     offspring[site] = offspring[site] + factor * (parents1[site] - parents2[site])
     # 上下界裁剪
     if isinstance(lower, int) or isinstance(lower, float):
-        Lower = np.ones((N, D)) * lower
-        Upper = np.ones((N, D)) * upper
+        lowers = np.ones((p_size, num_dec)) * lower
+        uppers = np.ones((p_size, num_dec)) * upper
     else:
-        Lower = lower.reshape(1, -1).repeat(N, 0)
-        Upper = upper.reshape(1, -1).repeat(N, 0)
-    offspring[offspring < Lower] = Lower[offspring < Lower]
-    offspring[offspring > Upper] = Upper[offspring > Upper]
+        lowers = lower.reshape(1, -1).repeat(p_size, 0)
+        uppers = upper.reshape(1, -1).repeat(p_size, 0)
+    offspring[offspring < lowers] = lowers[offspring < lowers]
+    offspring[offspring > uppers] = uppers[offspring > uppers]
     return offspring
 
 
@@ -282,20 +282,20 @@ def de_best_2(best, parents1, parents2, parents3, parents4, lower, upper, cross_
     """
     if not (parents1.shape == parents2.shape):
         raise ValueError("The shape of the two parent populations is not equal")
-    N, D = parents1.shape
-    site = np.random.random((N, D)) < cross_prob
-    offspring = np.repeat(best[np.newaxis, :], N, axis=0)
+    p_size, num_dec = parents1.shape
+    site = np.random.random((p_size, num_dec)) < cross_prob
+    offspring = np.repeat(best[np.newaxis, :], p_size, axis=0)
     offspring[site] = (offspring[site] + factor * (parents1[site] - parents2[site]) +
                        factor * (parents3[site] - parents4[site]))
     # 上下界裁剪
     if isinstance(lower, int) or isinstance(lower, float):
-        Lower = np.ones((N, D)) * lower
-        Upper = np.ones((N, D)) * upper
+        lowers = np.ones((p_size, num_dec)) * lower
+        uppers = np.ones((p_size, num_dec)) * upper
     else:
-        Lower = lower.reshape(1, -1).repeat(N, 0)
-        Upper = upper.reshape(1, -1).repeat(N, 0)
-    offspring[offspring < Lower] = Lower[offspring < Lower]
-    offspring[offspring > Upper] = Upper[offspring > Upper]
+        lowers = lower.reshape(1, -1).repeat(p_size, 0)
+        uppers = upper.reshape(1, -1).repeat(p_size, 0)
+    offspring[offspring < lowers] = lowers[offspring < lowers]
+    offspring[offspring > uppers] = uppers[offspring > uppers]
     return offspring
 
 
@@ -315,27 +315,27 @@ try:
         :param cross_prob: 交叉概率
         :return: 子代种群
         """
-        N, D = parents1.shape
+        p_size, num_dec = parents1.shape
         # 初始化子代
         offspring1 = np.zeros(parents1.shape, dtype=np.int32)
         offspring2 = np.zeros(parents2.shape, dtype=np.int32)
         # 两父代相同位保持不变，不同位均匀交叉，并且需要保证标签等量约束
         # 使用显式循环代替布尔数组索引
-        for i in range(N):
-            for j in range(D):
+        for i in range(p_size):
+            for j in range(num_dec):
                 if parents1[i, j] == parents2[i, j]:
                     offspring1[i, j] = parents1[i, j]
                     offspring2[i, j] = parents2[i, j]
 
         # 这里需要遍历以满足固定数量的约束
-        for i in range(N):
+        for i in range(p_size):
             # 统计剩余标签数量
             last_labels1 = labels_num.copy()
             last_labels2 = labels_num.copy()
             for j in range(len(labels_type)):
                 count1 = 0
                 count2 = 0
-                for k in range(D):
+                for k in range(num_dec):
                     if offspring1[i, k] == labels_type[j]:
                         count1 += 1
                     if offspring2[i, k] == labels_type[j]:
@@ -344,7 +344,7 @@ try:
                 last_labels2[j] -= count2
 
             # 根据现存数量在考虑约束的情况下得到子代
-            for j in range(D):
+            for j in range(num_dec):
                 if parents1[i, j] != parents2[i, j]:
                     # 随机从父代中选择继承点
                     if np.random.random() < cross_prob:

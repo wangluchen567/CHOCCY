@@ -18,7 +18,7 @@ import numpy as np
 from scipy.spatial.distance import cdist
 
 
-def cal_GD(objs, optimum):
+def cal_gd(objs, optimum):
     """
     计算代际距离指标(Generational Distance)
     :param objs: 目标值
@@ -41,7 +41,7 @@ def cal_GD(objs, optimum):
     return score
 
 
-def cal_IGD(objs, optimum=None):
+def cal_igd(objs, optimum=None):
     """
     计算逆代际距离指标(Inverted Generational Distance)
     :param objs: 目标值
@@ -76,7 +76,7 @@ def distance_plus(x, y):
     return np.sqrt(np.sum(diff ** 2))
 
 
-def cal_GDPlus(objs, optimum=None):
+def cal_gd_plus(objs, optimum=None):
     """
     计算代际距离+指标(Generational Distance Plus)
     :param objs: 目标值
@@ -99,7 +99,7 @@ def cal_GDPlus(objs, optimum=None):
     return score
 
 
-def cal_IGDPlus(objs, optimum=None):
+def cal_igd_plus(objs, optimum=None):
     """
     计算逆代际距离+指标(Inverted Generational Distance Plus)
     :param objs: 目标值
@@ -122,7 +122,7 @@ def cal_IGDPlus(objs, optimum=None):
     return score
 
 
-def cal_HV(objs, optimum=None):
+def cal_hv(objs, optimum=None):
     """
     计算超体积指标(Hyper-volume)
     :param objs: 目标值
@@ -132,32 +132,32 @@ def cal_HV(objs, optimum=None):
     if objs.ndim == 1:
         objs = objs.reshape(1, -1)
     # 获取目标值维度信息
-    N, M = objs.shape
+    obj_size, obj_dim = objs.shape
     # 如果未提供理论最优目标值，则参考点向量全置1
     if optimum is None:
-        refer_array = np.ones(M)
+        refer_array = np.ones(obj_dim)
     else:
         refer_array = np.array(optimum)
     # 根据参考点向量规范化目标值
-    f_min = np.min(np.vstack((np.min(objs, axis=0), np.zeros([1, M]))), axis=0)
+    f_min = np.min(np.vstack((np.min(objs, axis=0), np.zeros([1, obj_dim]))), axis=0)
     f_max = np.max(refer_array, axis=0)
-    objs_norm = (objs - f_min) / np.tile((f_max - f_min) * 1.1, (N, 1))
+    objs_norm = (objs - f_min) / np.tile((f_max - f_min) * 1.1, (obj_size, 1))
     objs_norm = objs_norm[np.all(objs_norm <= 1, axis=1)]
     # 参考点向量设置为全1向量
-    ref_point = np.ones(M)
+    ref_point = np.ones(obj_dim)
     # 如果目标值矩阵为空，超体积为0
     if objs_norm.size == 0:
         score = 0
-    elif M < 4:
+    elif obj_dim < 4:
         # 计算精确的HV值
-        score = cal_HV_accurate(objs_norm, ref_point)
+        score = cal_hv_accurate(objs_norm, ref_point)
     else:
         # 通过蒙特卡罗方法估计HV值
-        score = cal_HV_estimated(objs_norm, ref_point)
+        score = cal_hv_estimated(objs_norm, ref_point)
     return score
 
 
-def cal_HV_estimated_(objs_norm, ref_point, sample_num=1e6):
+def cal_hv_estimated_(objs_norm, ref_point, sample_num=1e6):
     """
     使用蒙特卡罗方法估计HV值
 
@@ -184,7 +184,7 @@ def cal_HV_estimated_(objs_norm, ref_point, sample_num=1e6):
     return score
 
 
-def cal_HV_accurate_(objs_norm, ref_point):
+def cal_hv_accurate_(objs_norm, ref_point):
     """
     计算精确的HV值
 
@@ -202,61 +202,61 @@ def cal_HV_accurate_(objs_norm, ref_point):
     for k in range(objs_norm.shape[1] - 1):
         s_ = []
         for i in range(len(s)):
-            stemp = Slice(s[i][1], k, ref_point)
+            stemp = _slice(s[i][1], k, ref_point)
             for j in range(len(stemp)):
                 temp = [[stemp[j][0] * s[i][0], np.array(stemp[j][1])]]
-                s_ = Add(temp, s_)
+                s_ = _add(temp, s_)
         s = s_
     score = 0
     for i in range(len(s)):
-        p = Head(s[i][1])
+        p = _head(s[i][1])
         score = score + s[i][0] * np.abs(p[-1] - ref_point[-1])
     return score
 
 
-def Slice(pl: np.ndarray, k: int, ref_point: np.ndarray) -> list:
-    p = Head(pl)
-    pl = Tail(pl)
+def _slice(pl: np.ndarray, k: int, ref_point: np.ndarray) -> list:
+    p = _head(pl)
+    pl = _tail(pl)
     ql = np.array([])
     s = []
     while len(pl):
-        ql = Insert(p, k + 1, ql)
-        p_ = Head(pl)
+        ql = _insert(p, k + 1, ql)
+        p_ = _head(pl)
         if ql.ndim == 1:
             list_ = [[np.abs(p[k] - p_[k]), np.array([ql])]]
         else:
             list_ = [[np.abs(p[k] - p_[k]), ql]]
-        s = Add(list_, s)
+        s = _add(list_, s)
         p = p_
-        pl = Tail(pl)
-    ql = Insert(p, k + 1, ql)
+        pl = _tail(pl)
+    ql = _insert(p, k + 1, ql)
     if ql.ndim == 1:
         list_ = [[np.abs(p[k] - ref_point[k]), np.array([ql])]]
     else:
         list_ = [[np.abs(p[k] - ref_point[k]), ql]]
-    s = Add(list_, s)
+    s = _add(list_, s)
     return s
 
 
-def Insert(p: np.ndarray, k: int, pl: np.ndarray) -> np.ndarray:
+def _insert(p: np.ndarray, k: int, pl: np.ndarray) -> np.ndarray:
     flag1 = 0
     flag2 = 0
     ql = np.array([])
-    hp = Head(pl)
+    hp = _head(pl)
     while len(pl) and hp[k] < p[k]:
         if len(ql) == 0:
             ql = hp
         else:
             ql = np.vstack((ql, hp))
-        pl = Tail(pl)
-        hp = Head(pl)
+        pl = _tail(pl)
+        hp = _head(pl)
     if len(ql) == 0:
         ql = p
     else:
         ql = np.vstack((ql, p))
     m = max(p.shape)
     while len(pl):
-        q = Head(pl)
+        q = _head(pl)
         for i in range(k, m):
             if p[i] < q[i]:
                 flag1 = 1
@@ -264,14 +264,14 @@ def Insert(p: np.ndarray, k: int, pl: np.ndarray) -> np.ndarray:
                 flag2 = 1
         if not (flag1 == 1 and flag2 == 0):
             if len(ql) == 0:
-                ql = Head(pl)
+                ql = _head(pl)
             else:
-                ql = np.vstack((ql, Head(pl)))
-        pl = Tail(pl)
+                ql = np.vstack((ql, _head(pl)))
+        pl = _tail(pl)
     return ql
 
 
-def Head(pl: np.ndarray) -> np.ndarray:
+def _head(pl: np.ndarray) -> np.ndarray:
     # 取第一行所有元素
     if pl.ndim == 1:
         p = pl
@@ -280,7 +280,7 @@ def Head(pl: np.ndarray) -> np.ndarray:
     return p
 
 
-def Tail(pl: np.ndarray) -> np.ndarray:
+def _tail(pl: np.ndarray) -> np.ndarray:
     # 取除去第一行的所有元素
     if pl.ndim == 1 or min(pl.shape) == 1:
         ql = np.array([])
@@ -289,7 +289,7 @@ def Tail(pl: np.ndarray) -> np.ndarray:
     return ql
 
 
-def Add(list_: list, s: list) -> list:
+def _add(list_: list, s: list) -> list:
     n = len(s)
     m = 0
     for k in range(n):
@@ -341,21 +341,21 @@ try:
 
 
     @jit(nopython=True, cache=True)
-    def _Head(pl):
+    def _head_jit(pl):
         if pl.shape[0] == 0:
             return np.empty(0)
         return pl[0]
 
 
     @jit(nopython=True, cache=True)
-    def _Tail(pl):
+    def _tail_jit(pl):
         if pl.shape[0] <= 1:
             return np.empty((0, pl.shape[1]))
         return pl[1:]
 
 
     @jit(nopython=True, cache=True)
-    def _Add(list_, s):
+    def _add_jit(list_, s):
         num_s = len(s)
         found = False
         new_factor, new_ql = list_[0]
@@ -374,7 +374,7 @@ try:
 
 
     @jit(nopython=True, cache=True)
-    def _Insert(p, k, pl):
+    def _insert_jit(p, k, pl):
         m = p.shape[0]
         ql = np.zeros((0, m), dtype=p.dtype)
         i = 0
@@ -399,32 +399,32 @@ try:
 
 
     @jit(nopython=True, cache=True)
-    def _Slice(pl, k, ref_point):
+    def _slice_jit(pl, k, ref_point):
         s = List()
         if pl.shape[0] == 0:
             s.append((1.0, pl))
             return s
-        p = _Head(pl)
-        pl = _Tail(pl)
+        p = _head_jit(pl)
+        pl = _tail_jit(pl)
         ql = np.zeros((0, pl.shape[1]), dtype=pl.dtype)
         while pl.shape[0] > 0:
-            ql = _Insert(p, k + 1, ql)
-            p_next = _Head(pl)
+            ql = _insert_jit(p, k + 1, ql)
+            p_next = _head_jit(pl)
             list_ = List()
             delta = np.abs(p[k] - p_next[k])
             list_.append((delta, ql))
-            s = _Add(list_, s)
+            s = _add_jit(list_, s)
             p = p_next
-            pl = _Tail(pl)
-        ql = _Insert(p, k + 1, ql)
+            pl = _tail_jit(pl)
+        ql = _insert_jit(p, k + 1, ql)
         list_ = List()
         delta = np.abs(p[k] - ref_point[k])
         list_.append((delta, ql))
-        s = _Add(list_, s)
+        s = _add_jit(list_, s)
         return s
 
 
-    def cal_HV_accurate(objs_norm, ref_point):
+    def cal_hv_accurate(objs_norm, ref_point):
         """
         精确计算HV值(使用numba加速)
 
@@ -441,11 +441,11 @@ try:
         objs_norm = np.unique(objs_norm, axis=0)
         if objs_norm.size == 0:
             return 0.0
-        return _cal_HV_accurate_numba(objs_norm, ref_point)
+        return _cal_hv_accurate_jit(objs_norm, ref_point)
 
 
     @jit(nopython=True, cache=True)
-    def _cal_HV_accurate_numba(objs_norm, ref_point):
+    def _cal_hv_accurate_jit(objs_norm, ref_point):
         pl = objs_norm
         s = List()
         # Initialize with explicit typing
@@ -458,7 +458,7 @@ try:
                 factor, points = s[i]
                 if points.shape[0] == 0:
                     continue
-                slice_temp = _Slice(points, k, ref_point)
+                slice_temp = _slice_jit(points, k, ref_point)
                 for item in slice_temp:
                     delta, ql = item
                     if ql.shape[0] == 0:
@@ -466,19 +466,19 @@ try:
                     new_factor = factor * delta
                     temp = List()
                     temp.append((new_factor, ql))
-                    s_new = _Add(temp, s_new)
+                    s_new = _add_jit(temp, s_new)
             s = s_new
         score = 0.0
         for i in range(len(s)):
             factor, points = s[i]
             if points.shape[0] == 0:
                 continue
-            p = _Head(points)
+            p = _head_jit(points)
             score += factor * np.abs(p[-1] - ref_point[-1])
         return score
 
     @jit(nopython=True, parallel=True, cache=True)
-    def cal_HV_estimated(objs_norm, ref_point, sample_num=1e6):
+    def cal_hv_estimated(objs_norm, ref_point, sample_num=1e6):
         """
         使用蒙特卡罗方法估计HV值(numba多核并行加速)
 
@@ -537,6 +537,5 @@ except ImportError:
     # 如果导入numba加速库失败，使用原始的函数
     warnings.warn("Optimizing problems without using numba acceleration...")
     array_equal = np.array_equal
-    cal_HV_accurate = cal_HV_accurate_
-    cal_HV_estimated = cal_HV_estimated_
-
+    cal_hv_accurate = cal_hv_accurate_
+    cal_hv_estimated = cal_hv_estimated_

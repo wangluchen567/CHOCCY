@@ -22,6 +22,7 @@ def educate_tsp(problem, offspring, educate_prob):
     根据指定问题(tsp)对子代进行教育
     :param problem: 问题对象
     :param offspring: 子代
+    :param educate_prob: 对子代教育的概率
     :return: 教育后的子代
     """
     if not hasattr(problem, 'dist_mat'):
