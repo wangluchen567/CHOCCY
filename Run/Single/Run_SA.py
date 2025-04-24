@@ -41,7 +41,7 @@ def Solve_TSP():
     best, best_obj, best_con = algorithm.get_best()
     print(best_obj)
     algorithm.plot_scores()
-    algorithm.plot(show_mode=SA.PRB)
+    algorithm.plot(show_mode=SA.PROB)
 
 
 def Solve_FixLabelCluster():
@@ -51,7 +51,7 @@ def Solve_FixLabelCluster():
     best, best_obj, best_con = algorithm.get_best()
     print(best_obj)
     algorithm.plot_scores()
-    algorithm.plot(show_mode=SA.PRB)
+    algorithm.plot(show_mode=SA.PROB)
 
 
 def Solve_MixFixLabelCluster():
@@ -61,7 +61,7 @@ def Solve_MixFixLabelCluster():
     best, best_obj, best_con = algorithm.get_best()
     print(best_obj)
     algorithm.plot_scores()
-    algorithm.plot(show_mode=SA.PRB)
+    algorithm.plot(show_mode=SA.PROB)
 
 
 if __name__ == '__main__':

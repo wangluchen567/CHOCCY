@@ -30,7 +30,7 @@ class Evaluator(object):
     def __init__(self,
                  problems: Union[list, dict],
                  algorithms: Union[list, dict],
-                 num_run: int = 3,
+                 num_run: int = 5,
                  pop_size: Union[int, None] = None,
                  max_iter: Union[int, None] = None,
                  same_init: bool = False,

@@ -15,6 +15,7 @@ import numpy as np
 from tqdm import tqdm
 from typing import Union
 from Problems import PROBLEM
+from Algorithms import View
 from Algorithms.Utility.Utils import fast_nd_sort, shuffle_matrix_in_row, record_time
 from Algorithms.Utility.PlotUtils import plot_scores, plot_decs, plot_objs, plot_objs_decs
 from Algorithms.Utility.PerfMetrics import cal_gd, cal_igd, cal_gd_plus, cal_igd_plus, cal_hv
@@ -30,15 +31,15 @@ class ALGORITHM(object):
     PMU = PROBLEM.PMU  # 序列
     FIX = PROBLEM.FIX  # 固定标签
     # 定义绘图常量
-    NULL = -1  # 不绘制
-    BAR = 0  # 绘制进度条
-    OBJ = 1  # 绘制目标空间
-    DEC = 2  # 绘制决策空间
-    OAD2 = 3  # 绘制目标空间和决策空间混合(二维空间)
-    OAD3 = 4  # 绘制目标空间和决策空间混合(三维空间)
-    SCORE = 5  # 绘制分数情况(单目标为目标值,多目标为评价指标)
-    PRB = 6  # 问题提供绘图方法
-    ALG = 7  # 算法提供绘图方法
+    NONE = View.NONE  # 不绘制
+    BAR = View.BAR  # 绘制进度条
+    OBJ = View.OBJ  # 绘制目标空间
+    DEC = View.DEC  # 绘制决策空间
+    MIX2D = View.MIX2D  # 绘制目标空间和决策空间混合(二维空间)
+    MIX3D = View.MIX3D  # 绘制目标空间和决策空间混合(三维空间)
+    SCORE = View.SCORE  # 绘制分数情况(单目标为目标值,多目标为评价指标)
+    PROB = View.PROB  # 问题提供绘图方法
+    ALGO = View.ALGO  # 算法提供绘图方法
     # 定义指标类型常量(多目标)
     score_types = ['HV', 'GD', 'IGD', 'GD+', 'IGD+']
 
@@ -48,7 +49,7 @@ class ALGORITHM(object):
                  cross_prob: Union[float, None] = None,
                  mutate_prob: Union[float, None] = None,
                  educate_prob: Union[float, None] = None,
-                 show_mode: int = BAR):
+                 show_mode: Union[int, View] = BAR):
         """
         算法父类
 
@@ -453,21 +454,21 @@ class ALGORITHM(object):
             pause = False
         if show_mode is not None:
             self.show_mode = show_mode
-        if self.show_mode == self.NULL or self.show_mode == self.BAR:
+        if self.show_mode == self.NONE or self.show_mode == self.BAR:
             pass
         elif self.show_mode == self.OBJ:
             self.plot_objs(n_iter, pause)
         elif self.show_mode == self.DEC:
             self.plot_decs(n_iter, pause)
-        elif self.show_mode == self.OAD2:
+        elif self.show_mode == self.MIX2D:
             self.plot_objs_decs(n_iter, pause)
-        elif self.show_mode == self.OAD3:
+        elif self.show_mode == self.MIX3D:
             self.plot_objs_decs(n_iter, pause, contour=False)
         elif self.show_mode == self.SCORE:
             self.plot_scores(n_iter, pause)
-        elif self.show_mode == self.PRB:
+        elif self.show_mode == self.PROB:
             self.plot_by_problem(n_iter, pause)
-        elif self.show_mode == self.ALG:
+        elif self.show_mode == self.ALGO:
             self.plot_(n_iter, pause)
         else:
             raise ValueError("There is no such plotting mode")

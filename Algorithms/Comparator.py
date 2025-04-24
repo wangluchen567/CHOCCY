@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
 from typing import Union
+from Algorithms import View
 from Algorithms import ALGORITHM
 from Problems.PROBLEM import PROBLEM
 from scipy.interpolate import griddata
@@ -32,7 +33,7 @@ class Comparator(ALGORITHM):
                  max_iter: Union[int, None] = None,
                  same_init: bool = False,
                  show_colors: Union[list, None] = None,
-                 show_mode: int = 0):
+                 show_mode: Union[int, View] = 0):
         """
         算法比较器(用于对比多个算法效果)
         :param problem: 问题对象
@@ -226,15 +227,15 @@ class Comparator(ALGORITHM):
             for alg in self.algorithms.values():
                 if len(alg.scores) == 0:
                     alg.get_scores()
-        if self.show_mode == self.NULL or self.show_mode == self.BAR:
+        if self.show_mode == self.NONE or self.show_mode == self.BAR:
             pass
         elif self.show_mode == self.OBJ:
             self.plot_objs(n_iter, pause)
         elif self.show_mode == self.DEC:
             self.plot_decs(n_iter, pause)
-        elif self.show_mode == self.OAD2:
+        elif self.show_mode == self.MIX2D:
             self.plot_objs_decs(n_iter, pause)
-        elif self.show_mode == self.OAD3:
+        elif self.show_mode == self.MIX3D:
             self.plot_objs_decs(n_iter, pause, contour=False)
         elif self.show_mode == self.SCORE:
             self.plot_scores(n_iter, pause)

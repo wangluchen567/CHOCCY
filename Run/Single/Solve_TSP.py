@@ -5,8 +5,7 @@ from Algorithms.Single import ACO
 from Algorithms.Single import HGATSP
 from Algorithms.Single import FI
 from Algorithms.Single import GFLS
-from Algorithms import ALGORITHM
-from Algorithms import Comparator
+from Algorithms import View, Comparator
 
 if __name__ == '__main__':
     problem = TSP(30)
@@ -18,7 +17,7 @@ if __name__ == '__main__':
     algorithms['HGA-TSP'] = HGATSP(pop_size, max_iter)
     algorithms['FI'] = FI()
     algorithms['GFLS'] = GFLS(max_iter)
-    comparator = Comparator(problem, algorithms, show_mode=Comparator.OBJ, same_init=True)
+    comparator = Comparator(problem, algorithms, show_mode=View.OBJ, same_init=True)
     comparator.run()
-    comparator.plot(show_mode=Comparator.OBJ)
-    algorithms['HGA-TSP'].plot(show_mode=ALGORITHM.PRB)
+    comparator.plot(show_mode=View.OBJ)
+    algorithms['HGA-TSP'].plot(show_mode=View.PROB)

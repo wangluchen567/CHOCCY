@@ -3,7 +3,7 @@ from Algorithms.Multi import NNDREA
 from Algorithms.Multi import NSGAII
 from Algorithms.Multi import MOEAD
 from Algorithms.Multi import SPEA2
-from Algorithms import Comparator
+from Algorithms import View, Comparator
 
 if __name__ == '__main__':
     problem = MOKP(10000)
@@ -13,6 +13,6 @@ if __name__ == '__main__':
     algorithms['MOEA/D'] = MOEAD(pop_size, max_iter)
     algorithms['SPEA2'] = SPEA2(pop_size, max_iter)
     algorithms['NNDREA'] = NNDREA(pop_size, max_iter)
-    comparator = Comparator(problem, algorithms, show_mode=Comparator.OBJ)
+    comparator = Comparator(problem, algorithms, show_mode=View.OBJ)
     comparator.run()
-    comparator.plot(show_mode=Comparator.SCORE)
+    comparator.plot(show_mode=View.SCORE)
