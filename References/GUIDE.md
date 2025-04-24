@@ -194,6 +194,7 @@ def _cal_objs(self, X):
 ```python
 import numpy as np
 from Problems import PROBLEM
+from Algorithms import View
 from Algorithms.Single import DE
 
 class Sphere(PROBLEM):
@@ -209,7 +210,7 @@ class Sphere(PROBLEM):
 if __name__ == '__main__':
     problem = Sphere(num_dec=10)  # 实例化问题，并指定决策向量大小
     # 实例化算法并设置种群大小为100，迭代次数为100，优化过程展示为目标值变化情况
-    algorithm = DE(pop_size=100, max_iter=100, show_mode=DE.OBJ)
+    algorithm = DE(pop_size=100, max_iter=100, show_mode=View.OBJ)
     algorithm.solve(problem)  # 使用该算法求解问题
     # 获取最优解并打印
     best, best_obj, best_con = algorithm.get_best()
@@ -221,6 +222,9 @@ if __name__ == '__main__':
 运行代码后可以看到优化过程动图，并给出最终结果
 
 
+### 绘图参数的使用
+
+待更新
 
 ### 比较器的使用
 
