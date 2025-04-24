@@ -28,19 +28,40 @@ Chen's Heuristic Optimizer Constructed with Core numpY
 
 ## 安装教程
 
-**1. 建议使用 `Anaconda` 创建 `Python` 环境**<br>
-使用 Anaconda 创建环境可以方便地管理依赖包，避免版本冲突。建议从 [Anaconda 官网](https://www.anaconda.com/download/success) 下载并安装 Anaconda。如果需要特定版本，可以访问 [Anaconda所有版本下载地址](https://repo.anaconda.com/archive/)。<br>
-安装完成后，运行以下命令创建 Python 环境：
-```bash
-conda create --name my_env python=3.9
-conda activate my_env
-```
-**注意**：本项目支持 Python 3.7 及以上版本，建议使用 Python 3.9 以获得最佳兼容性。<br>
-**2. 安装必要包**<br>
-本项目依赖以下包: `numpy`、`scipy`、`matplotlib`、`seaborn`、`tqdm`、`networkx`、`numba`、`tbb`。请确保已安装 Python 3.7 或更高版本，运行以下命令一键安装必要包：<br>
-```bash
-pip install numpy scipy matplotlib seaborn tqdm networkx numba tbb
-```
+**1. 建议使用 `Anaconda` 创建 `Python` 环境**
+
+  使用 Anaconda 创建环境可以方便地管理依赖包，避免版本冲突。建议从 [Anaconda 官网](https://www.anaconda.com/download/success) 下载并安装 Anaconda。如果需要特定版本，可以访问 [Anaconda所有版本下载地址](https://repo.anaconda.com/archive/)。
+  
+  安装完成后，运行以下命令创建 Python 环境：
+  
+  ```bash
+  conda create --name my_env python=3.9
+  conda activate my_env
+  ```
+  **注意**：本项目支持 Python 3.7 及以上版本，建议使用 Python 3.9 以获得最佳兼容性。
+
+**2. 安装必要包**
+
+  本项目依赖以下包: `numpy`、`scipy`、`matplotlib`、`seaborn`、`tqdm`、`networkx`、`numba`、`tbb`。请确保已安装 Python 3.7 或更高版本，运行以下命令一键安装必要包：
+  
+  ```bash
+  pip install numpy scipy matplotlib seaborn tqdm networkx numba tbb
+  ```
+  
+**3. 安装可选包**
+
+  本项目支持通过`numba`进行加速优化。为了体验更快的运行和优化速度，建议安装 `numba` 和 `tbb`。安装命令如下：
+  ```bash
+  pip install numba tbb
+  ```
+
+**4. 镜像源选择**
+
+  如果在运行安装命令时发现下载速度较慢，可以尝试使用清华大学的镜像源进行安装。安装命令如下：
+  ```bash
+  pip install numpy scipy matplotlib seaborn tqdm networkx numba tbb -i https://pypi.tuna.tsinghua.edu.cn/simple
+  ```
+  注意：如果无法访问上述镜像源，也可以选择其他可用的镜像源，例如中国科技大学、阿里云等。
 
 ## 项目结构
 
@@ -117,13 +138,15 @@ Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimizatio
 
 假设已经定义了一个问题，以Ackley为例，问题如何定义的详细内容请参见[使用指南](./References/GUIDE.md)<br>
 那么我们就可以直接实例化问题，并使用合适的算法进行优化：
+
 ```python
+from Algorithms import View  # 导入绘图参数类
+from Algorithms.Single import DE  # 导入求解问题的算法
 from Problems.Single import Ackley  # 定义问题后导入问题
-from Algorithms.Single import DE  # 导入求解该问题的算法
 
 problem = Ackley(num_dec=2)  # 实例化问题，并指定决策向量大小
 # 实例化算法并设置种群大小为100，迭代次数为100，优化过程展示为目标值变化情况
-algorithm = DE(pop_size=100, max_iter=100, show_mode=DE.OAD3)
+algorithm = DE(pop_size=100, max_iter=100, show_mode=View.MIX3D)
 algorithm.solve(problem)  # 使用该算法求解问题
 # 获取最优解并打印
 best, best_obj, best_con = algorithm.get_best()
@@ -138,12 +161,12 @@ print("算法运行时间(秒)：", algorithm.run_time)
 算法运行时间(秒)： 0.058713674545288086
 ```
 下面给出不同参数下的效果动图：<br>
-- 左图：`num_dec=2`, `show_mode=DE.OBJ`; 右图：`num_dec=1`, `show_mode=DE.OAD2`
+- 左图：`num_dec=2`, `show_mode=View.OBJ`; 右图：`num_dec=1`, `show_mode=View.MIX2D`
 
     <img src="./References/Pictures/DE_Ackley.gif" width="288" height="220"/>
     <img src="./References/Pictures/DE_Ackley1.gif" width="288" height="220"/>
 
-- 左图：`num_dec=2`, `show_mode=DE.OAD2`; 右图：`num_dec=2`, `show_mode=DE.OAD3`
+- 左图：`num_dec=2`, `show_mode=View.MIX2D`; 右图：`num_dec=2`, `show_mode=View.MIX3D`
 
     <img src="./References/Pictures/DE_Ackley2.gif" width="288" height="220"/>
     <img src="./References/Pictures/DE_Ackley3.gif" width="288" height="220"/>
@@ -153,11 +176,12 @@ print("算法运行时间(秒)：", algorithm.run_time)
 #### 算法优化实时对比
 
 仍然以Ackley为例，我们可以实例化该问题，并使用多种算法进行实时优化与对比：
+
 ```python
 from Problems.Single import Ackley  # 导入问题
 from Algorithms.Single import GA  # 导入GA算法
 from Algorithms.Single import DE  # 导入DE算法
-from Algorithms import Comparator  # 导入比较器类
+from Algorithms import View, Comparator  # 导入绘图参数与比较器类
 
 problem = Ackley(num_dec=2)  # 实例化问题，并指定决策向量大小 
 algorithms = dict()  # 将多个算法放入字典
@@ -167,10 +191,10 @@ algorithms['GA'] = GA(pop_size, max_iter)
 algorithms['DE/rand/1'] = DE(pop_size, max_iter, operator_type=DE.RAND1)
 algorithms['DE/best/1'] = DE(pop_size, max_iter, operator_type=DE.BEST1)
 # 定义算法对比类，并指定绘图模式为决策向量与目标向量绘制到同一个二维图像上
-comparator = Comparator(problem, algorithms, show_mode=Comparator.OAD2, same_init=True)
+comparator = Comparator(problem, algorithms, show_mode=View.MIX2D, same_init=True)
 comparator.run()  # 运行所有算法进行比较，实时对比算法运行情况
 # 绘制优化结果图，展示目标值变化情况
-comparator.plot(show_mode=Comparator.OBJ)
+comparator.plot(show_mode=View.OBJ)
 ```
 
 运行代码后可以看到优化过程动图，并给出最终结果如下：<br>
@@ -195,7 +219,7 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 - [ ] 更新使用指南
 - [ ] 更新算法笔记
 - [x] 加入其他评价指标
-- [ ] 加入约束相关算法
+- [ ] 加入更好的约束算法
 - [ ] 加入梯度优化相关算法
 - [x] 实现多核CPU并行优化对比
 - [ ] 加入保存多个优化结果功能
