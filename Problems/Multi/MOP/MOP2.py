@@ -29,6 +29,7 @@ class MOP2(PROBLEM):
         super().__init__(PROBLEM.REAL, num_dec, num_obj, lower, upper)
 
     def _cal_objs(self, X):
-        objs = np.vstack((1 - np.exp(-np.sum((X - 1 / np.sqrt(self.num_dec)) ** 2, axis=1)),
-                          (1 - np.exp(-np.sum((X + 1 / np.sqrt(self.num_dec)) ** 2, axis=1))))).T
+        f1 = 1 - np.exp(-np.sum((X - 1 / np.sqrt(self.num_dec)) ** 2, axis=1))
+        f2 = 1 - np.exp(-np.sum((X + 1 / np.sqrt(self.num_dec)) ** 2, axis=1))
+        objs = np.column_stack((f1, f2))
         return objs

@@ -29,7 +29,9 @@ class MOP1(PROBLEM):
         super().__init__(PROBLEM.REAL, num_dec, num_obj, lower, upper)
 
     def _cal_objs(self, X):
-        objs = np.concatenate((X ** 2, (X - 2) ** 2), axis=1)
+        f1 = X ** 2
+        f2 = (X - 2) ** 2
+        objs = np.column_stack((f1, f2))
         return objs
 
     def get_optimum(self, N=1000):
@@ -40,5 +42,5 @@ class MOP1(PROBLEM):
         return optimums
 
     def get_pareto_front(self, N=1000):
-        """获取帕累托最优前沿"""
+        """获取帕累托最优前沿(以绘图)"""
         return self.get_optimum(N)

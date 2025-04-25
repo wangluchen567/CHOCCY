@@ -71,4 +71,5 @@ class MOKP(PROBLEM):
         return cons
 
     def get_optimum(self):
+        # 返回参考点（不是最优解）
         return np.sum(self.values, axis=0).reshape(1, -1)

@@ -102,13 +102,8 @@ def plot_objs(objs, n_iter=None, pause=False, pause_time=0.06, pareto_front=None
             x = pareto_front[:, 0]
             y = pareto_front[:, 1]
             z = pareto_front[:, 2]
-            # 生成需要插值的网格
-            xi = np.linspace(min(x), max(x), 100)
-            yi = np.linspace(min(y), max(y), 100)
-            xi, yi = np.meshgrid(xi, yi)
-            # 使用 griddata 进行插值
-            zi = griddata((x, y), z, (xi, yi), method='linear')
-            ax.plot_wireframe(xi, yi, zi, color='gray', linewidth=0.3)
+            # 绘制三维三角曲面（面透明且边浅灰）（支持不规则图形）
+            ax.plot_trisurf(x, y, z, edgecolor='gray', color=(1, 1, 1, 0), linewidth=0.16)
         # 设置三维图像角度(仰角方位角)
         ax.view_init(elev=30, azim=30)
         ax.set_xlabel('obj1')
@@ -157,12 +152,10 @@ def plot_objs_decs(problem, decs, objs, n_iter=None, pause=False, pause_time=0.0
         plt.ylabel('obj')
     elif decs_dim == 2:
         # 对问题进行采样绘制问题图像
-        # x = np.linspace(problem.lower[0], problem.upper[0], 1000).reshape(-1, 1)
-        # y = np.linspace(problem.lower[1], problem.upper[1], 1000).reshape(-1, 1)
-        if sym is True:  # 对称图像绘制
+        if sym is True:  # 完全对称绘图
             x_min, x_max = -np.max(np.abs(decs)), np.max(np.abs(decs))
             y_min, y_max = -np.max(np.abs(decs)), np.max(np.abs(decs))
-        else:
+        else:  # 非对称绘图
             x_min, x_max = np.min(decs[:, 0]), np.max(decs[:, 0])
             y_min, y_max = np.min(decs[:, 1]), np.max(decs[:, 1])
         x = np.linspace(x_min, x_max, 1000).reshape(-1, 1)

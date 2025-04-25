@@ -19,8 +19,11 @@ class ZDT5(PROBLEM):
         """
         ZDT5
 
-        References: Comparison of multiobjective evolutionary algorithms: Empirical results,
-        E. Zitzler, K. Deb, and L. Thiele
+        References:
+            Comparison of multiobjective evolutionary algorithms: Empirical results,
+            E. Zitzler, K. Deb, and L. Thiele
+        Code References:
+            PlatEMO(https://github.com/BIMK/PlatEMO)
         :param num_dec: 决策变量个数
         """
         super().__init__(PROBLEM.BIN, num_dec, num_obj=2, lower=0, upper=1)
@@ -57,5 +60,5 @@ class ZDT5(PROBLEM):
         return optimums
 
     def get_pareto_front(self, N=1000):
-        """获取帕累托最优前沿"""
+        """获取帕累托最优前沿(以绘图)"""
         return self.get_optimum(N)

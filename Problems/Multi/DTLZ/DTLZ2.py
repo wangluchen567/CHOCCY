@@ -19,8 +19,11 @@ class DTLZ2(PROBLEM):
         """
         DTLZ2
 
-        References: Scalable test problems for evolutionary multiobjective optimization,
-        K. Deb, L. Thiele, M. Laumanns, and E. Zitzler
+        References:
+            Scalable test problems for evolutionary multiobjective optimization,
+            K. Deb, L. Thiele, M. Laumanns, and E. Zitzler
+        Code References:
+            PlatEMO(https://github.com/BIMK/PlatEMO)
         :param num_dec: 决策变量个数
         :param num_obj: 优化目标个数
         """
@@ -45,5 +48,5 @@ class DTLZ2(PROBLEM):
         return optimums
 
     def get_pareto_front(self, N=1000):
-        """获取帕累托最优前沿"""
+        """获取帕累托最优前沿(以绘图)"""
         return self.get_optimum(N)

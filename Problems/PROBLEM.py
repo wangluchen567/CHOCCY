@@ -143,7 +143,7 @@ class PROBLEM(object):
         return None
 
     def get_pareto_front(self, *args, **kwargs):
-        """获取帕累托最优前沿"""
+        """获取帕累托最优前沿(以绘图)"""
         return None
 
     def plot(self, *args, **kwargs):

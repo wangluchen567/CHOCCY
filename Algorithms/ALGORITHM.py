@@ -98,7 +98,11 @@ class ALGORITHM(object):
 
     @record_time
     def init_algorithm(self, problem: PROBLEM, pop=None):
-        """初始化算法"""
+        """
+        初始化算法
+        :param problem: 问题对象
+        :param pop: 指定种群用于初始化
+        """
         # 初始化算法所有参数
         self.init_params(problem)
         # 检查算法是否可求解该问题
@@ -107,7 +111,10 @@ class ALGORITHM(object):
         self.init_and_eval(pop)
 
     def init_params(self, problem: PROBLEM):
-        """初始化所有参数"""
+        """
+        初始化所有参数
+        :param problem: 问题对象
+        """
         # 初始化问题参数
         self.problem = problem
         self.num_dec = self.problem.num_dec
@@ -137,7 +144,10 @@ class ALGORITHM(object):
             raise ValueError("This algorithm does not support solving this type of problem")
 
     def init_and_eval(self, pop=None):
-        """初始化种群并对种群中解进行评价"""
+        """
+        初始化种群并对种群中解进行评价
+        :param pop: 指定种群用于初始化
+        """
         # 若给定种群中个体数量太多则进行裁剪
         pop = pop[:self.pop_size] if pop is not None else None
         # 初始化种群(随机初始化或给定种群初始化)
@@ -177,16 +187,29 @@ class ALGORITHM(object):
         self.record()
 
     def cal_objs(self, pop):
-        """计算目标值"""
+        """
+        计算目标值
+        :param pop: 给定种群
+        :return: 种群中每个个体目标值（矩阵）
+        """
         return self.problem.cal_objs(pop)
 
     def cal_cons(self, pop):
-        """计算约束值"""
+        """
+        计算约束值
+        :param pop: 给定种群
+        :return: 种群中每个个体约束值（矩阵）
+        """
         return self.problem.cal_cons(pop)
 
     @staticmethod
     def cal_objs_based_cons(objs, cons):
-        """计算约束松弛后的目标值"""
+        """
+        计算约束松弛后的目标值
+        :param objs: 种群中每个个体目标值（矩阵）
+        :param cons: 种群中每个个体约束值（矩阵）
+        :return: 基于约束松弛后的每个个体目标值（矩阵）
+        """
         objs_based_cons = objs.copy()
         # 找出所有不满足约束的个体
         not_feas = np.any(cons > 0, axis=1)
@@ -200,7 +223,12 @@ class ALGORITHM(object):
         return objs_based_cons
 
     def cal_fits(self, objs, cons):
-        """根据给定目标值和约束值得到适应度值(默认是单目标情况)"""
+        """
+        根据给定目标值和约束值得到适应度值(默认是单目标情况)
+        :param objs: 种群中每个个体目标值（矩阵）
+        :param cons: 种群中每个个体约束值（矩阵）
+        :return: 种群中每个个体适应度值（矩阵）
+        """
         # 检查是否均满足约束，若均满足约束则无需考虑约束
         if np.all(cons <= 0):
             return objs.flatten()
@@ -208,14 +236,21 @@ class ALGORITHM(object):
             return self.cal_objs_based_cons(objs, cons).flatten()
 
     def evaluate(self, pop):
-        """给定种群解并对解进行评价(求目标值/约束值/适应度)"""
+        """
+        给定种群解并对解进行评价(求目标值/约束值/适应度)
+        :param pop: 给定种群
+        :return: 目标值/约束值/适应度
+        """
         objs = self.cal_objs(pop)
         cons = self.cal_cons(pop)
         fits = self.cal_fits(objs, cons)
         return objs, cons, fits
 
     def set_score_type(self, score_type):
-        """重新设置指标分数类型(多目标)"""
+        """
+        重新设置评价指标分数类型(多目标)
+        :param score_type: 评价指标(分数)类型
+        """
         if self.num_obj == 1:
             warnings.warn("Single objective problem cannot set score type")
             return
@@ -224,7 +259,13 @@ class ALGORITHM(object):
         self.score_type = score_type
 
     def cal_score(self, score_type=None, best_obj=None, optimums=None):
-        """给定种群解的最优个体目标值计算评价指标分数(多目标)"""
+        """
+        给定种群解的最优个体目标值计算评价指标分数(多目标)
+        :param score_type: 评价指标分数类型
+        :param best_obj: 最优目标值情况
+        :param optimums: 最优解（或参考点）
+        :return: 评价指标分数(多目标)
+        """
         if score_type is None:
             score_type = self.score_type
         if best_obj is None:
@@ -246,7 +287,11 @@ class ALGORITHM(object):
 
     @staticmethod
     def record_time(method):
-        """统计运行时间"""
+        """
+        统计运行时间
+        :param method: 方法
+        :return: 运行时间
+        """
         return record_time(method)
 
     def get_best(self):
@@ -313,7 +358,11 @@ class ALGORITHM(object):
         return pop
 
     def operator(self, mating_pool):
-        """进行交叉变异生成子代"""
+        """
+        进行交叉变异生成子代
+        :param mating_pool: 交配池(下标)
+        :return: 子代种群
+        """
         offspring = self.pop[mating_pool]
         for t in self.unique_type:
             offspring[:, self.type_indices[t]] = self.operator_(t)(offspring[:, self.type_indices[t]],
@@ -324,7 +373,11 @@ class ALGORITHM(object):
 
     @staticmethod
     def operator_(problem_type):
-        """根据问题类型返回对应函数"""
+        """
+        根据问题类型返回对应函数
+        :param problem_type: 问题类型
+        :return: 交配函数
+        """
         if problem_type == ALGORITHM.REAL:
             return operator_real
         elif problem_type == ALGORITHM.INT:
@@ -343,7 +396,12 @@ class ALGORITHM(object):
         pass
 
     def mating_pool_selection(self, num_next=None, k=2):
-        """交配池选择"""
+        """
+        交配池选择
+        :param num_next: 下一代种群的个体数量
+        :param k: 用于锦标赛选择，K元锦标赛
+        :return: 交配池（下标）
+        """
         if num_next is None:
             num_next = self.pop_size
         if k >= 2:
@@ -354,7 +412,11 @@ class ALGORITHM(object):
             return roulette_selection(self.fits, num_next)
 
     def pop_merge(self, offspring):
-        """当前种群与其子代合并"""
+        """
+        当前种群与其子代合并
+        :param offspring:
+        :return: 新种群及其目标值/约束值/适应度值
+        """
         # 先计算子代目标值与约束值
         off_objs = self.cal_objs(offspring)
         off_cons = self.cal_cons(offspring)
@@ -367,7 +429,10 @@ class ALGORITHM(object):
         return new_pop, new_objs, new_cons, new_fits
 
     def environmental_selection(self, offspring):
-        """进行环境选择"""
+        """
+        进行环境选择
+        :param offspring: 子代种群
+        """
         # 将当前种群与其子代合并
         new_pop, new_objs, new_cons, new_fits = self.pop_merge(offspring)
         # 使用选择策略(默认精英选择)选择进入下一代新种群的个体
@@ -383,7 +448,13 @@ class ALGORITHM(object):
 
     @staticmethod
     def get_current_best_(pop, objs, cons):
-        """获取给定种群的最优解"""
+        """
+        获取给定种群的最优解
+        :param pop: 给定种群
+        :param objs: 给定种群目标值
+        :param cons: 给定种群约束值
+        :return: 给定种群最优解/解集
+        """
         num_obj = objs.shape[1]
         # 先判断是否满足约束
         feas = (cons <= 0).flatten()
@@ -443,11 +514,13 @@ class ALGORITHM(object):
         # 记录评价指标
         self.scores = np.empty(0)
 
-    def plot(self, show_mode=None, n_iter=None, pause=False):
+    def plot(self, show_mode=None, n_iter=None, pause=False, sym=True):
         """
         绘图函数，根据不同模式进行绘图
-        (-1:不绘制, 0:进度条, 1:目标空间, 2:决策空间, 3:混合模式(等高线),
-        4:混合模式(三维空间), 5:问题提供, 6:算法提供)
+        :param show_mode: 绘图模式，参见View类
+        :param n_iter: 迭代次数，绘制指定迭代次数下的图像
+        :param pause: 是否短暂暂停显示（不建议外部调用）
+        :param sym: 是否进行完全对称图像的绘制（只对MIX绘图有效）
         """
         if n_iter == self.max_iter:
             # 最后一次迭代不再使用停顿展示
@@ -461,9 +534,9 @@ class ALGORITHM(object):
         elif self.show_mode == self.DEC:
             self.plot_decs(n_iter, pause)
         elif self.show_mode == self.MIX2D:
-            self.plot_objs_decs(n_iter, pause)
+            self.plot_objs_decs(n_iter, pause, sym=sym)
         elif self.show_mode == self.MIX3D:
-            self.plot_objs_decs(n_iter, pause, contour=False)
+            self.plot_objs_decs(n_iter, pause, sym=sym, contour=False)
         elif self.show_mode == self.SCORE:
             self.plot_scores(n_iter, pause)
         elif self.show_mode == self.PROB:
@@ -478,22 +551,46 @@ class ALGORITHM(object):
         pass
 
     def plot_decs(self, n_iter=None, pause=False, pause_time=0.06):
-        """绘制种群个体决策向量"""
+        """
+        绘制种群个体决策向量
+        :param n_iter: 迭代次数，绘制指定迭代次数下的图像
+        :param pause: 是否短暂暂停显示（不建议外部调用）
+        :param pause_time: 短暂暂停时长（不建议外部调用）
+        """
         if pause or n_iter is None:
             plot_decs(self.pop, n_iter, pause, pause_time)
         else:
             plot_decs(self.pop_history[n_iter], n_iter, pause, pause_time)
 
     def plot_objs(self, n_iter=None, pause=False, pause_time=0.06):
-        """绘制种群目标值"""
-        if self.num_obj == 1:
-            # 若是单目标问题，绘制目标值范围情况
-            plot_objs(self.objs_history, n_iter, pause, pause_time)
+        """
+        绘制种群目标值
+        :param n_iter: 迭代次数，绘制指定迭代次数下的图像
+        :param pause: 是否短暂暂停显示（不建议外部调用）
+        :param pause_time: 短暂暂停时长（不建议外部调用）
+        """
+        if pause or n_iter is None:
+            if self.num_obj == 1:
+                # 若是单目标问题，绘制目标值范围情况
+                plot_objs(self.objs_history, n_iter, pause, pause_time)
+            else:
+                plot_objs(self.objs, n_iter, pause, pause_time, self.problem.pareto_front)
         else:
-            plot_objs(self.objs, n_iter, pause, pause_time, self.problem.pareto_front)
+            if self.num_obj == 1:
+                # 若是单目标问题，绘制目标值范围情况
+                plot_objs(self.objs_history[:n_iter + 1], n_iter, pause, pause_time)
+            else:
+                plot_objs(self.objs_history[n_iter], n_iter, pause, pause_time, self.problem.pareto_front)
 
     def plot_objs_decs(self, n_iter=None, pause=False, pause_time=0.06, contour=True, sym=True):
-        """在特定条件下可将目标空间与决策空间绘制到同一空间中"""
+        """
+        在特定条件下可将目标空间与决策空间绘制到同一空间中
+        :param n_iter: 迭代次数，绘制指定迭代次数下的图像
+        :param pause: 是否短暂暂停显示（不建议外部调用）
+        :param pause_time: 短暂暂停时长（不建议外部调用）
+        :param contour: 是否使用等高线的方式绘制
+        :param sym: 是否进行完全对称图像的绘制
+        """
         if pause or n_iter is None:
             plot_objs_decs(self.problem, self.pop, self.objs,
                            n_iter, pause, pause_time, contour=contour, sym=sym)
@@ -517,13 +614,25 @@ class ALGORITHM(object):
         return self.scores
 
     def plot_scores(self, n_iter=None, pause=False, pause_time=0.06):
-        """绘制指标的变化情况"""
+        """
+        绘制指标的变化情况
+        :param n_iter: 迭代次数，绘制指定迭代次数下的图像
+        :param pause: 是否短暂暂停显示（不建议外部调用）
+        :param pause_time: 短暂暂停时长（不建议外部调用）
+        """
         if self.scores is None or len(self.scores) == 0:
             self.get_scores()
-        plot_scores(self.scores, self.score_type, n_iter, pause, pause_time)
+        if pause or n_iter is None:
+            plot_scores(self.scores, self.score_type, n_iter, pause, pause_time)
+        else:
+            plot_scores(self.scores[:n_iter + 1], self.score_type, n_iter, pause, pause_time)
 
     def plot_by_problem(self, n_iter=None, pause=False):
-        """使用问题给定的绘图函数绘图"""
+        """
+        使用问题给定的绘图函数绘图
+        :param n_iter: 迭代次数，绘制指定迭代次数下的图像
+        :param pause: 是否短暂暂停显示（不建议外部调用）
+        """
         if pause or n_iter is None:
             self.problem.plot(self.best_history[-1], n_iter, pause)
         else:

@@ -20,8 +20,9 @@ class ZDT3(PROBLEM):
         """
         ZDT3
 
-        References: Comparison of multiobjective evolutionary algorithms: Empirical results,
-        E. Zitzler, K. Deb, and L. Thiele
+        References:
+            Comparison of multiobjective evolutionary algorithms: Empirical results,
+            E. Zitzler, K. Deb, and L. Thiele
         :param num_dec: 决策变量个数
         """
         super().__init__(PROBLEM.REAL, num_dec, num_obj=2, lower=0, upper=1)
@@ -44,7 +45,7 @@ class ZDT3(PROBLEM):
         return optimums[fronts[0]]
 
     def get_pareto_front(self, N=1000):
-        """获取帕累托最优前沿"""
+        """获取帕累托最优前沿(以绘图)"""
         optimums = np.zeros((N, 2))
         optimums[:, 0] = np.linspace(0, 1, N)
         optimums[:, 1] = 1 - optimums[:, 0] ** 0.5 - optimums[:, 0] * np.sin(10 * np.pi * optimums[:, 0])
