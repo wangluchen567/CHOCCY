@@ -6,9 +6,10 @@
 3. [背景知识](#背景知识)
 4. [算法介绍](#算法介绍)
 5. [快速开始](#快速开始)
-6. [高级功能](#高级功能)
-7. [常见问题](#常见问题)
-8. [技术支持](#技术支持)
+6. [进阶功能](#进阶功能)
+7. [高级功能](#高级功能)
+8. [常见问题](#常见问题)
+9. [技术支持](#技术支持)
 
 ---
 
@@ -20,21 +21,43 @@ CHOCCY是一个基于 NumPy 构建的启发式优化求解器，用于解决各�
 ## 安装
 ### 环境要求
 - Python 3.7 或更高版本
-- numpy、scipy、matplotlib、seaborn、tqdm、networkx、numba 等依赖包
+- `numpy`、`scipy`、`matplotlib`、`seaborn`、`tqdm`、`networkx` 等依赖包
 
 ### 安装步骤
-1. 使用 Anaconda 创建 Python 环境
-   使用 Anaconda 创建环境可以方便地管理依赖包，避免版本冲突。建议从 [Anaconda 官网](https://www.anaconda.com/download/success) 下载并安装 Anaconda。如果需要特定版本，可以访问 [Anaconda所有版本下载地址](https://repo.anaconda.com/archive/)。安装完成 Anaconda 后，运行以下命令快速创建 Python 环境：
-   
-   ```bash
-   conda create --name my_env python=3.9
-   conda activate my_env
+**1. 建议使用 `Anaconda` 创建 `Python` 环境**
 
-2. 下载 numpy、scipy、matplotlib、seaborn、tqdm、networkx、numba 等依赖包，运行以下命令一键安装必要包：
+  使用 Anaconda 创建环境可以方便地管理依赖包，避免版本冲突。建议从 [Anaconda 官网](https://www.anaconda.com/download/success) 下载并安装 Anaconda。如果需要特定版本，可以访问 [Anaconda所有版本下载地址](https://repo.anaconda.com/archive/)。
 
-   ```bash
-   pip install numpy scipy matplotlib seaborn tqdm networkx numba
-   ```
+  安装完成后，运行以下命令创建 Python 环境：
+
+  ```bash
+  conda create --name my_env python=3.9
+  conda activate my_env
+  ```
+  **注意**：本项目支持 Python 3.7 及以上版本，建议使用 Python 3.9 以获得最佳兼容性。
+
+**2. 安装必要包**
+
+  本项目依赖以下包: `numpy`、`scipy`、`matplotlib`、`seaborn`、`tqdm`、`networkx`、`numba`、`tbb`。请确保已安装 Python 3.7 或更高版本，运行以下命令一键安装必要包：
+
+  ```bash
+  pip install numpy scipy matplotlib seaborn tqdm networkx numba tbb
+  ```
+
+**3. 安装可选包**
+
+  本项目支持通过`numba`进行加速优化。为了体验更快的运行和优化速度，建议安装 `numba` 和 `tbb`。安装命令如下：
+  ```bash
+  pip install numba tbb
+  ```
+
+**4. 镜像源选择**
+
+  如果在运行安装命令时发现下载速度较慢，可以尝试使用清华大学的镜像源进行安装。安装命令如下：
+  ```bash
+  pip install numpy scipy matplotlib seaborn tqdm networkx numba tbb -i https://pypi.tuna.tsinghua.edu.cn/simple
+  ```
+  注意：如果无法访问上述镜像源，也可以选择其他可用的镜像源，例如中国科技大学、阿里云等。
 
 ## 背景知识
 **在使用本项目求解问题之前，需要先熟悉一些背景知识**
@@ -66,6 +89,24 @@ CHOCCY是一个基于 NumPy 构建的启发式优化求解器，用于解决各�
 
 实际上，一般的元启发式算法并不擅长求解带有约束的优化问题，只有在求解较简单的约束时效果尚可。尤其是在存在强约束的情况下，即受到约束后搜索空间非常狭窄，问题会变得更加困难，尤其是当约束中包含“等式约束”时。狭窄的搜索空间会导致元启发式算法在初始化阶段随机生成的解很可能不满足约束条件，甚至全部都不满足约束。这可能会导致搜索过程中大量的计算资源被浪费在优化满足约束条件的解上，从而导致收敛缓慢。因此，通常需要设计专门用于处理约束的算法，例如通过每次修复解以满足约束条件等方法，从而使算法能够更好地向最优目标收敛。
 
+### 评价指标
+
+评价指标是衡量算法对某个问题优化效果的关键工具，尤其是在多目标问题中，其重要性不言而喻。对于多目标问题，常见的评价指标包括：
+
+1. 超体积指标 (HV)
+2. 代际距离指标 (GD)
+3. 逆代际距离指标 (IGD)
+4. 代际距离+指标 (GD+)
+5. 逆代际距离+指标 (IGD+) 等
+
+值得注意的是，在真实世界的多目标问题中，Pareto最优前沿通常是未知的。因此，我们通常通过给定参考点，使用超体积指标来进行评价。以下是超体积指标的定义：
+
+**超体积指标 (HV)** 是一种衡量多目标优化算法性能的重要指标，它表示由非支配解集和参考点围成的超体积大小。具体来说，超体积指标反映了优化解集在目标空间中所覆盖的区域大小。超体积越大，说明解集的多样性和接近性越好，优化效果也更佳。其计算公式为：
+$$
+HV = \text{Volume}(\{y \in \mathbb{R}^m \mid y \succ \text{参考点}, y \prec \text{非支配解集}\})
+$$
+其中，$\succ$ 表示优于，$\prec$ 表示劣于。超体积指标不仅考虑了解集的分布，还反映了其与参考点的相对位置，是评估多目标优化算法性能的有力工具。
+
 ## 算法介绍
 
 ### 多目标算法
@@ -79,7 +120,7 @@ CHOCCY是一个基于 NumPy 构建的启发式优化求解器，用于解决各�
 
 ## 快速开始
 
-### 问题定义
+### 问题定义与实现
 
 在使用优化器求解问题之前，需要先明确问题的关键信息，以便正确实现问题。这些关键信息包括：
 
@@ -107,8 +148,8 @@ CHOCCY是一个基于 NumPy 构建的启发式优化求解器，用于解决各�
 - `problem_type=real`
 - `num_dec=30`
 - `num_obj=1`
-- `lower=-10`
-- `upper=10`
+- `lower=-100`
+- `upper=100`
 
 在确定好问题的关键信息之后，我们就可以根据这些信息初始化问题类了。所有的问题类都必须继承自 `Problems` 模块下的 `PROBLEM` 父类，这样可以方便后续的预处理和算法调用。
 
@@ -123,7 +164,7 @@ class Sphere(PROBLEM):
 ```
 在上述代码中，需要注意三个参数：
 1. **`problem_type`参数**
-    
+   
     该参数可以直接调用父类 `PROBLEM` 下的静态变量作为输入，也可以直接输入对应的整数值。具体每种问题类型对应的变量值如下：
     ```python
     REAL = 0  # 实数
@@ -141,7 +182,7 @@ class Sphere(PROBLEM):
     problem_type=np.array([PROBLEM.REAL, PROBLEM.REAL, PROBLEM.INT, PROBLEM.BIN])
     ```
     那么，输入的决策变量的每一位对应的类型分别为：【`实数`、`实数`、`整数`、`二进制`】。需要注意的是，当输入是 `np.array` 数组时，数组的大小必须与决策变量的个数 `num_dec` 相匹配。
-     
+    
 2. **`lower`和`upper`参数**
 
    这两个参数与 `problem_type` 参数类似。当输入单独的值时，指定的是所有决策变量的统一下界和上界。也可以通过输入 `np.array` 来指定每一位决策变量的下界和上界，但数组的大小必须与决策变量的个数 `num_dec` 相匹配。
@@ -152,7 +193,7 @@ class Sphere(PROBLEM):
 
 ```python
 def _cal_obj(self, x):
-    return x ** 2
+    return sum(x ** 2)
 ```
 
 如果仅覆写了 `_cal_obj` 方法，`PROBLEM` 父类会自动通过 `for` 循环逐次调用 `_cal_obj` 来计算多个解的目标值。其源码实现如下：
@@ -181,12 +222,9 @@ def _cal_objs(self, X):
 
 此外，需要注意的是，输入的 `X` 变量一定是一个二维矩阵。即使决策变量的个数为 `1`，输入的形状也应为 `(n, 1)`，其中 `n` 表示解的个数。
 
-### 多目标问题定义
+另外，如果将问题定义在了 `Problems` 模块中，建议根据问题的性质将其分类为多目标问题（`Multi`）和单目标问题（`Single`），并将它们分别放入对应的模块文件夹中。同时，建议在模块的 `__init__.py` 文件中导入这些定义，以便于后续的调用。
 
-待更新
-
-
-### 算法选择
+### 算法选择与调用
 定义好问题之后，需要选择一个或多个合适的算法进行求解，具体算法适用求解问题类型可见[算法介绍](#算法介绍)。
 
 对于前面定义的`Sphere`问题，我们可以直接调用合适的单目标算法来求解，以差分进化算法为例：
@@ -219,18 +257,133 @@ if __name__ == '__main__':
     print("算法运行时间(秒)：", algorithm.run_time)
 ```
 
-运行代码后可以看到优化过程动图，并给出最终结果
+运行代码后可以看到优化过程动图，并得到最终结果
 
+### 算法绘图与可视化
 
-### 绘图参数的使用
+本项目提供了灵活的可视化功能，支持在优化过程中绘制状态图像，以及在优化完成后绘制最终状态或指定迭代次数的状态图像。具体可绘制的内容包括以下几种：
+
+1. 不绘制 (NONE)
+2. 绘制进度条 (BAR)
+3. 绘制目标空间中的状态 (OBJ)
+4. 绘制决策空间中的状态 (DEC)
+5. 绘制二维的目标空间和决策空间混合状态 (MIX2D)
+6. 绘制三维的目标空间和决策空间混合状态 (MIX3D)
+7. 绘制分数/指标的状态 (SCORE)
+8. 根据问题给定方法绘制图像 (PROB)
+9. 根据算法给定方法绘制图像 (ALGO)
+
+这些选项与 `Algorithms` 模块中静态参数类 `View` 的参数一一对应。因此，在每次绘制图像时，建议先导入该类。以下是具体的绘图方式：
+
+1. 若希望在优化过程中实时绘制图像，可在算法定义时直接将 `show_mode` 参数设置为所需的绘制类型。例如：
+
+    ```python
+    # 实例化算法并设置种群大小为100，迭代次数为100，优化过程展示为目标值变化情况
+    algorithm = DE(pop_size=100, max_iter=100, show_mode=View.OBJ)
+    ```
+
+2. 若希望在优化结束后绘制图像，可在算法运行完成后，通过调用算法的 `plot` 函数并指定 `show_mode` 参数来实现。例如：
+
+    ```python
+    # 优化结束后绘制决策空间的状态图像
+    algorithm.plot(show_mode=View.DEC)
+    # 优化结束后绘制目标空间的状态图像"""
+    algorithm.plot(show_mode=View.OBJ)
+    ```
+
+3. 若希望在优化结束后绘制某次特定迭代的图像，可在算法运行完成后，通过调用 `plot` 函数并指定 `n_iter` 参数来选择迭代次数。例如：
+
+    ```python
+    # 优化结束后绘制第30次迭代的决策空间的状态图像
+    algorithm.plot(show_mode=View.DEC, n_iter=30)
+    # 优化结束后绘制第30次迭代的目标空间的状态图像
+    algorithm.plot(show_mode=View.OBJ, n_iter=30)
+    ```
+
+在使用绘图功能时，请注意以下几点：
+
+1. `MIX2D` 和 `MIX3D` 用于绘制目标空间和决策空间混合的状态。这些选项对数据维度有严格要求：决策向量维度必须为2，目标向量维度必须为1。其中，`MIX3D` 将两维的决策向量作为 `x` 和 `y` 轴，目标向量作为 `z` 轴，实现三维空间中的绘图；而 `MIX2D` 则是 `MIX3D` 在二维空间中的投影，以等高线形式呈现。
+
+2. `SCORE` 用于绘制分数/指标的状态。对于单目标问题，默认使用适应度值作为分数；对于多目标问题，默认使用超体积（HV）作为分数。由于多目标问题可能存在多种指标，因此可以指定指标类型。指标类型需在算法优化前设置。
+
+    ```python
+    problem = ZDT3()  # 定义问题
+    # 定义算法，并指定优化过程展示分数值变化情况
+    algorithm = NSGAII(pop_size=100, max_iter=100, show_mode=View.SCORE)
+    # 设置评价指标分数类型为逆代际距离指标(IGD)
+    algorithm.set_score_type('IGD')
+    # 使用算法求解问题
+    algorithm.solve(problem)
+    ```
+
+## 进阶功能
+
+### 多目标问题的定义与实现
+
+与单目标问题的定义方式相似，多目标问题的定义仍然需要明确问题的关键信息。以一个简单的多目标问题为例，假设要求解的问题是 $y=f(x)=\{f_1(x), f_2(x)\} = \{x^2, (x - 2)^2\}$，我们可以确定该问题的关键信息如下：
+
+1. **问题的类型**：该问题是单纯的 `实数` 问题。
+2. **决策变量的个数**：1。
+3. **优化目标的个数**：2，因为有两个目标。
+4. **决策变量下界**：不确定，但为了缩小范围，均指定为 -1000。
+5. **决策变量上界**：不确定，但为了缩小范围，均指定为 1000。
+
+根据上述信息，可以得到实现该问题的关键参数：
+- `problem_type=real`
+- `num_dec=1`
+- `num_obj=2`
+- `lower=-1000`
+- `upper=1000`
+
+在确定好问题的关键信息之后，我们就可以根据这些信息初始化问题类了。所有的问题类都必须继承自 `Problems` 模块下的 `PROBLEM` 父类，这样可以方便后续的预处理和算法调用。
+
+除了这些基础信息之外，多目标问题还要考虑分数指标，以评价算法的优化效果。
+
+对于已知 Pareto 最优前沿的多目标问题，建议指定问题的最优前沿信息，可以覆写 `PROBLEM` 父类下的 `get_optimum` 函数以指定最优前沿信息。若想同时绘制最优前沿的图像，则可以覆写 `PROBLEM` 父类下的 `get_pareto_front`。这里需要注意一点，当绘制三维空间中的 Pareto 前沿图像时，若 Pareto 前沿为空间中的线，则需要扰动后绘制，参见 `DTLZ5` 的实现。
+
+对于未知 Pareto 最优前沿的多目标问题，建议指定问题的参考点信息，以方便算法对超体积指标的计算（超体积指标的定义参见 [评价指标](#评价指标)）。指定参考点信息时可以覆写 `PROBLEM` 父类下的 `get_optimum` 函数，给定参考点的值即可。`get_optimum` 函数本身虽然是获取问题的最优前沿的函数，但为了简化，同时也兼顾接收参考点的信息。因为当最优前沿已知的时候，直接给定最优前沿，算法会自动计算参考点，而当最优前沿未知，则该函数直接用于获取参考点信息。
+
+以下是示例代码：
+```python
+import numpy as np
+from Problems import PROBLEM
+
+class MOP1(PROBLEM):
+    def __init__(self, lower=-1e3, upper=1e3):
+        num_dec = 1
+        num_obj = 2
+        super().__init__(PROBLEM.REAL, num_dec, num_obj, lower, upper)
+
+    def _cal_objs(self, X):
+        f1 = X ** 2
+        f2 = (X - 2) ** 2
+        # 将两个目标合并为一个矩阵
+        objs = np.column_stack((f1, f2))
+        return objs
+
+    def get_optimum(self, N=1000):
+        """获取理论最优目标值"""
+        optimums = np.zeros((N, 2))
+        optimums[:, 0] = np.linspace(0, 4, N)
+        optimums[:, 1] = (np.sqrt(optimums[:, 0]) - 2) ** 2
+        return optimums
+
+    def get_pareto_front(self, N=1000):
+        """获取帕累托最优前沿(以绘图)"""
+        return self.get_optimum(N)
+```
+
+此外，需要注意的是，输出的的 `objs` 变量一定是一个二维矩阵，形状为 `(n, m)`，其中 `n` 表示解的个数，`m` 表示目标向量的维度（目标的个数）。
+
+### 约束类型问题
 
 待更新
 
-### 比较器的使用
+### 比较器功能的使用
 
 待更新
 
-### 评估器的使用
+### 评估器功能的使用
 
 待更新
 
