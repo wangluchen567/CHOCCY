@@ -639,3 +639,23 @@ class ALGORITHM(object):
             self.problem.plot(self.best_history[-1], n_iter, pause)
         else:
             self.problem.plot(self.best_history[n_iter], n_iter, pause)
+
+    def save_best(self, save_type='npy'):
+        """
+        保存最优个体解的结果
+        :param save_type: 保存文件类型
+        """
+        # 获取算法与问题名称
+        algo_name = type(self).__name__
+        prob_name = type(self.problem).__name__
+        # 得到项目的根目录
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir]))
+        if self.problem.num_obj == 1:  # 判断是否是单目标问题
+            save_path = project_root + "\\Outputs\\Single\\" + algo_name + "_solve_" + prob_name + "_best"
+        else:
+            save_path = project_root + "\\Outputs\\Multi\\" + algo_name + "_solve_" + prob_name + "_best"
+        # 判断最优解是否为空
+        if self.best is not None:
+            save_array(self.best, save_path, save_type)
+        else:
+            warnings.warn("Best solution is None, save failed !")
