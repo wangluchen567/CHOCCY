@@ -107,6 +107,8 @@ HV = \text{Volume}(\{y \in \mathbb{R}^m \mid y \succ \text{参考点}, y \prec \
 $$
 其中，$\succ$ 表示优于，$\prec$ 表示劣于。超体积指标不仅考虑了解集的分布，还反映了其与参考点的相对位置，是评估多目标优化算法性能的有力工具。
 
+<img src="./Pictures/HV.png" style="zoom:45%;" />
+
 ## 算法介绍
 
 ### 多目标算法
@@ -302,9 +304,11 @@ if __name__ == '__main__':
 
 在使用绘图功能时，请注意以下几点：
 
-1. `MIX2D` 和 `MIX3D` 用于绘制目标空间和决策空间混合的状态。这些选项对数据维度有严格要求：决策向量维度必须为2，目标向量维度必须为1。其中，`MIX3D` 将两维的决策向量作为 `x` 和 `y` 轴，目标向量作为 `z` 轴，实现三维空间中的绘图；而 `MIX2D` 则是 `MIX3D` 在二维空间中的投影，以等高线形式呈现。
+1. `OBJ` 绘制目标空间中的状态，对于单目标问题，绘制的是种群解的最优解目标值(实线部分)以及种群解的其他解到最差解的状态范围(阴影部分)。
 
-2. `SCORE` 用于绘制分数/指标的状态。对于单目标问题，默认使用适应度值作为分数；对于多目标问题，默认使用超体积（HV）作为分数。由于多目标问题可能存在多种指标，因此可以指定指标类型。指标类型需在算法优化前设置。
+2. `MIX2D` 和 `MIX3D` 用于绘制目标空间和决策空间混合的状态。这些选项对数据维度有严格要求：决策向量维度必须为2，目标向量维度必须为1。其中，`MIX3D` 将两维的决策向量作为 `x` 和 `y` 轴，目标向量作为 `z` 轴，实现三维空间中的绘图；而 `MIX2D` 则是 `MIX3D` 在二维空间中的投影，以等高线形式呈现。
+
+3. `SCORE` 用于绘制分数/指标的状态。对于单目标问题，默认使用适应度值作为分数；对于多目标问题，默认使用超体积（HV）作为分数。由于多目标问题可能存在多种指标，因此可以指定指标类型。指标类型需在算法优化前设置。
 
     ```python
     problem = ZDT3()  # 定义问题
@@ -312,7 +316,7 @@ if __name__ == '__main__':
     algorithm = NSGAII(pop_size=100, max_iter=100, show_mode=View.SCORE)
     # 设置评价指标分数类型为逆代际距离指标(IGD)
     algorithm.set_score_type('IGD')
-    # 使用算法求解问题
+    # 使用算法求解问题(保存与展示的是IGD的分数变化情况)
     algorithm.solve(problem)
     ```
 
@@ -381,7 +385,34 @@ class MOP1(PROBLEM):
 
 ### 比较器功能的使用
 
-待更新
+比较器的功能是用于比较不同算法在同一个问题上的表现，这有助于研究算法的性能差异。为了方便实时比较算法的效果，比较器支持在每一步迭代中将所有算法绘制到同一图像中。
+调用比较器非常简单：首先确定一个问题，然后将所有算法放入同一个字典中，字典的键值建议为算法名称，以便于绘图和区分。需要注意的一个重要参数是 `same_init`，它的作用是确保所有算法尽可能地使用一致的初始化条件（‘尽可能地保持一致’是考虑到某些算法的特殊性，例如只包含单个个体的算法，只能单个个体一致）。
+
+以下是一个示例，展示了多种算法在 Ackley 问题上的表现：
+```python
+from Problems.Single import Ackley  # 导入问题
+from Algorithms import View, Comparator  # 导入绘图参数与比较器
+from Algorithms.Single import GA, SA, DE, PSO  # 导入算法
+
+if __name__ == '__main__':
+    # 定义要求解的问题
+    problem = Ackley(num_dec=2)
+    # 初始化算法字典集合
+    algorithms = dict()
+    # 定义算法的参数(参数统一)
+    pop_size, max_iter = 100, 100
+    # 在算法字典集合中加入算法
+    algorithms['GA'] = GA(pop_size, max_iter)
+    algorithms['SA'] = SA(pop_size, max_iter)
+    algorithms['PSO'] = PSO(pop_size, max_iter)
+    algorithms['DE/rand/1'] = DE(pop_size, max_iter, operator_type=DE.RAND1)
+    algorithms['DE/rand/2'] = DE(pop_size, max_iter, operator_type=DE.RAND2)
+    algorithms['DE/best/1'] = DE(pop_size, max_iter, operator_type=DE.BEST1)
+    algorithms['DE/best/2'] = DE(pop_size, max_iter, operator_type=DE.BEST2)
+    # 使用比较器比较算法，并展示各个算法目标值的效果比较
+    comparator = Comparator(problem, algorithms, show_mode=View.OBJ, same_init=True)
+    comparator.run()
+```
 
 ### 评估器功能的使用
 
