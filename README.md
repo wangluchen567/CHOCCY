@@ -102,26 +102,29 @@ CHOCCY/
 ├── Datasets/                   # 数据集
 │   ├── Multi/                  # 多目标问题数据集
 │   └── Single/                 # 单目标问题数据集
+├── Outputs/                    # 输出结果集
+│   ├── Multi/                  # 多目标问题输出结果
+│   └── Single/                 # 单目标问题输出结果
 ├── Problems/                   # 问题集
 │   ├── Multi/                  # 多目标问题集
-│   └── Single/                 # 单目标问题集
+│   ├── Single/                 # 单目标问题集
 │   ├── __init__.py             # 包初始化文件
 │   └── PROBLEM.py              # 问题父类
-├── Run/                        # 算法优化问题实例
-│   ├── Multi/                  # 多目标问题的优化实例
+├── RunDemos/                   # 算法优化问题示例
+│   ├── Multi/                  # 多目标问题的优化示例
 │   │   ├── Cal_Scores.py       # 计算评价指标示例
 │   │   ├── Eval_ZDT.py         # 多种算法优化与评估ZDT示例
-│   │   ├── Run_NSGAII.py       # 运行NSGAII算法实例
-│   │   ├── Solve_MOKP.py       # 多种算法求解MOKP问题对比实例
-│   │   ├── Solve_ZDT.py        # 多种算法求解ZDT问题对比实例
-│   │   └── ...                 # 其他实例可自行查看
-│   └── Single/                 # 单目标问题的优化实例
+│   │   ├── Run_NSGAII.py       # 运行NSGAII算法示例
+│   │   ├── Solve_MOKP.py       # 多种算法求解MOKP问题对比示例
+│   │   ├── Solve_ZDT.py        # 多种算法求解ZDT问题对比示例
+│   │   └── ...                 # 其他示例可自行查看
+│   └── Single/                 # 单目标问题的优化示例
 │   │   ├── Eval_Ackley.py      # 多种算法优化与评估Ackley示例
-│   │   ├── Run_DE.py           # 运行差分进化算法实例
-│   │   ├── Run_GA.py           # 运行遗传算法实例
-│   │   ├── Solve_Ackley.py     # 多种算法求解Ackley问题对比实例
-│   │   ├── Solve_TSP.py        # 多种算法求解TSP问题对比实例
-│   │   └── ...                 # 其他实例可自行查看
+│   │   ├── Run_DE.py           # 运行差分进化算法示例
+│   │   ├── Run_GA.py           # 运行遗传算法示例
+│   │   ├── Solve_Ackley.py     # 多种算法求解Ackley问题对比示例
+│   │   ├── Solve_TSP.py        # 多种算法求解TSP问题对比示例
+│   │   └── ...                 # 其他示例可自行查看
 └── README.md                   # 项目文档
 ```
 
