@@ -107,7 +107,7 @@ HV = \text{Volume}(\{y \in \mathbb{R}^m \mid y \succ \text{参考点}, y \prec \
 $$
 其中，$\succ$ 表示优于，$\prec$ 表示劣于。超体积指标不仅考虑了解集的分布，还反映了其与参考点的相对位置，是评估多目标优化算法性能的有力工具。
 
-<img src="./Pictures/HV.png" style="zoom:45%;" />
+<img src="./Pictures/HV.png" style="zoom:60%;" />
 
 ## 算法介绍
 
