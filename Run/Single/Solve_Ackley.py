@@ -1,9 +1,6 @@
-from Algorithms.Single import GA
-from Algorithms.Single import SA
-from Algorithms.Single import DE
-from Algorithms.Single import PSO
 from Problems.Single import Ackley
 from Algorithms import View, Comparator
+from Algorithms.Single import GA, SA, DE, PSO
 
 if __name__ == '__main__':
     problem = Ackley(num_dec=2)
@@ -18,4 +15,3 @@ if __name__ == '__main__':
     algorithms['DE/best/2'] = DE(pop_size, max_iter, operator_type=DE.BEST2)
     comparator = Comparator(problem, algorithms, show_mode=View.OBJ, same_init=True)
     comparator.run()
-    comparator.plot(show_mode=View.OBJ)

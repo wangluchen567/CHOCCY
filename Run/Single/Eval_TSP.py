@@ -1,11 +1,6 @@
 from Problems.Single import TSP
-from Algorithms.Single import GA
-from Algorithms.Single import SA
-from Algorithms.Single import ACO
-from Algorithms.Single import HGATSP
-from Algorithms.Single import FI
-from Algorithms.Single import GFLS
 from Algorithms import Evaluator
+from Algorithms.Single import GA, SA, ACO, HGATSP, FI, GFLS
 
 if __name__ == '__main__':
     problems = [TSP(30)]

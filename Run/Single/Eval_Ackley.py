@@ -1,9 +1,6 @@
-from Algorithms.Single import GA
-from Algorithms.Single import SA
-from Algorithms.Single import DE
-from Algorithms.Single import PSO
 from Problems.Single import Ackley
 from Algorithms import Evaluator
+from Algorithms.Single import GA, SA, DE, PSO
 
 if __name__ == '__main__':
     problems = [Ackley(num_dec=30)]

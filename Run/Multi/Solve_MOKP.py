@@ -1,9 +1,6 @@
 from Problems.Multi import MOKP
-from Algorithms.Multi import NNDREA
-from Algorithms.Multi import NSGAII
-from Algorithms.Multi import MOEAD
-from Algorithms.Multi import SPEA2
 from Algorithms import View, Comparator
+from Algorithms.Multi import NNDREA, NSGAII, MOEAD, SPEA2
 
 if __name__ == '__main__':
     problem = MOKP(10000)

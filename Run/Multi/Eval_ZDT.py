@@ -4,10 +4,8 @@ from Problems.Multi import ZDT3
 from Problems.Multi import ZDT4
 from Problems.Multi import ZDT5
 from Problems.Multi import ZDT6
-from Algorithms.Multi import NSGAII
-from Algorithms.Multi import MOEAD
-from Algorithms.Multi import SPEA2
 from Algorithms import Evaluator
+from Algorithms.Multi import NSGAII, MOEAD, SPEA2
 
 if __name__ == '__main__':
     problems = [

@@ -1,8 +1,6 @@
 from Problems.Multi import ZDT1
-from Algorithms.Multi import MOEAD
-from Algorithms.Multi import NSGAII
-from Algorithms.Multi import SPEA2
 from Algorithms.Comparator import View, Comparator
+from Algorithms.Multi import MOEAD, NSGAII, SPEA2
 
 if __name__ == '__main__':
     problem = ZDT1()

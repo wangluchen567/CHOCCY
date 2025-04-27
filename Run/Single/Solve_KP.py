@@ -1,12 +1,8 @@
 import numpy as np
 import seaborn as sns
 from Problems.Single import KP
-from Algorithms.Single import SA
-from Algorithms.Single import GA
-from Algorithms.Single import DPKP
-from Algorithms.Single import NNDREAS
-from Algorithms.Single import GreedyKP
 from Algorithms import View, Comparator
+from Algorithms.Single import SA, GA, DPKP, NNDREAS, GreedyKP
 
 if __name__ == '__main__':
     problem = KP(num_dec=100)
@@ -18,6 +14,5 @@ if __name__ == '__main__':
     algorithms['NNDREA'] = NNDREAS(pop_size=100, max_iter=100)
     comparator = Comparator(problem, algorithms, show_mode=View.SCORE, same_init=True)
     comparator.run()
-    comparator.plot(show_mode=View.SCORE)
     print(np.min(algorithms['NNDREA'].pop_weights), np.max(algorithms['NNDREA'].pop_weights))
     sns.heatmap(algorithms['NNDREA'].pop_weights, cmap="YlGnBu")

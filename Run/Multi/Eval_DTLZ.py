@@ -1,10 +1,5 @@
-from Problems.Multi import DTLZ1
-from Problems.Multi import DTLZ2
-from Problems.Multi import DTLZ3
-from Problems.Multi import DTLZ4
-from Algorithms.Multi import NSGAII
-from Algorithms.Multi import MOEAD
-from Algorithms.Multi import SPEA2
+from Problems.Multi import DTLZ1, DTLZ2, DTLZ3, DTLZ4
+from Algorithms.Multi import NSGAII, MOEAD, SPEA2
 from Algorithms import Evaluator
 
 if __name__ == '__main__':
