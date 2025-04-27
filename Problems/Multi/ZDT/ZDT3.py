@@ -12,7 +12,7 @@ See the Mulan PSL v2 for more details.
 """
 import numpy as np
 from Problems import PROBLEM
-from Algorithms.Utility.Utils import fast_nd_sort
+from Algorithms.Utility.SupportUtils import fast_nd_sort
 
 
 class ZDT3(PROBLEM):

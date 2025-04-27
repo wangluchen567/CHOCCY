@@ -13,7 +13,7 @@ See the Mulan PSL v2 for more details.
 import numpy as np
 from Algorithms import ALGORITHM
 from scipy.spatial import distance_matrix
-from Algorithms.Utility.Utils import get_dom_between
+from Algorithms.Utility.SupportUtils import get_dom_between
 
 
 class SPEA2(ALGORITHM):

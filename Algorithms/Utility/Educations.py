@@ -14,7 +14,7 @@ NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
 import numpy as np
-from Algorithms.Utility.Utils import two_opt
+from Algorithms.Utility.SupportUtils import two_opt
 
 
 def educate_tsp(problem, offspring, educate_prob):

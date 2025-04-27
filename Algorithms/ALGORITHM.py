@@ -10,13 +10,15 @@ KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
+import os
 import warnings
 import numpy as np
 from tqdm import tqdm
 from typing import Union
 from Problems import PROBLEM
 from Algorithms import View
-from Algorithms.Utility.Utils import fast_nd_sort, shuffle_matrix_in_row, record_time
+from Algorithms.Utility.SaveUtils import save_array
+from Algorithms.Utility.SupportUtils import fast_nd_sort, shuffle_matrix_in_row, record_time
 from Algorithms.Utility.PlotUtils import plot_scores, plot_decs, plot_objs, plot_objs_decs
 from Algorithms.Utility.PerfMetrics import cal_gd, cal_igd, cal_gd_plus, cal_igd_plus, cal_hv
 from Algorithms.Utility.Selections import elitist_selection, tournament_selection, roulette_selection

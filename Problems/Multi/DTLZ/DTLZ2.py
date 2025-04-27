@@ -12,7 +12,7 @@ See the Mulan PSL v2 for more details.
 """
 import numpy as np
 from Problems import PROBLEM
-from Algorithms.Utility.Utils import get_uniform_vectors
+from Algorithms.Utility.SupportUtils import get_uniform_vectors
 
 class DTLZ2(PROBLEM):
     def __init__(self, num_dec=None, num_obj=3):

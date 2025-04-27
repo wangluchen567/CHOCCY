@@ -14,7 +14,7 @@ import numpy as np
 from Algorithms import ALGORITHM
 from Algorithms.Utility.Selections import elitist_selection
 from Algorithms.Utility.Operators import operator_real, operator_binary
-from Algorithms.Utility.Utils import fast_nd_sort, cal_crowd_dist, cal_ranking
+from Algorithms.Utility.SupportUtils import fast_nd_sort, cal_crowd_dist, cal_ranking
 
 
 class NNDREA(ALGORITHM):

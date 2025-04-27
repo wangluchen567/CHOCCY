@@ -1,6 +1,6 @@
 """
-工具类
-Utils
+算法支持工具类
+Support Utils
 
 Copyright (c) 2024 LuChen Wang
 CHOCCY is licensed under Mulan PSL v2.
@@ -149,30 +149,30 @@ def cal_ranking(ranks, crowd_dist):
     return ranking
 
 
-def get_uniform_vectors(N, M):
+def get_uniform_vectors(p_size, num_dim):
     """
     获取分解后的均匀分布的权重向量
-    :param N: 个体数
-    :param M: 维度数
+    :param p_size: 个体数
+    :param num_dim: 维度数
     :return: 权重向量
     """
-    H1 = 1
-    while len(list(itertools.combinations(range(H1 + M), M - 1))) <= N:
-        H1 = H1 + 1
-    W = np.array(list(itertools.combinations(range(H1 + M - 1), M - 1)))
-    W = W - np.repeat(np.array([range(M - 1)]), len(W), axis=0)
-    W = (np.hstack((W, np.zeros((len(W), 1)) + H1)) - np.hstack((np.zeros((len(W), 1)), W))) / H1
-    return W
+    h1 = 1
+    while len(list(itertools.combinations(range(h1 + num_dim), num_dim - 1))) <= p_size:
+        h1 = h1 + 1
+    wt = np.array(list(itertools.combinations(range(h1 + num_dim - 1), num_dim - 1)))
+    wt = wt - np.repeat(np.array([range(num_dim - 1)]), len(wt), axis=0)
+    wt = (np.hstack((wt, np.zeros((len(wt), 1)) + h1)) - np.hstack((np.zeros((len(wt), 1)), wt))) / h1
+    return wt
 
 
 def shuffle_matrix_in_row(matrix):
     """使用Knuth-Durstenfeld Shuffle算法对矩阵按行进行打乱"""
-    N, D = matrix.shape
-    for i in reversed(np.arange(1, D)):
-        i_vec = np.zeros((N), dtype=int) + i
-        j_vec = np.array(np.random.random(N) * (i + 1), dtype=int)
-        matrix[np.arange(N), i_vec], matrix[np.arange(N), j_vec] = matrix[np.arange(N), j_vec], matrix[
-            np.arange(N), i_vec]
+    data_size, num_dim = matrix.shape
+    for i in reversed(np.arange(1, num_dim)):
+        i_vec = np.zeros(data_size, dtype=int) + i
+        j_vec = np.array(np.random.random(data_size) * (i + 1), dtype=int)
+        matrix[np.arange(data_size), i_vec], matrix[np.arange(data_size), j_vec] \
+            = matrix[np.arange(data_size), j_vec], matrix[np.arange(data_size), i_vec]
 
 
 def shuffle(x):
