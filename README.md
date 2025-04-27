@@ -267,7 +267,7 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 - 运行`Multi`下的`Run_NSGAII`对`ZDT3`问题优化; 运行`Run_MOEAD`对`DTLZ2`问题优化
 
     <img src="./References/Pictures/ZDT3.gif" width="288" height="230"/>
-    <img src="./References/Pictures/DTLZ2_MOEAD.gif" width="288" height="230"/><br/>
+    <img src="./References/Pictures/DTLZ2.gif" width="288" height="230"/><br/>
 
 #### 多种算法优化相同问题对比
 
