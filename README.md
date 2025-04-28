@@ -139,8 +139,9 @@ Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimizatio
 
 ### 算法优化指定问题
 
-假设已经定义了一个问题，以Ackley为例，问题如何定义的详细内容请参见[使用指南](./References/GUIDE.md)<br>
-那么我们就可以直接实例化问题，并使用合适的算法进行优化：
+在开始优化之前，首先需要定义一个问题。关于如何自定义问题的详细内容，请参见[使用指南](./References/GUIDE.md)中的`快速开始`部分
+
+假设已经定义好了一个问题，以下以经典的 Ackley 函数为例。那么，我们就可以直接实例化问题，并使用合适的算法进行优化：
 
 ```python
 from Algorithms import View  # 导入绘图参数类
