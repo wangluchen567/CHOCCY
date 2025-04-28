@@ -14,4 +14,4 @@ if __name__ == '__main__':
     algorithms['GFLS'] = GFLS(max_iter)
     comparator = Comparator(problem, algorithms, show_mode=View.OBJ, same_init=True)
     comparator.run()
-    algorithms['HGA-TSP'].plot(show_mode=View.PROB)
+    algorithms['GFLS'].plot(show_mode=View.PROB)
