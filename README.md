@@ -42,10 +42,10 @@ Chen's Heuristic Optimizer Constructed with Core numpY
 
 **2. 安装必要包**
 
-  本项目依赖以下包: `numpy`、`scipy`、`matplotlib`、`seaborn`、`tqdm`、`networkx`、`numba`、`tbb`。请确保已安装 Python 3.7 或更高版本，运行以下命令一键安装必要包：
+  本项目依赖以下包: `numpy`、`scipy`、`matplotlib`、`seaborn`、`tqdm`、`networkx`。请确保已安装 Python 3.7 或更高版本，运行以下命令一键安装必要包：
   
   ```bash
-  pip install numpy scipy matplotlib seaborn tqdm networkx numba tbb
+  pip install numpy scipy matplotlib seaborn tqdm networkx
   ```
   
 **3. 安装可选包**
