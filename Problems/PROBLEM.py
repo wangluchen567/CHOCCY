@@ -149,3 +149,14 @@ class PROBLEM(object):
     def plot(self, *args, **kwargs):
         """问题提供的绘图函数"""
         pass
+
+    def get_info(self):
+        """获取问题的相关信息"""
+        return {
+            'problem_type': self.problem_type.tolist(),
+            'num_dec': self.num_dec,
+            'num_obj': self.num_obj,
+            'lower': self.lower.tolist(),
+            'upper': self.upper.tolist(),
+            'unique_type': self.unique_type.tolist(),
+        }

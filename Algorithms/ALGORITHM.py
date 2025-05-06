@@ -17,9 +17,9 @@ from tqdm import tqdm
 from typing import Union
 from Problems import PROBLEM
 from Algorithms import View
-from Algorithms.Utility.SaveUtils import save_array
-from Algorithms.Utility.SupportUtils import fast_nd_sort, shuffle_matrix_in_row, record_time
+from Algorithms.Utility.SaveUtils import save_array, save_arrays, get_timestamp, save_json
 from Algorithms.Utility.PlotUtils import plot_scores, plot_decs, plot_objs, plot_objs_decs
+from Algorithms.Utility.SupportUtils import fast_nd_sort, shuffle_matrix_in_row, record_time
 from Algorithms.Utility.PerfMetrics import cal_gd, cal_igd, cal_gd_plus, cal_igd_plus, cal_hv
 from Algorithms.Utility.Selections import elitist_selection, tournament_selection, roulette_selection
 from Algorithms.Utility.Operators import operator_real, operator_binary, operator_permutation, operator_fix_label
@@ -640,7 +640,18 @@ class ALGORITHM(object):
         else:
             self.problem.plot(self.best_history[n_iter], n_iter, pause)
 
-    def save_best(self, save_type='npy'):
+    def get_params_info(self):
+        """获取算法的参数信息"""
+        return {
+            'pop_size': self.pop_size,
+            'max_iter': self.max_iter,
+            'cross_prob': self.cross_prob,
+            'mutate_prob': self.mutate_prob,
+            'educate_prob': self.educate_prob,
+            'only_solve_single': self.only_solve_single
+        }
+
+    def save_best(self, save_type='csv'):
         """
         保存最优个体解的结果
         :param save_type: 保存文件类型
@@ -650,12 +661,26 @@ class ALGORITHM(object):
         prob_name = type(self.problem).__name__
         # 得到项目的根目录
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir]))
+        # 得到当前时间点时间戳
+        timestamp = get_timestamp()
         if self.problem.num_obj == 1:  # 判断是否是单目标问题
-            save_path = project_root + "\\Outputs\\Single\\" + algo_name + "_solve_" + prob_name + "_best"
+            save_path = project_root + "\\Outputs\\Single\\" + algo_name + "_solve_" + prob_name + "_best_" + timestamp
         else:
-            save_path = project_root + "\\Outputs\\Multi\\" + algo_name + "_solve_" + prob_name + "_best"
-        # 判断最优解是否为空
-        if self.best is not None:
-            save_array(self.best, save_path, save_type)
-        else:
-            warnings.warn("Best solution is None, save failed !")
+            save_path = project_root + "\\Outputs\\Multi\\" + algo_name + "_solve_" + prob_name + "_best_" + timestamp
+        # 若文件夹不存在则创建文件夹
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+        # 保存问题和算法的相关信息
+        info = dict()
+        info['algorithm_params'] = self.get_params_info()
+        info['problem_info'] = self.problem.get_info()
+        save_json(info, save_path + "\\info")
+        # 保存相关数据
+        try:
+            save_array(self.best, save_path + "\\best", save_type)
+            save_array(self.best_obj, save_path + "\\best_obj", save_type)
+            save_array(self.best_con, save_path + "\\best_con", save_type)
+        except Exception as e:
+            warnings.warn(f"There is a error with saving: {e}, and the data may not have been fully saved")
+
+

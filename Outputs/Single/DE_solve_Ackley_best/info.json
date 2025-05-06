@@ -1,0 +1,1 @@
+{"algorithm_params": {"pop_size": 100, "max_iter": 100, "cross_prob": 0.9, "mutate_prob": 0.5, "educate_prob": 0.5, "only_solve_single": true, "factor": 0.5, "operator_type": "DE/best/1"}, "problem_info": {"problem_type": [0, 0], "num_dec": 2, "num_obj": 1, "lower": [-32.0, -32.0], "upper": [32.0, 32.0], "unique_type": [0]}}
