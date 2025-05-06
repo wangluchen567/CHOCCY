@@ -19,7 +19,7 @@ from Algorithms.Utility.SupportUtils import get_uniform_vectors
 class MOEAD(ALGORITHM):
     PBI = 1  # 基于惩罚边界的聚合方法
     TCH = 2  # 切比雪夫聚合方法
-    LAG = 3  # 线性聚合方法
+    WSM = 3  # 线性聚合方法
 
     def __init__(self, pop_size=100, max_iter=None, agg_type=PBI, cross_prob=None, mutate_prob=None, show_mode=0):
         """
@@ -113,9 +113,9 @@ class MOEAD(ALGORITHM):
     def aggregate(self, vectors, objs):
         """
         聚合函数
-        :param vectors:
-        :param objs:
-        :return:
+        :param vectors: 聚合向量
+        :param objs: 聚合目标
+        :return: 聚合结果
         """
         # 改变形状方便矩阵运算
         if objs.ndim == 1:
@@ -135,7 +135,7 @@ class MOEAD(ALGORITHM):
         elif self.agg_type == self.TCH:
             # 切比雪夫聚合方法
             return np.max(vectors * np.abs(objs - self.ref), axis=1)
-        elif self.agg_type == self.LAG:
+        elif self.agg_type == self.WSM:
             # 线性聚合方法
             if len(objs) == 1:
                 # 若是单个个体则直接求点积
@@ -147,3 +147,10 @@ class MOEAD(ALGORITHM):
                 # return np.einsum('ij,ij->i', objs, vectors).flatten()
         else:
             raise ValueError("There is no such aggregate function type")
+
+    def get_params_info(self):
+        """获取参数信息"""
+        info = super().get_params_info()
+        types = ['', 'Penalty Boundary', 'Tchebycheff', 'Weighted Sum']
+        info['agg_type'] = types[self.agg_type]
+        return info

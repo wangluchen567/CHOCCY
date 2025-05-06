@@ -79,3 +79,11 @@ class DE(ALGORITHM):
         self.objs[better] = off_objs[better]
         self.cons[better] = off_cons[better]
         self.fits[better] = off_fits[better]
+
+    def get_params_info(self):
+        """获取参数信息"""
+        info = super().get_params_info()
+        types = ['', '', 'DE/best/1', 'DE/rand/1', 'DE/best/2', 'DE/rand/2']
+        info['factor'] = self.factor
+        info['operator_type'] = types[self.operator_type]
+        return info
