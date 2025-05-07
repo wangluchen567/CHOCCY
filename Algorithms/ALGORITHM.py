@@ -683,4 +683,72 @@ class ALGORITHM(object):
         except Exception as e:
             warnings.warn(f"There is a error with saving: {e}, and the data may not have been fully saved")
 
+    def save_pop(self, save_type='csv'):
+        """
+        保存当前代种群的结果
+        :param save_type:  保存文件类型
+        """
+        # 获取算法与问题名称
+        algo_name = type(self).__name__
+        prob_name = type(self.problem).__name__
+        # 得到项目的根目录
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir]))
+        # 得到当前时间点时间戳
+        timestamp = get_timestamp()
+        if self.problem.num_obj == 1:  # 判断是否是单目标问题
+            save_path = project_root + "\\Outputs\\Single\\" + algo_name + "_solve_" + prob_name + "_pop_" + timestamp
+        else:
+            save_path = project_root + "\\Outputs\\Multi\\" + algo_name + "_solve_" + prob_name + "_pop_" + timestamp
+        # 若文件夹不存在则创建文件夹
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+        # 保存问题和算法的相关信息
+        info = dict()
+        info['algorithm_params'] = self.get_params_info()
+        info['problem_info'] = self.problem.get_info()
+        save_json(info, save_path + "\\info")
+        # 保存相关数据
+        try:
+            save_array(self.pop, save_path + "\\pop", save_type)
+            save_array(self.objs, save_path + "\\objs", save_type)
+            save_array(self.cons, save_path + "\\cons", save_type)
+        except Exception as e:
+            warnings.warn(f"There is a error with saving: {e}, and the data may not have been fully saved")
 
+    def save_history(self, save_type='npz'):
+        """
+        保存种群所有历史的结果
+        :param save_type:  保存文件类型
+        """
+        # 获取算法与问题名称
+        algo_name = type(self).__name__
+        prob_name = type(self.problem).__name__
+        # 得到项目的根目录
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir]))
+        # 得到当前时间点时间戳
+        timestamp = get_timestamp()
+        if self.problem.num_obj == 1:  # 判断是否是单目标问题
+            save_path = (project_root + "\\Outputs\\Single\\" + algo_name + "_solve_" + prob_name +
+                         "_history_" + timestamp)
+        else:
+            save_path = (project_root + "\\Outputs\\Multi\\" + algo_name + "_solve_" + prob_name +
+                         "_history_" + timestamp)
+        # 若文件夹不存在则创建文件夹
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+        # 保存问题和算法的相关信息
+        info = dict()
+        info['algorithm_params'] = self.get_params_info()
+        info['problem_info'] = self.problem.get_info()
+        save_json(info, save_path + "\\info")
+        # 保存相关数据
+        try:
+            # 预处理相关数据
+            pop_dict = {f'iter_{i}': self.pop_history[i] for i in range(len(self.pop_history))}
+            objs_dict = {f'iter_{i}': self.objs_history[i] for i in range(len(self.objs_history))}
+            cons_dict = {f'iter_{i}': self.cons_history[i] for i in range(len(self.cons_history))}
+            save_arrays(pop_dict, save_path + "\\pop_history", save_type)
+            save_arrays(objs_dict, save_path + "\\objs_history", save_type)
+            save_arrays(cons_dict, save_path + "\\cons_history", save_type)
+        except Exception as e:
+            warnings.warn(f"There is a error with saving: {e}, and the data may not have been fully saved")
