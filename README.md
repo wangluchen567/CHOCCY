@@ -175,6 +175,17 @@ print("算法运行时间(秒)：", algorithm.run_time)
     <img src="./References/Pictures/DE_Ackley2.gif" width="288" height="220"/>
     <img src="./References/Pictures/DE_Ackley3.gif" width="288" height="220"/>
 
+
+另外，框架支持对优化结果与历史信息进行保存，方便后续分析与对比。保存路径默认为 `Outputs/` 文件夹，具体路径会根据问题类型进行区分：单目标问题的保存路径为 `Outputs/Single/`；多目标问题的保存路径为 `Outputs/Multi/`
+
+保存的文件夹名称默认格式为 `[算法名称]_solve_[问题名称]_[保存内容类型]`，相关保存功能的代码如下：
+
+```
+algorithm.save_best()  # 保存优化求解后得到的最优解相关信息
+algorithm.save_pop()  # 保存优化求解后得到的整个种群相关信息
+algorithm.save_history()  # 保存优化求解后得到的种群所有历史相关信息
+```
+
 ### 多种算法优化问题对比
 
 #### 算法优化实时对比
