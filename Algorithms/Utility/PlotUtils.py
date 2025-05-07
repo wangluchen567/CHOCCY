@@ -15,7 +15,6 @@ See the Mulan PSL v2 for more details.
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.interpolate import griddata
 from mpl_toolkits.mplot3d import Axes3D
 
 

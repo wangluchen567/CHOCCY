@@ -141,7 +141,6 @@ class Evaluator(object):
         """
         使用多进程并行运行评估任务(请谨慎使用,可能会造成卡顿)
         :param num_processes: 使用并行运行的CPU个数(默认使用CPU核心数)
-        :return: None
         """
         if num_processes is None:
             num_processes = multiprocessing.cpu_count()  # 默认使用 CPU 核心数
@@ -164,7 +163,6 @@ class Evaluator(object):
         :param score_types: 指定每种问题的分数类型
         :param stats_test: 是否使用统计检验进行算法比较
         :param dec: 精确到小数点后的位数
-        :return: None
         """
         if score_types is not None:
             # 若指定打印分数类型则重新对类型设置

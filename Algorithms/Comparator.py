@@ -20,7 +20,6 @@ from typing import Union
 from Algorithms import View
 from Algorithms import ALGORITHM
 from Problems.PROBLEM import PROBLEM
-from scipy.interpolate import griddata
 from mpl_toolkits.mplot3d import Axes3D
 
 
@@ -134,7 +133,6 @@ class Comparator(ALGORITHM):
         格式化打印多个算法的对比结果
         :param dec: 精确到小数点后的位数
         :param show_con: 是否展示约束结果
-        :return: None
         """
         if self.problem.num_obj == 1:
             self.print_single(dec, show_con)
@@ -211,11 +209,13 @@ class Comparator(ALGORITHM):
         colors = [mcolors.to_hex(c) for c in raw_colors]
         return colors
 
-    def plot(self, show_mode=None, n_iter=None, pause=False):
+    def plot(self, show_mode=None, n_iter=None, pause=False, sym=True):
         """
         绘图函数，根据不同模式进行绘图
-        (-1:不绘制, 0:进度条, 1:目标空间, 2:决策空间,
-        3:混合模式(等高线), 4:混合模式(三维空间))
+        :param show_mode: 绘图模式，参见View类
+        :param n_iter: 迭代次数，绘制指定迭代次数下的图像
+        :param pause: 是否短暂暂停显示（不建议外部调用）
+        :param sym: 是否进行完全对称图像的绘制（只对MIX绘图有效）
         """
         if n_iter == self.max_iter:
             # 最后一次迭代不再使用停顿展示
@@ -234,21 +234,27 @@ class Comparator(ALGORITHM):
         elif self.show_mode == self.DEC:
             self.plot_decs(n_iter, pause)
         elif self.show_mode == self.MIX2D:
-            self.plot_objs_decs(n_iter, pause)
+            self.plot_objs_decs(n_iter, pause, sym=sym)
         elif self.show_mode == self.MIX3D:
-            self.plot_objs_decs(n_iter, pause, contour=False)
+            self.plot_objs_decs(n_iter, pause, sym=sym, contour=False)
         elif self.show_mode == self.SCORE:
             self.plot_scores(n_iter, pause)
         else:
             raise ValueError("There is no such plotting mode")
 
     def plot_decs(self, n_iter=None, pause=False, pause_time=0.06):
-        """绘制种群个体决策向量"""
+        """
+        绘制种群个体决策向量
+        :param n_iter: 迭代次数，绘制指定迭代次数下的图像
+        :param pause: 是否短暂暂停显示（不建议外部调用）
+        :param pause_time: 短暂暂停时长（不建议外部调用）
+        """
         plt.clf()
         if self.problem.num_dec == 1:
             plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
             for idx, (name, alg) in enumerate(self.algorithms.items()):
-                X_stack = np.hstack((alg.pop, alg.pop))
+                pop = alg.pop if pause or n_iter is None else alg.pop_history[n_iter]
+                X_stack = np.hstack((pop, pop))
                 plt.plot(np.arange(0, 2), X_stack[0, :], c=self.colors[idx], alpha=0.5, label=name)
                 for i in range(1, len(X_stack)):
                     plt.plot(np.arange(0, 2), X_stack[i, :], c=self.colors[idx], alpha=0.5)
@@ -258,7 +264,8 @@ class Comparator(ALGORITHM):
         elif self.problem.num_dec == 2:
             plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
             for idx, (name, alg) in enumerate(self.algorithms.items()):
-                plt.scatter(alg.pop[:, 0], alg.pop[:, 1], marker="o", c=self.colors[idx], label=name)
+                pop = alg.pop if pause or n_iter is None else alg.pop_history[n_iter]
+                plt.scatter(pop[:, 0], pop[:, 1], marker="o", c=self.colors[idx], label=name)
             plt.xlabel('x')
             plt.ylabel('y')
         elif self.problem.num_dec == 3:
@@ -267,7 +274,8 @@ class Comparator(ALGORITHM):
             ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
             ax.ticklabel_format(style='sci', axis='z', scilimits=(0, 0))
             for idx, name, alg in enumerate(self.algorithms.items()):
-                ax.scatter(alg.pop[:, 0], alg.pop[:, 1], alg.pop[:, 2],
+                pop = alg.pop if pause or n_iter is None else alg.pop_history[n_iter]
+                ax.scatter(pop[:, 0], pop[:, 1], pop[:, 2],
                            marker="o", c=self.colors[idx], label=name)
             # 设置三维图像角度(仰角方位角)
             # ax.view_init(elev=30, azim=30)
@@ -277,10 +285,11 @@ class Comparator(ALGORITHM):
         else:
             plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
             for idx, (name, alg) in enumerate(self.algorithms.items()):
-                plt.plot(np.arange(1, self.problem.num_dec + 1), alg.pop[0, :],
+                pop = alg.pop if pause or n_iter is None else alg.pop_history[n_iter]
+                plt.plot(np.arange(1, self.problem.num_dec + 1), pop[0, :],
                          c=self.colors[idx], alpha=0.5, label=name)
-                for i in range(1, len(alg.pop)):
-                    plt.plot(np.arange(1, self.problem.num_dec + 1), alg.pop[i, :],
+                for i in range(1, len(pop)):
+                    plt.plot(np.arange(1, self.problem.num_dec + 1), pop[i, :],
                              c=self.colors[idx], alpha=0.5)
             plt.xlabel('dim')
             plt.ylabel('x')
@@ -296,12 +305,17 @@ class Comparator(ALGORITHM):
             plt.show()
 
     def plot_objs(self, n_iter=None, pause=False, pause_time=0.06):
-        """绘制种群目标值"""
+        """
+        绘制种群目标值
+        :param n_iter: 迭代次数，绘制指定迭代次数下的图像
+        :param pause: 是否短暂暂停显示（不建议外部调用）
+        :param pause_time: 短暂暂停时长（不建议外部调用）
+        """
         plt.clf()
         if self.problem.num_obj == 1:
             plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
             for idx, (name, alg) in enumerate(self.algorithms.items()):
-                objs = alg.objs_history
+                objs = alg.objs_history if pause or n_iter is None else alg.objs_history[:n_iter + 1]
                 x = np.arange(len(objs))
                 objs_ = np.concatenate(objs, axis=1).T
                 objs_min = np.min(objs_, axis=1)
@@ -314,7 +328,8 @@ class Comparator(ALGORITHM):
         elif self.problem.num_obj == 2:
             plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
             for idx, (name, alg) in enumerate(self.algorithms.items()):
-                plt.scatter(alg.objs[:, 0], alg.objs[:, 1], marker="o", c=self.colors[idx], label=name, alpha=0.6)
+                objs = alg.objs if pause or n_iter is None else alg.objs_history[n_iter]
+                plt.scatter(objs[:, 0], objs[:, 1], marker="o", c=self.colors[idx], label=name, alpha=0.6)
             # 绘制最优前沿面
             if self.problem.pareto_front is not None:
                 plt.plot(self.problem.pareto_front[:, 0], self.problem.pareto_front[:, 1], marker="", c='gray')
@@ -326,20 +341,16 @@ class Comparator(ALGORITHM):
             ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
             ax.ticklabel_format(style='sci', axis='z', scilimits=(0, 0))
             for idx, (name, alg) in enumerate(self.algorithms.items()):
-                ax.scatter(alg.objs[:, 0], alg.objs[:, 1], alg.objs[:, 2],
+                objs = alg.objs if pause or n_iter is None else alg.objs_history[n_iter]
+                ax.scatter(objs[:, 0], objs[:, 1], objs[:, 2],
                            marker="o", c=self.colors[idx], label=name, alpha=0.6)
             # 绘制最优前沿面
             if self.problem.pareto_front is not None:
                 x = self.problem.pareto_front[:, 0]
                 y = self.problem.pareto_front[:, 1]
                 z = self.problem.pareto_front[:, 2]
-                # 生成需要插值的网格
-                xi = np.linspace(min(x), max(x), 100)
-                yi = np.linspace(min(y), max(y), 100)
-                xi, yi = np.meshgrid(xi, yi)
-                # 使用 griddata 进行插值
-                zi = griddata((x, y), z, (xi, yi), method='linear')
-                ax.plot_wireframe(xi, yi, zi, color='gray', linewidth=0.3)
+                # 绘制三维三角曲面（面透明且边浅灰）（支持不规则图形）
+                ax.plot_trisurf(x, y, z, edgecolor='gray', color=(1, 1, 1, 0), linewidth=0.16)
             # 设置三维图像角度(仰角方位角)
             ax.view_init(elev=30, azim=30)
             ax.set_xlabel('obj1')
@@ -348,10 +359,11 @@ class Comparator(ALGORITHM):
         else:
             plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
             for idx, (name, alg) in enumerate(self.algorithms.items()):
-                plt.plot(np.arange(1, self.problem.num_obj + 1), alg.objs[0, :],
+                objs = alg.objs if pause or n_iter is None else alg.objs_history[n_iter]
+                plt.plot(np.arange(1, self.problem.num_obj + 1), objs[0, :],
                          c=self.colors[idx], alpha=0.6, label=name)
-                for i in range(1, len(alg.objs)):
-                    plt.plot(np.arange(1, self.problem.num_obj + 1), alg.objs[i, :],
+                for i in range(1, len(objs)):
+                    plt.plot(np.arange(1, self.problem.num_obj + 1), objs[i, :],
                              c=self.colors[idx], alpha=0.6)
             plt.xlabel('dim')
             plt.ylabel('obj')
@@ -374,8 +386,10 @@ class Comparator(ALGORITHM):
         if self.problem.num_dec == 1:
             all_pop = np.empty(shape=(0, 1))
             for idx, (name, alg) in enumerate(self.algorithms.items()):
-                plt.scatter(alg.pop, alg.objs, marker="o", c=self.colors[idx], label=name, alpha=0.6)
-                all_pop = np.concatenate((all_pop, alg.pop))
+                pop = alg.pop if pause or n_iter is None else alg.pop_history[n_iter]
+                objs = alg.objs if pause or n_iter is None else alg.objs_history[n_iter]
+                plt.scatter(pop, objs, marker="o", c=self.colors[idx], label=name, alpha=0.6)
+                all_pop = np.concatenate((all_pop, pop))
             # 对问题进行采样绘制问题图像
             if sym is True:  # 对称图像绘制
                 x_min, x_max = -np.max(np.abs(all_pop)), np.max(np.abs(all_pop))
@@ -392,7 +406,8 @@ class Comparator(ALGORITHM):
             # 得到所有算法的种群状态
             all_pop = np.empty(shape=(0, 2))
             for alg in self.algorithms.values():
-                all_pop = np.concatenate((all_pop, alg.pop))
+                pop = alg.pop if pause or n_iter is None else alg.pop_history[n_iter]
+                all_pop = np.concatenate((all_pop, pop))
             # 对问题进行采样绘制问题图像
             if sym is True:  # 对称图像绘制
                 x_min, x_max = -np.max(np.abs(all_pop)), np.max(np.abs(all_pop))
@@ -403,14 +418,17 @@ class Comparator(ALGORITHM):
             x = np.linspace(x_min, x_max, 1000).reshape(-1, 1)
             y = np.linspace(y_min, y_max, 1000).reshape(-1, 1)
             X, Y = np.meshgrid(x, y)
-            Z = self.problem.cal_objs(np.concatenate((np.expand_dims(X, -1), np.expand_dims(Y, -1)), -1))
+            decs_pack = np.concatenate((np.expand_dims(X, -1), np.expand_dims(Y, -1)), -1).reshape(-1, 2)
+            objs_pack = self.problem.cal_objs(decs_pack)
+            Z = objs_pack.reshape(X.shape)
             if contour:
                 # 设置x轴和y轴使用科学计数法
                 plt.ticklabel_format(style='sci', axis='both', scilimits=(0, 0))
                 contour_ = plt.contour(X, Y, Z, levels=np.linspace(np.min(Z), np.max(Z), 20))
                 plt.clabel(contour_, inline=True, fontsize=8)  # 添加等高线标签
                 for idx, (name, alg) in enumerate(self.algorithms.items()):
-                    plt.scatter(alg.pop[:, 0], alg.pop[:, 1], marker="o", c=self.colors[idx], label=name, alpha=0.6)
+                    pop = alg.pop if pause or n_iter is None else alg.pop_history[n_iter]
+                    plt.scatter(pop[:, 0], pop[:, 1], marker="o", c=self.colors[idx], label=name, alpha=0.6)
                 plt.xlabel('x')
                 plt.ylabel('y')
             else:
@@ -421,7 +439,9 @@ class Comparator(ALGORITHM):
                 ax.ticklabel_format(style='sci', axis='z', scilimits=(0, 0))
                 ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.5, zorder=1)
                 for idx, (name, alg) in enumerate(self.algorithms.items()):
-                    ax.scatter(alg.pop[:, 0], alg.pop[:, 1], alg.objs.flatten(),
+                    pop = alg.pop if pause or n_iter is None else alg.pop_history[n_iter]
+                    objs = alg.objs if pause or n_iter is None else alg.objs_history[n_iter]
+                    ax.scatter(pop[:, 0], pop[:, 1], objs.flatten(),
                                marker="o", s=50, c=self.colors[idx], zorder=2, label=name, alpha=0.6)
                 ax.set_xlabel('x')
                 ax.set_ylabel('y')

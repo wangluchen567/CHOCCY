@@ -15,7 +15,7 @@ from Algorithms.Utility.Mutations import *
 
 
 class SA(ALGORITHM):
-    def __init__(self, pop_size=1, max_iter=10000, init_temp=1e4, alpha=0.99, perturb_prob=0.5, show_mode=0):
+    def __init__(self, pop_size=1, max_iter=10000, init_temp=1e4, alpha=0.99, perturb_prob=None, show_mode=0):
         """
         模拟退火算法
 
@@ -45,7 +45,7 @@ class SA(ALGORITHM):
 
     @ALGORITHM.record_time
     def run_step(self, i):
-        if self.temp < 1e-100:
+        if self.temp < 1e-200:
             # 若温度已经很小，则不再更新
             pass
         else:
@@ -89,7 +89,7 @@ class SA(ALGORITHM):
         if delta_e < 0:
             # 若新解比旧解更好则直接接受新解
             return True
-        elif temp < 1e-100:
+        elif temp < 1e-200:
             # 温度太低之后直接不接受新解
             return False
         else:
@@ -118,10 +118,12 @@ class SA(ALGORITHM):
         # 防止影响原数据
         new_solutions = solutions.copy()
         for t in self.unique_type:
+            # 若是序列问题建议扰动概率为0.5，这里默认直接设置为0.5
+            mutate_prob = 0.5 if t == self.PMU else self.mutate_prob
             new_solutions[:, self.type_indices[t]] = self.mutate_(t, new_solutions[:, self.type_indices[t]],
                                                                   self.lower[self.type_indices[t]],
                                                                   self.upper[self.type_indices[t]],
-                                                                  self.mutate_prob)
+                                                                  mutate_prob)
         return new_solutions
 
     @staticmethod

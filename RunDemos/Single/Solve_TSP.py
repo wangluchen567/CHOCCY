@@ -7,7 +7,7 @@ if __name__ == '__main__':
     algorithms = dict()
     pop_size, max_iter = 100, 100
     algorithms['GA'] = GA(pop_size, max_iter)
-    algorithms['SA'] = SA(pop_size, max_iter, perturb_prob=0.5)
+    algorithms['SA'] = SA(pop_size, max_iter)
     algorithms['ACO'] = ACO(pop_size, max_iter)
     algorithms['HGA-TSP'] = HGATSP(pop_size, max_iter)
     algorithms['FI'] = FI()

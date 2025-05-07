@@ -15,7 +15,7 @@ from Algorithms import ALGORITHM
 
 
 class PSO(ALGORITHM):
-    def __init__(self, pop_size=None, max_iter=None, w=0.7298, c1=2.0, c2=2.0, show_mode=0):
+    def __init__(self, pop_size=None, max_iter=None, w=0.7298, c1=1.5, c2=1.5, show_mode=0):
         """
         粒子群优化算法
 
