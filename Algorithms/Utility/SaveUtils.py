@@ -1,5 +1,5 @@
 """
-保存工具类
+保存文件工具类
 Save Utils
 
 Copyright (c) 2024 LuChen Wang
@@ -56,49 +56,6 @@ def save_json(data: dict, file_path):
     """保存为json文件"""
     with open(file_path + ".json", "w") as f:
         json.dump(data, f)
-
-
-def load_array(file_path):
-    """加载保存的一个数组的文件"""
-    # 根据文件扩展名判断文件类型
-    if file_path.endswith('.npy'):
-        # 加载 npy 文件
-        arr = np.load(file_path)
-    elif file_path.endswith('.txt'):
-        # 加载 txt 文件
-        arr = np.loadtxt(file_path)
-    elif file_path.endswith('.csv'):
-        # 加载 csv 文件
-        arr = np.loadtxt(file_path, delimiter=',')
-    else:
-        raise ValueError(f"Unsupported file type: {file_path}")
-
-    return arr
-
-
-def load_arrays(file_path):
-    """加载保存的多个数组的文件"""
-    # 根据文件扩展名判断文件类型
-    if file_path.endswith('.npz'):
-        # 加载 npz 文件
-        loaded_data = np.load(file_path)
-        # 将数据转换为字典
-        arrays_dict = {key: loaded_data[key] for key in loaded_data.files}
-        loaded_data.close()  # 关闭文件
-    elif file_path.endswith('.json'):
-        # 加载 json 文件
-        with open(file_path, "r") as f:
-            loaded_json_data = json.load(f)
-        # 将列表转换回 numpy 数组
-        arrays_dict = {key: np.array(value) for key, value in loaded_json_data.items()}
-    elif file_path.endswith('.pkl'):
-        # 加载 pkl 文件
-        with open(file_path, "rb") as f:
-            arrays_dict = pickle.load(f)
-    else:
-        raise ValueError(f"Unsupported file type: {file_path}")
-
-    return arrays_dict
 
 
 def get_timestamp(k=3):
