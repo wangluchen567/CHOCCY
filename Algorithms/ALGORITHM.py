@@ -11,12 +11,14 @@ NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
 import os
+import time
 import warnings
 import numpy as np
 from tqdm import tqdm
 from typing import Union
 from Problems import PROBLEM
 from Algorithms import View
+from Algorithms.Utility.RecordUtils import setup_logger
 from Algorithms.Utility.SaveUtils import save_array, save_arrays, get_timestamp, save_json
 from Algorithms.Utility.PlotUtils import plot_scores, plot_decs, plot_objs, plot_objs_decs
 from Algorithms.Utility.SupportUtils import fast_nd_sort, shuffle_matrix_in_row, record_time
@@ -42,6 +44,7 @@ class ALGORITHM(object):
     SCORE = View.SCORE  # 绘制分数情况(单目标为目标值,多目标为评价指标)
     PROB = View.PROB  # 问题提供绘图方法
     ALGO = View.ALGO  # 算法提供绘图方法
+    LOG = View.LOG  # 输出日志
     # 定义指标类型常量(多目标)
     score_types = ['HV', 'GD', 'IGD', 'GD+', 'IGD+']
 
@@ -91,8 +94,12 @@ class ALGORITHM(object):
         self.best, self.best_obj, self.best_con = None, None, None
         # 记录种群最优个体及其目标/约束(适应度为中间值不记录)
         self.best_history, self.best_obj_his, self.best_con_his = [], [], []
+        # 记录开始时间
+        self.start_time = 0.0
         # 记录运行时间
         self.run_time = 0.0
+        # 初始化日志记录器
+        self.logger = None
         # 初始化决策变量示例
         self.example_dec = None
         # 初始化评价指标记录与评价指标类型
@@ -126,6 +133,7 @@ class ALGORITHM(object):
         self.type_indices = self.problem.type_indices
         self.lower = self.problem.lower
         self.upper = self.problem.upper
+        self.start_time = time.time()
         # 决策变量示例(固定标签问题)
         if hasattr(self.problem, 'example_dec'):
             self.example_dec = self.problem.example_dec
@@ -137,6 +145,7 @@ class ALGORITHM(object):
         self.cross_prob = 1.0 if self.cross_prob is None else self.cross_prob
         self.educate_prob = 0.5 if self.educate_prob is None else self.educate_prob
         self.mutate_prob = 1 / self.num_dec if self.mutate_prob is None else self.mutate_prob
+        self.logger = setup_logger() if self.show_mode == self.LOG else None  # 设置日志记录器
 
     def check_feasibility(self):
         """检查算法是否可求解该问题"""
@@ -493,7 +502,7 @@ class ALGORITHM(object):
         self.best_history.append(self.best)
         self.best_obj_his.append(self.best_obj)
         self.best_con_his.append(self.best_con)
-        if self.num_obj == 1 or self.show_mode == self.SCORE:
+        if self.num_obj == 1 or self.show_mode == self.SCORE or self.show_mode == self.LOG:
             # 若是单目标问题或需要展示评价指标变化则直接记录分数
             self.record_score()
 
@@ -531,6 +540,8 @@ class ALGORITHM(object):
             self.show_mode = show_mode
         if self.show_mode == self.NONE or self.show_mode == self.BAR:
             pass
+        if self.show_mode == self.LOG:
+            self.logger.info(self.get_log_info(n_iter))
         elif self.show_mode == self.OBJ:
             self.plot_objs(n_iter, pause)
         elif self.show_mode == self.DEC:
@@ -639,6 +650,36 @@ class ALGORITHM(object):
             self.problem.plot(self.best_history[-1], n_iter, pause)
         else:
             self.problem.plot(self.best_history[n_iter], n_iter, pause)
+
+    def enable_file_logging(self, log_name=None):
+        """
+        打开输出日志到文件功能
+        :param log_name: 输出日志文件的名称
+        """
+        if self.show_mode != self.LOG:
+            warnings.warn("Logging mode is not currently enabled")
+        # 得到项目的根目录
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir]))
+        if log_name is None:
+            # 获取算法与问题名称
+            algo_name = type(self).__name__
+            # 若log_name给定为空则默认命名为[algorithm_name].log
+            log_name = algo_name + ".log"
+        save_path = project_root + "\\Outputs\\Logs\\" + log_name
+        self.logger = setup_logger(save_path, to_file=True)
+
+    def get_log_info(self, n_iter):
+        """
+        获取当前状态信息
+        :param n_iter: 迭代次数
+        """
+        info = ""
+        use_time = time.time() - self.start_time
+        if self.num_obj == 1:
+            info += f"n_iter = {n_iter}, time = {use_time:.3f} s, best_obj = {self.best_obj[0]:.6e}"
+        else:
+            info += f"n_iter = {n_iter}, time = {use_time:.3f} s, score = {self.scores[-1]:.6e}"
+        return info
 
     def get_params_info(self):
         """获取算法的参数信息"""
