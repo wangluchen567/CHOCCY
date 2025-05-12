@@ -371,7 +371,7 @@ class ALGORITHM(object):
     def operator(self, mating_pool):
         """
         进行交叉变异生成子代
-        :param mating_pool: 交配池(下标)
+        :param mating_pool: 匹配池(下标)
         :return: 子代种群
         """
         offspring = self.pop[mating_pool]
@@ -387,7 +387,7 @@ class ALGORITHM(object):
         """
         根据问题类型返回对应函数
         :param problem_type: 问题类型
-        :return: 交配函数
+        :return: 匹配函数
         """
         if problem_type == ALGORITHM.REAL:
             return operator_real
@@ -408,18 +408,18 @@ class ALGORITHM(object):
 
     def mating_pool_selection(self, num_next=None, k=2):
         """
-        交配池选择
+        匹配池选择
         :param num_next: 下一代种群的个体数量
         :param k: 用于锦标赛选择，K元锦标赛
-        :return: 交配池（下标）
+        :return: 匹配池（下标）
         """
         if num_next is None:
             num_next = self.pop_size
         if k >= 2:
-            # 使用锦标赛选择获取交配池
+            # 使用锦标赛选择获取匹配池
             return tournament_selection(self.fits, num_next, k)
         else:
-            # 使用轮盘赌选择获取交配池
+            # 使用轮盘赌选择获取匹配池
             return roulette_selection(self.fits, num_next)
 
     def pop_merge(self, offspring):

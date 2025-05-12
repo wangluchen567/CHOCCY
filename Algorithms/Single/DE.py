@@ -45,7 +45,7 @@ class DE(ALGORITHM):
     @ALGORITHM.record_time
     def run_step(self, i):
         """运行算法单步"""
-        # 获取交配池
+        # 获取匹配池
         mating_pools = [self.mating_pool_selection(self.pop_size) for _ in range(self.num_parents)]
         # 交叉变异生成子代
         offspring = self.operator(mating_pools)

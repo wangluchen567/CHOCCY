@@ -103,14 +103,14 @@ class NNDREAS(ALGORITHM):
     def run_step(self, i):
         """运行算法单步"""
         if i <= self.delta_iter:
-            # 获取交配池
+            # 获取匹配池
             mating_pool = self.mating_pool_selection()
             # 交叉变异生成子代
             offspring_weights = self.operator_weights(mating_pool)
             # 进行环境选择
             self.environmental_selection_weights(offspring_weights)
         else:
-            # 获取交配池
+            # 获取匹配池
             mating_pool = self.mating_pool_selection()
             # 交叉变异生成子代
             offspring = self.operator_origin(mating_pool)
