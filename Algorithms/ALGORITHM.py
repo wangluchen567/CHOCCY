@@ -661,7 +661,7 @@ class ALGORITHM(object):
         # 得到项目的根目录
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir]))
         if log_name is None:
-            # 获取算法与问题名称
+            # 获取算法名称
             algo_name = type(self).__name__
             # 若log_name给定为空则默认命名为[algorithm_name].log
             log_name = algo_name + ".log"
@@ -675,10 +675,16 @@ class ALGORITHM(object):
         """
         info = ""
         use_time = time.time() - self.start_time
+        # 获取算法与问题名称
+        algo_name = type(self).__name__
+        prob_name = type(self.problem).__name__
+        # 判断是否是单目标问题
         if self.num_obj == 1:
-            info += f"n_iter = {n_iter}, time = {use_time:.3f} s, best_obj = {self.best_obj[0]:.6e}"
+            info += f"[{algo_name}] n_iter = {n_iter}, time = {use_time:.3f} s, "
+            info += f"[{prob_name}] best_obj = {self.best_obj[0]:.6e}"
         else:
-            info += f"n_iter = {n_iter}, time = {use_time:.3f} s, score = {self.scores[-1]:.6e}"
+            info += f"[{algo_name}] n_iter = {n_iter}, time = {use_time:.3f} s, "
+            info += f"[{prob_name}] {self.score_type} = {self.scores[-1]:.6e}"
         return info
 
     def get_params_info(self):

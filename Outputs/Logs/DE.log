@@ -1,101 +1,101 @@
-[2025-05-09 18:04:39] n_iter = 0, time = 0.000 s, best_obj = 5.390445e+00
-[2025-05-09 18:04:39] n_iter = 1, time = 0.001 s, best_obj = 3.597348e+00
-[2025-05-09 18:04:39] n_iter = 2, time = 0.001 s, best_obj = 1.513887e+00
-[2025-05-09 18:04:39] n_iter = 3, time = 0.002 s, best_obj = 1.277238e+00
-[2025-05-09 18:04:39] n_iter = 4, time = 0.002 s, best_obj = 1.585540e-01
-[2025-05-09 18:04:39] n_iter = 5, time = 0.002 s, best_obj = 8.948112e-02
-[2025-05-09 18:04:39] n_iter = 6, time = 0.003 s, best_obj = 8.948112e-02
-[2025-05-09 18:04:39] n_iter = 7, time = 0.003 s, best_obj = 3.967142e-02
-[2025-05-09 18:04:39] n_iter = 8, time = 0.004 s, best_obj = 3.967142e-02
-[2025-05-09 18:04:39] n_iter = 9, time = 0.004 s, best_obj = 3.967142e-02
-[2025-05-09 18:04:39] n_iter = 10, time = 0.005 s, best_obj = 3.967142e-02
-[2025-05-09 18:04:39] n_iter = 11, time = 0.005 s, best_obj = 3.967142e-02
-[2025-05-09 18:04:39] n_iter = 12, time = 0.005 s, best_obj = 2.798611e-02
-[2025-05-09 18:04:39] n_iter = 13, time = 0.006 s, best_obj = 1.592730e-02
-[2025-05-09 18:04:39] n_iter = 14, time = 0.006 s, best_obj = 1.456608e-02
-[2025-05-09 18:04:39] n_iter = 15, time = 0.007 s, best_obj = 6.846044e-03
-[2025-05-09 18:04:39] n_iter = 16, time = 0.007 s, best_obj = 3.784438e-03
-[2025-05-09 18:04:39] n_iter = 17, time = 0.007 s, best_obj = 3.332427e-03
-[2025-05-09 18:04:39] n_iter = 18, time = 0.008 s, best_obj = 3.114561e-03
-[2025-05-09 18:04:39] n_iter = 19, time = 0.008 s, best_obj = 3.114561e-03
-[2025-05-09 18:04:39] n_iter = 20, time = 0.009 s, best_obj = 2.023122e-03
-[2025-05-09 18:04:39] n_iter = 21, time = 0.009 s, best_obj = 2.023122e-03
-[2025-05-09 18:04:39] n_iter = 22, time = 0.009 s, best_obj = 1.359615e-03
-[2025-05-09 18:04:39] n_iter = 23, time = 0.010 s, best_obj = 1.148245e-03
-[2025-05-09 18:04:39] n_iter = 24, time = 0.010 s, best_obj = 5.092997e-04
-[2025-05-09 18:04:39] n_iter = 25, time = 0.010 s, best_obj = 2.093393e-04
-[2025-05-09 18:04:39] n_iter = 26, time = 0.011 s, best_obj = 2.093393e-04
-[2025-05-09 18:04:39] n_iter = 27, time = 0.011 s, best_obj = 8.478515e-05
-[2025-05-09 18:04:39] n_iter = 28, time = 0.011 s, best_obj = 8.478515e-05
-[2025-05-09 18:04:39] n_iter = 29, time = 0.012 s, best_obj = 8.478515e-05
-[2025-05-09 18:04:39] n_iter = 30, time = 0.012 s, best_obj = 8.478515e-05
-[2025-05-09 18:04:39] n_iter = 31, time = 0.012 s, best_obj = 8.478515e-05
-[2025-05-09 18:04:39] n_iter = 32, time = 0.013 s, best_obj = 6.868801e-05
-[2025-05-09 18:04:39] n_iter = 33, time = 0.013 s, best_obj = 5.041964e-05
-[2025-05-09 18:04:39] n_iter = 34, time = 0.013 s, best_obj = 2.739246e-05
-[2025-05-09 18:04:39] n_iter = 35, time = 0.014 s, best_obj = 2.553098e-05
-[2025-05-09 18:04:39] n_iter = 36, time = 0.014 s, best_obj = 5.654859e-06
-[2025-05-09 18:04:39] n_iter = 37, time = 0.015 s, best_obj = 5.654859e-06
-[2025-05-09 18:04:39] n_iter = 38, time = 0.015 s, best_obj = 5.190139e-06
-[2025-05-09 18:04:39] n_iter = 39, time = 0.015 s, best_obj = 5.190139e-06
-[2025-05-09 18:04:39] n_iter = 40, time = 0.016 s, best_obj = 5.190139e-06
-[2025-05-09 18:04:39] n_iter = 41, time = 0.016 s, best_obj = 2.389728e-06
-[2025-05-09 18:04:39] n_iter = 42, time = 0.016 s, best_obj = 2.389728e-06
-[2025-05-09 18:04:39] n_iter = 43, time = 0.017 s, best_obj = 1.609003e-06
-[2025-05-09 18:04:39] n_iter = 44, time = 0.017 s, best_obj = 8.574922e-07
-[2025-05-09 18:04:39] n_iter = 45, time = 0.017 s, best_obj = 7.520516e-07
-[2025-05-09 18:04:39] n_iter = 46, time = 0.018 s, best_obj = 7.520516e-07
-[2025-05-09 18:04:39] n_iter = 47, time = 0.018 s, best_obj = 3.068014e-07
-[2025-05-09 18:04:39] n_iter = 48, time = 0.018 s, best_obj = 8.886672e-08
-[2025-05-09 18:04:39] n_iter = 49, time = 0.019 s, best_obj = 8.886672e-08
-[2025-05-09 18:04:39] n_iter = 50, time = 0.019 s, best_obj = 8.886672e-08
-[2025-05-09 18:04:39] n_iter = 51, time = 0.019 s, best_obj = 8.886672e-08
-[2025-05-09 18:04:39] n_iter = 52, time = 0.020 s, best_obj = 6.375930e-08
-[2025-05-09 18:04:39] n_iter = 53, time = 0.020 s, best_obj = 3.966320e-08
-[2025-05-09 18:04:39] n_iter = 54, time = 0.020 s, best_obj = 3.966320e-08
-[2025-05-09 18:04:39] n_iter = 55, time = 0.021 s, best_obj = 3.966320e-08
-[2025-05-09 18:04:39] n_iter = 56, time = 0.021 s, best_obj = 3.868775e-08
-[2025-05-09 18:04:39] n_iter = 57, time = 0.022 s, best_obj = 1.384546e-08
-[2025-05-09 18:04:39] n_iter = 58, time = 0.022 s, best_obj = 1.082739e-08
-[2025-05-09 18:04:39] n_iter = 59, time = 0.022 s, best_obj = 2.142397e-09
-[2025-05-09 18:04:39] n_iter = 60, time = 0.023 s, best_obj = 2.142397e-09
-[2025-05-09 18:04:39] n_iter = 61, time = 0.023 s, best_obj = 1.616308e-09
-[2025-05-09 18:04:39] n_iter = 62, time = 0.024 s, best_obj = 1.616308e-09
-[2025-05-09 18:04:39] n_iter = 63, time = 0.024 s, best_obj = 1.314441e-09
-[2025-05-09 18:04:39] n_iter = 64, time = 0.024 s, best_obj = 4.615583e-10
-[2025-05-09 18:04:39] n_iter = 65, time = 0.025 s, best_obj = 4.061183e-10
-[2025-05-09 18:04:39] n_iter = 66, time = 0.025 s, best_obj = 3.461911e-10
-[2025-05-09 18:04:39] n_iter = 67, time = 0.025 s, best_obj = 2.758722e-10
-[2025-05-09 18:04:39] n_iter = 68, time = 0.026 s, best_obj = 2.758722e-10
-[2025-05-09 18:04:39] n_iter = 69, time = 0.027 s, best_obj = 5.350076e-11
-[2025-05-09 18:04:39] n_iter = 70, time = 0.027 s, best_obj = 5.350076e-11
-[2025-05-09 18:04:39] n_iter = 71, time = 0.028 s, best_obj = 5.350076e-11
-[2025-05-09 18:04:39] n_iter = 72, time = 0.028 s, best_obj = 5.350076e-11
-[2025-05-09 18:04:39] n_iter = 73, time = 0.028 s, best_obj = 2.914691e-11
-[2025-05-09 18:04:39] n_iter = 74, time = 0.029 s, best_obj = 2.914691e-11
-[2025-05-09 18:04:39] n_iter = 75, time = 0.029 s, best_obj = 1.776757e-11
-[2025-05-09 18:04:39] n_iter = 76, time = 0.029 s, best_obj = 1.036016e-11
-[2025-05-09 18:04:39] n_iter = 77, time = 0.030 s, best_obj = 1.036016e-11
-[2025-05-09 18:04:39] n_iter = 78, time = 0.030 s, best_obj = 4.999112e-12
-[2025-05-09 18:04:39] n_iter = 79, time = 0.030 s, best_obj = 4.686473e-12
-[2025-05-09 18:04:39] n_iter = 80, time = 0.031 s, best_obj = 4.686473e-12
-[2025-05-09 18:04:39] n_iter = 81, time = 0.031 s, best_obj = 4.142908e-12
-[2025-05-09 18:04:39] n_iter = 82, time = 0.032 s, best_obj = 4.142908e-12
-[2025-05-09 18:04:39] n_iter = 83, time = 0.032 s, best_obj = 4.142908e-12
-[2025-05-09 18:04:39] n_iter = 84, time = 0.032 s, best_obj = 1.183498e-12
-[2025-05-09 18:04:39] n_iter = 85, time = 0.033 s, best_obj = 6.363798e-13
-[2025-05-09 18:04:39] n_iter = 86, time = 0.033 s, best_obj = 6.363798e-13
-[2025-05-09 18:04:39] n_iter = 87, time = 0.033 s, best_obj = 4.019007e-13
-[2025-05-09 18:04:39] n_iter = 88, time = 0.034 s, best_obj = 4.019007e-13
-[2025-05-09 18:04:39] n_iter = 89, time = 0.034 s, best_obj = 3.486100e-13
-[2025-05-09 18:04:39] n_iter = 90, time = 0.034 s, best_obj = 3.486100e-13
-[2025-05-09 18:04:39] n_iter = 91, time = 0.035 s, best_obj = 2.562395e-13
-[2025-05-09 18:04:39] n_iter = 92, time = 0.035 s, best_obj = 2.100542e-13
-[2025-05-09 18:04:39] n_iter = 93, time = 0.035 s, best_obj = 1.496581e-13
-[2025-05-09 18:04:39] n_iter = 94, time = 0.036 s, best_obj = 7.860379e-14
-[2025-05-09 18:04:39] n_iter = 95, time = 0.036 s, best_obj = 5.018208e-14
-[2025-05-09 18:04:39] n_iter = 96, time = 0.036 s, best_obj = 4.307665e-14
-[2025-05-09 18:04:39] n_iter = 97, time = 0.037 s, best_obj = 3.241851e-14
-[2025-05-09 18:04:39] n_iter = 98, time = 0.037 s, best_obj = 3.241851e-14
-[2025-05-09 18:04:39] n_iter = 99, time = 0.037 s, best_obj = 2.531308e-14
-[2025-05-09 18:04:39] n_iter = 100, time = 0.038 s, best_obj = 7.549517e-15
+[2025-05-12 17:17:40] [DE] n_iter = 0, time = 0.000 s, [Ackley] best_obj = 8.437270e+00
+[2025-05-12 17:17:40] [DE] n_iter = 1, time = 0.000 s, [Ackley] best_obj = 2.622909e+00
+[2025-05-12 17:17:40] [DE] n_iter = 2, time = 0.001 s, [Ackley] best_obj = 1.707012e+00
+[2025-05-12 17:17:40] [DE] n_iter = 3, time = 0.001 s, [Ackley] best_obj = 6.799509e-01
+[2025-05-12 17:17:40] [DE] n_iter = 4, time = 0.002 s, [Ackley] best_obj = 1.487890e-01
+[2025-05-12 17:17:40] [DE] n_iter = 5, time = 0.002 s, [Ackley] best_obj = 1.487890e-01
+[2025-05-12 17:17:40] [DE] n_iter = 6, time = 0.002 s, [Ackley] best_obj = 1.487890e-01
+[2025-05-12 17:17:40] [DE] n_iter = 7, time = 0.003 s, [Ackley] best_obj = 1.471424e-01
+[2025-05-12 17:17:40] [DE] n_iter = 8, time = 0.003 s, [Ackley] best_obj = 5.329944e-02
+[2025-05-12 17:17:40] [DE] n_iter = 9, time = 0.004 s, [Ackley] best_obj = 5.329944e-02
+[2025-05-12 17:17:40] [DE] n_iter = 10, time = 0.004 s, [Ackley] best_obj = 5.329944e-02
+[2025-05-12 17:17:40] [DE] n_iter = 11, time = 0.005 s, [Ackley] best_obj = 5.329944e-02
+[2025-05-12 17:17:40] [DE] n_iter = 12, time = 0.005 s, [Ackley] best_obj = 3.907954e-02
+[2025-05-12 17:17:40] [DE] n_iter = 13, time = 0.005 s, [Ackley] best_obj = 2.687924e-02
+[2025-05-12 17:17:40] [DE] n_iter = 14, time = 0.006 s, [Ackley] best_obj = 1.513263e-02
+[2025-05-12 17:17:40] [DE] n_iter = 15, time = 0.006 s, [Ackley] best_obj = 9.288881e-03
+[2025-05-12 17:17:40] [DE] n_iter = 16, time = 0.006 s, [Ackley] best_obj = 5.085021e-03
+[2025-05-12 17:17:40] [DE] n_iter = 17, time = 0.007 s, [Ackley] best_obj = 2.460092e-03
+[2025-05-12 17:17:40] [DE] n_iter = 18, time = 0.007 s, [Ackley] best_obj = 2.460092e-03
+[2025-05-12 17:17:40] [DE] n_iter = 19, time = 0.007 s, [Ackley] best_obj = 1.411901e-03
+[2025-05-12 17:17:40] [DE] n_iter = 20, time = 0.008 s, [Ackley] best_obj = 1.411901e-03
+[2025-05-12 17:17:40] [DE] n_iter = 21, time = 0.008 s, [Ackley] best_obj = 1.411901e-03
+[2025-05-12 17:17:40] [DE] n_iter = 22, time = 0.009 s, [Ackley] best_obj = 1.025106e-03
+[2025-05-12 17:17:40] [DE] n_iter = 23, time = 0.009 s, [Ackley] best_obj = 4.717421e-04
+[2025-05-12 17:17:40] [DE] n_iter = 24, time = 0.009 s, [Ackley] best_obj = 4.717421e-04
+[2025-05-12 17:17:40] [DE] n_iter = 25, time = 0.010 s, [Ackley] best_obj = 4.717421e-04
+[2025-05-12 17:17:40] [DE] n_iter = 26, time = 0.010 s, [Ackley] best_obj = 4.717421e-04
+[2025-05-12 17:17:40] [DE] n_iter = 27, time = 0.010 s, [Ackley] best_obj = 4.717421e-04
+[2025-05-12 17:17:40] [DE] n_iter = 28, time = 0.011 s, [Ackley] best_obj = 1.970355e-04
+[2025-05-12 17:17:40] [DE] n_iter = 29, time = 0.011 s, [Ackley] best_obj = 1.970355e-04
+[2025-05-12 17:17:40] [DE] n_iter = 30, time = 0.011 s, [Ackley] best_obj = 1.970355e-04
+[2025-05-12 17:17:40] [DE] n_iter = 31, time = 0.012 s, [Ackley] best_obj = 1.180398e-04
+[2025-05-12 17:17:40] [DE] n_iter = 32, time = 0.012 s, [Ackley] best_obj = 1.076255e-04
+[2025-05-12 17:17:40] [DE] n_iter = 33, time = 0.012 s, [Ackley] best_obj = 1.048393e-04
+[2025-05-12 17:17:40] [DE] n_iter = 34, time = 0.013 s, [Ackley] best_obj = 9.299387e-05
+[2025-05-12 17:17:40] [DE] n_iter = 35, time = 0.013 s, [Ackley] best_obj = 4.633716e-05
+[2025-05-12 17:17:40] [DE] n_iter = 36, time = 0.014 s, [Ackley] best_obj = 2.980780e-05
+[2025-05-12 17:17:40] [DE] n_iter = 37, time = 0.014 s, [Ackley] best_obj = 1.169342e-05
+[2025-05-12 17:17:40] [DE] n_iter = 38, time = 0.014 s, [Ackley] best_obj = 1.036132e-05
+[2025-05-12 17:17:40] [DE] n_iter = 39, time = 0.015 s, [Ackley] best_obj = 2.514217e-06
+[2025-05-12 17:17:40] [DE] n_iter = 40, time = 0.015 s, [Ackley] best_obj = 2.514217e-06
+[2025-05-12 17:17:40] [DE] n_iter = 41, time = 0.015 s, [Ackley] best_obj = 2.062671e-06
+[2025-05-12 17:17:40] [DE] n_iter = 42, time = 0.016 s, [Ackley] best_obj = 2.062671e-06
+[2025-05-12 17:17:40] [DE] n_iter = 43, time = 0.016 s, [Ackley] best_obj = 2.062671e-06
+[2025-05-12 17:17:40] [DE] n_iter = 44, time = 0.016 s, [Ackley] best_obj = 1.462815e-06
+[2025-05-12 17:17:40] [DE] n_iter = 45, time = 0.017 s, [Ackley] best_obj = 1.042762e-06
+[2025-05-12 17:17:40] [DE] n_iter = 46, time = 0.017 s, [Ackley] best_obj = 8.485256e-07
+[2025-05-12 17:17:40] [DE] n_iter = 47, time = 0.018 s, [Ackley] best_obj = 3.965170e-07
+[2025-05-12 17:17:40] [DE] n_iter = 48, time = 0.018 s, [Ackley] best_obj = 2.618935e-07
+[2025-05-12 17:17:40] [DE] n_iter = 49, time = 0.018 s, [Ackley] best_obj = 2.025674e-07
+[2025-05-12 17:17:40] [DE] n_iter = 50, time = 0.019 s, [Ackley] best_obj = 2.025674e-07
+[2025-05-12 17:17:40] [DE] n_iter = 51, time = 0.019 s, [Ackley] best_obj = 4.388160e-08
+[2025-05-12 17:17:40] [DE] n_iter = 52, time = 0.019 s, [Ackley] best_obj = 4.388160e-08
+[2025-05-12 17:17:40] [DE] n_iter = 53, time = 0.020 s, [Ackley] best_obj = 3.903224e-08
+[2025-05-12 17:17:40] [DE] n_iter = 54, time = 0.020 s, [Ackley] best_obj = 3.903224e-08
+[2025-05-12 17:17:40] [DE] n_iter = 55, time = 0.020 s, [Ackley] best_obj = 3.903224e-08
+[2025-05-12 17:17:40] [DE] n_iter = 56, time = 0.021 s, [Ackley] best_obj = 3.903224e-08
+[2025-05-12 17:17:40] [DE] n_iter = 57, time = 0.021 s, [Ackley] best_obj = 1.931092e-09
+[2025-05-12 17:17:40] [DE] n_iter = 58, time = 0.021 s, [Ackley] best_obj = 1.931092e-09
+[2025-05-12 17:17:40] [DE] n_iter = 59, time = 0.022 s, [Ackley] best_obj = 1.931092e-09
+[2025-05-12 17:17:40] [DE] n_iter = 60, time = 0.022 s, [Ackley] best_obj = 1.931092e-09
+[2025-05-12 17:17:40] [DE] n_iter = 61, time = 0.023 s, [Ackley] best_obj = 1.931092e-09
+[2025-05-12 17:17:40] [DE] n_iter = 62, time = 0.023 s, [Ackley] best_obj = 1.931092e-09
+[2025-05-12 17:17:40] [DE] n_iter = 63, time = 0.023 s, [Ackley] best_obj = 1.931092e-09
+[2025-05-12 17:17:40] [DE] n_iter = 64, time = 0.024 s, [Ackley] best_obj = 1.698965e-09
+[2025-05-12 17:17:40] [DE] n_iter = 65, time = 0.024 s, [Ackley] best_obj = 1.698965e-09
+[2025-05-12 17:17:40] [DE] n_iter = 66, time = 0.024 s, [Ackley] best_obj = 8.120478e-10
+[2025-05-12 17:17:40] [DE] n_iter = 67, time = 0.025 s, [Ackley] best_obj = 6.057275e-10
+[2025-05-12 17:17:40] [DE] n_iter = 68, time = 0.025 s, [Ackley] best_obj = 3.592366e-10
+[2025-05-12 17:17:40] [DE] n_iter = 69, time = 0.025 s, [Ackley] best_obj = 2.471165e-10
+[2025-05-12 17:17:40] [DE] n_iter = 70, time = 0.026 s, [Ackley] best_obj = 2.423808e-10
+[2025-05-12 17:17:40] [DE] n_iter = 71, time = 0.026 s, [Ackley] best_obj = 2.423808e-10
+[2025-05-12 17:17:40] [DE] n_iter = 72, time = 0.026 s, [Ackley] best_obj = 5.729861e-11
+[2025-05-12 17:17:40] [DE] n_iter = 73, time = 0.027 s, [Ackley] best_obj = 5.729861e-11
+[2025-05-12 17:17:40] [DE] n_iter = 74, time = 0.027 s, [Ackley] best_obj = 1.445999e-11
+[2025-05-12 17:17:40] [DE] n_iter = 75, time = 0.027 s, [Ackley] best_obj = 3.176570e-12
+[2025-05-12 17:17:40] [DE] n_iter = 76, time = 0.028 s, [Ackley] best_obj = 3.176570e-12
+[2025-05-12 17:17:40] [DE] n_iter = 77, time = 0.028 s, [Ackley] best_obj = 3.176570e-12
+[2025-05-12 17:17:40] [DE] n_iter = 78, time = 0.029 s, [Ackley] best_obj = 3.176570e-12
+[2025-05-12 17:17:40] [DE] n_iter = 79, time = 0.029 s, [Ackley] best_obj = 3.176570e-12
+[2025-05-12 17:17:40] [DE] n_iter = 80, time = 0.029 s, [Ackley] best_obj = 3.176570e-12
+[2025-05-12 17:17:40] [DE] n_iter = 81, time = 0.030 s, [Ackley] best_obj = 4.871659e-13
+[2025-05-12 17:17:40] [DE] n_iter = 82, time = 0.030 s, [Ackley] best_obj = 3.415046e-13
+[2025-05-12 17:17:40] [DE] n_iter = 83, time = 0.030 s, [Ackley] best_obj = 3.415046e-13
+[2025-05-12 17:17:40] [DE] n_iter = 84, time = 0.031 s, [Ackley] best_obj = 7.860379e-14
+[2025-05-12 17:17:40] [DE] n_iter = 85, time = 0.031 s, [Ackley] best_obj = 5.373479e-14
+[2025-05-12 17:17:40] [DE] n_iter = 86, time = 0.031 s, [Ackley] best_obj = 5.373479e-14
+[2025-05-12 17:17:40] [DE] n_iter = 87, time = 0.032 s, [Ackley] best_obj = 5.373479e-14
+[2025-05-12 17:17:40] [DE] n_iter = 88, time = 0.032 s, [Ackley] best_obj = 5.373479e-14
+[2025-05-12 17:17:40] [DE] n_iter = 89, time = 0.032 s, [Ackley] best_obj = 5.018208e-14
+[2025-05-12 17:17:40] [DE] n_iter = 90, time = 0.033 s, [Ackley] best_obj = 5.018208e-14
+[2025-05-12 17:17:40] [DE] n_iter = 91, time = 0.033 s, [Ackley] best_obj = 4.662937e-14
+[2025-05-12 17:17:40] [DE] n_iter = 92, time = 0.034 s, [Ackley] best_obj = 1.110223e-14
+[2025-05-12 17:17:40] [DE] n_iter = 93, time = 0.034 s, [Ackley] best_obj = 1.110223e-14
+[2025-05-12 17:17:40] [DE] n_iter = 94, time = 0.034 s, [Ackley] best_obj = 1.110223e-14
+[2025-05-12 17:17:40] [DE] n_iter = 95, time = 0.035 s, [Ackley] best_obj = 3.996803e-15
+[2025-05-12 17:17:40] [DE] n_iter = 96, time = 0.035 s, [Ackley] best_obj = 3.996803e-15
+[2025-05-12 17:17:40] [DE] n_iter = 97, time = 0.035 s, [Ackley] best_obj = 3.996803e-15
+[2025-05-12 17:17:40] [DE] n_iter = 98, time = 0.036 s, [Ackley] best_obj = 3.996803e-15
+[2025-05-12 17:17:40] [DE] n_iter = 99, time = 0.036 s, [Ackley] best_obj = 3.996803e-15
+[2025-05-12 17:17:40] [DE] n_iter = 100, time = 0.036 s, [Ackley] best_obj = 3.996803e-15

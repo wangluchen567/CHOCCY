@@ -52,7 +52,7 @@ def setup_logger(log_path=None, to_file=False, to_console=True):
         # 将文件处理器添加到 logger
         logger.addHandler(file_handler)
     # 判断是否输出日志到控制台
-    if to_console:
+    if not to_file and to_console:
         # 创建一个控制台处理器，将日志输出到控制台
         console_handler = logging.StreamHandler()
         # 设置控制台处理器的日志级别
