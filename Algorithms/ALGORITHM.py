@@ -387,7 +387,7 @@ class ALGORITHM(object):
         """
         根据问题类型返回对应函数
         :param problem_type: 问题类型
-        :return: 匹配函数
+        :return: 操作函数(交叉变异)
         """
         if problem_type == ALGORITHM.REAL:
             return operator_real
