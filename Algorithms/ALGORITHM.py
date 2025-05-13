@@ -540,7 +540,7 @@ class ALGORITHM(object):
             self.show_mode = show_mode
         if self.show_mode == self.NONE or self.show_mode == self.BAR:
             pass
-        if self.show_mode == self.LOG:
+        elif self.show_mode == self.LOG:
             self.logger.info(self.get_log_info(n_iter))
         elif self.show_mode == self.OBJ:
             self.plot_objs(n_iter, pause)

@@ -17,6 +17,13 @@ from Problems import PROBLEM
 
 class KP(PROBLEM):
     def __init__(self, num_dec=100, weights=None, values=None, capacity=None):
+        """
+        背包问题
+        :param num_dec: 决策变量个数
+        :param weights: 每个物品的重量(若为空则随机给定，并保存为数据集)
+        :param values: 每个物品的价值(若为空则随机给定，并保存为数据集)
+        :param capacity: 背包的容量(若为空则指定为物品总重量的一半)
+        """
         problem_type = PROBLEM.BIN
         num_obj = 1
         lower = 0

@@ -19,15 +19,22 @@ from scipy.spatial import distance_matrix
 
 
 class TSP(PROBLEM):
-    def __init__(self, num_dec=30, data=None, is_dist_mat=False):
+    def __init__(self, num_dec=30, data=None, is_dist_mat=False, round_to_int=False):
+        """
+        旅行商问题
+        :param num_dec: 决策变量个数
+        :param data: 给定数据(城市点的坐标位置/各点之间的距离矩阵)
+        :param is_dist_mat: 给定的data是否是 各点之间的距离矩阵
+        :param round_to_int: 是否将距离矩阵进行取整操作
+        """
         problem_type = PROBLEM.PMU
         num_obj = 1
         lower = 0
         upper = num_dec
         super().__init__(problem_type, num_dec, num_obj, lower, upper)
-
+        # 检查给定数据是否为空
         if data is None:
-            # 若指定参数为空，则需要先检查是否有数据集
+            # 若给定数据为空，则需要先检查是否有数据集
             # 得到项目的根目录
             project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir] * 2))
             # 保存到Datasets中
@@ -42,7 +49,7 @@ class TSP(PROBLEM):
             is_dist_mat = False
         else:
             self.data = data
-
+        # 给定的data是否是 各点之间的距离矩阵
         if is_dist_mat:
             if self.data.shape[0] != self.data.shape[1]:
                 raise ValueError("The given dataset is not a matrix")
@@ -52,8 +59,12 @@ class TSP(PROBLEM):
             self.points = self.data
             # self.dist_mat = np.linalg.norm(self.points[:, None] - self.points, axis=-1)
             self.dist_mat = distance_matrix(self.data, self.data)
+        # 是否将距离矩阵进行取整操作
+        if round_to_int:
+            self.dist_mat = (self.dist_mat + 0.5).astype(int).astype(np.float64)
 
     def _cal_objs(self, X):
+        # 一行代码得到所有解的目标值
         objs = np.sum(self.dist_mat[X.astype(int), np.roll(X.astype(int), shift=-1, axis=1)], axis=1)
         return objs
 
