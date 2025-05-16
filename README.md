@@ -118,13 +118,13 @@ CHOCCY/
 │   │   ├── Solve_MOKP.py       # 多种算法求解MOKP问题对比示例
 │   │   ├── Solve_ZDT.py        # 多种算法求解ZDT问题对比示例
 │   │   └── ...                 # 其他示例可自行查看
-│   └── Single/                 # 单目标问题的优化示例
+│   ├── Single/                 # 单目标问题的优化示例
 │   │   ├── Eval_Ackley.py      # 多种算法优化与评估Ackley示例
 │   │   ├── Run_DE.py           # 运行差分进化算法示例
 │   │   ├── Run_GA.py           # 运行遗传算法示例
 │   │   ├── Solve_Ackley.py     # 多种算法求解Ackley问题对比示例
 │   │   ├── Solve_TSP.py        # 多种算法求解TSP问题对比示例
-│   │   └── ...                 # 其他示例可自行查看
+│   └── └── ...                 # 其他示例可自行查看
 └── README.md                   # 项目文档
 ```
 
