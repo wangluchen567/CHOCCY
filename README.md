@@ -19,9 +19,9 @@ Chen's Heuristic Optimizer Constructed with Core numpY
 ## 主要特点
 
 - 🌍 支持多种`启发式`和`元启发式`优化算法，适用于广泛的问题类型求解
-- ✨ 支持对多种问题的优化，包括但不限于`实数`、`整数`、`序列`、`(固定)标签`问题
-- 🔍 支持对混合问题的优化，即问题的不同部分可以是不同类型的问题
-- 🌟 提供了丰富的性能评估指标和优化算子及函数，可扩展性强
+- 🔍 支持对多种问题的优化，包括但不限于`实数`、`整数`、`序列`、`(固定)标签`问题
+- 🧩 支持对混合问题的优化，即问题的不同部分可以是不同类型的问题
+- 🛠️ 提供了丰富的性能评估指标和优化算子及函数，可扩展性强
 - 📉 支持对多种算法的实时优化比较，并提供可视化功能
 - 📊 支持多种算法对多类问题的优化和求解，并对结果进行比较和可视化
 - 🚀 使用`numba`对算法的核心部分进行优化，显著提高优化速度 
@@ -130,9 +130,9 @@ CHOCCY/
 └── README.md                   # 项目文档
 ```
 
-**支持的算法集与问题集** 请参见[实现清单](./References/IMPLES.md)<br>
+**支持的算法集与问题集** 请参见[实现清单](./References/IMPLES.md) 📝<br> 
 
-**PS: 项目中包含本人研究工作**<br>
+**PS: 项目中包含本人研究工作** ✨<br>
 Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimization with Millions of Variables (NNDREA), IEEE Transactions on Evolutionary Computation <br>
 原文下载地址：[IEEE xplore](https://ieeexplore.ieee.org/abstract/document/10530207) / [ResearchGate](https://www.researchgate.net/publication/380393707_Neural_Network-Based_Dimensionality_Reduction_for_Large-Scale_Binary_Optimization_with_Millions_of_Variables#:~:text=In%20this%20paper,%20we%20propose%20a%20dimensionality%20reduction%20method%20to) (免费下载)
 
