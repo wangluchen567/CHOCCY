@@ -1,5 +1,5 @@
 """
-算法支持工具类
+算法支持相关函数
 Support Utils
 
 Copyright (c) 2024 LuChen Wang

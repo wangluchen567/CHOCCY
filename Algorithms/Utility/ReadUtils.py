@@ -1,5 +1,5 @@
 """
-读取文件工具类
+读取文件工具
 Read Utils
 
 Copyright (c) 2024 LuChen Wang

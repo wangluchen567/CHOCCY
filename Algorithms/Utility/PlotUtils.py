@@ -1,5 +1,5 @@
 """
-绘图工具类
+绘图工具
 Plot Utils
 
 Copyright (c) 2024 LuChen Wang

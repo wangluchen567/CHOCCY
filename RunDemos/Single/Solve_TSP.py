@@ -1,6 +1,7 @@
 from Problems.Single import TSP
 from Algorithms import View, Comparator
 from Algorithms.Single import GA, SA, ACO, HGATSP, FI, GFLS
+"""多个算法优化TSP问题的对比测试"""
 
 if __name__ == '__main__':
     problem = TSP(30)

@@ -1,6 +1,7 @@
 from Problems.Multi import ZDT1
 from Algorithms.Comparator import View, Comparator
 from Algorithms.Multi import MOEAD, NSGAII, SPEA2
+"""多个算法优化一个ZDT问题的对比测试"""
 
 if __name__ == '__main__':
     problem = ZDT1()

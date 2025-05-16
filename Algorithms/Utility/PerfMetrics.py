@@ -1,5 +1,5 @@
 """
-计算评价指标工具类
+计算评价指标工具
 Performance Metrics
 
 Copyright (c) 2024 LuChen Wang

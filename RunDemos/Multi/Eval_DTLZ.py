@@ -1,6 +1,7 @@
 from Problems.Multi import DTLZ1, DTLZ2, DTLZ3, DTLZ4
 from Algorithms.Multi import NSGAII, MOEAD, SPEA2
 from Algorithms import Evaluator
+"""多种算法优化多个DTLZ问题的评估测试"""
 
 if __name__ == '__main__':
     problems = [

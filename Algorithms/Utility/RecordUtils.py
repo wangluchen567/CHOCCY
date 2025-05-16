@@ -1,5 +1,5 @@
 """
-记录信息工具类
+记录信息工具
 Record Utils
 
 Copyright (c) 2024 LuChen Wang

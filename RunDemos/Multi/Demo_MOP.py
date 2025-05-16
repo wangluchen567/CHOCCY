@@ -3,6 +3,7 @@ from Algorithms.Multi import MOEAD
 from Algorithms.Multi import NSGAII
 from Algorithms.Multi import SPEA2
 from Problems.Multi import MOP2
+"""求解多目标问题的Demo"""
 
 if __name__ == '__main__':
     problem = MOP2()

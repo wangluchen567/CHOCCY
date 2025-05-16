@@ -3,7 +3,7 @@ from Algorithms.Multi import NSGAII
 from Problems.Multi import ZDT3
 from Problems.Multi import DTLZ2
 from Problems.Multi import MOKP
-
+"""NSGA-II算法调用测试"""
 
 if __name__ == '__main__':
     problem = ZDT3()

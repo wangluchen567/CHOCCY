@@ -6,6 +6,7 @@ from Problems.Multi import ZDT5
 from Problems.Multi import ZDT6
 from Algorithms import Evaluator
 from Algorithms.Multi import NSGAII, MOEAD, SPEA2
+"""多种算法优化多个ZDT问题的评估测试"""
 
 if __name__ == '__main__':
     problems = [

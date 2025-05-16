@@ -3,6 +3,7 @@ from Problems.Multi import DTLZ2
 from Problems.Multi import MOKP
 from Algorithms.Multi import SPEA2
 import cProfile
+"""SPEA2算法调用测试"""
 
 if __name__ == '__main__':
     problem = ZDT1()

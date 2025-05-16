@@ -2,6 +2,7 @@ from Algorithms import View
 from Problems.Multi import ZDT1
 from Problems.Multi import DTLZ2
 from Algorithms.Multi import MOEAD
+"""MOEA/D算法调用测试"""
 
 if __name__ == '__main__':
     problem = DTLZ2()

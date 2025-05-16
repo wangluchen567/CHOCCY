@@ -5,7 +5,7 @@ from Problems.Single import Ackley
 from Problems.Single import Sphere
 from Problems.Single import FixLabelCluster
 from Problems.Single import MixFixLabelCluster
-
+"""模拟退火算法调用测试"""
 
 def Solve_Ackley():
     problem = Ackley(num_dec=2)

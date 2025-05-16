@@ -1,7 +1,7 @@
 from Algorithms import View
 from Algorithms.Multi import NNDREA
 from Problems.Multi import MOKP
-
+"""NNDREA算法调用测试"""
 
 if __name__ == '__main__':
     problem = MOKP(10000)

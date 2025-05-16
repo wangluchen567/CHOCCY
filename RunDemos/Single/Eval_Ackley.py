@@ -1,6 +1,7 @@
 from Problems.Single import Ackley
 from Algorithms import Evaluator
 from Algorithms.Single import GA, SA, DE, PSO
+"""多种算法优化Ackley问题的评估测试"""
 
 if __name__ == '__main__':
     problems = [Ackley(num_dec=30)]

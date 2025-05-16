@@ -3,6 +3,7 @@ import seaborn as sns
 from Problems.Single import KP
 from Algorithms import View, Comparator
 from Algorithms.Single import SA, GA, DPKP, NNDREAS, GreedyKP
+"""多个算法优化KP问题的对比测试"""
 
 if __name__ == '__main__':
     problem = KP(num_dec=100)

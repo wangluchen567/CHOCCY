@@ -2,6 +2,7 @@ from Problems.Single import TSP
 from Algorithms import View, Comparator
 from Algorithms.Single import GA, SA, ACO, HGATSP, FI, GFLS
 from Datasets.Single.TSPLIB.LoadTSPLIB import load_euc_2d, load_matrix
+"""多个算法优化TSPLIB问题的对比测试"""
 
 if __name__ == '__main__':
     # 读取TSPLIB数据集（给定城市坐标位置）

@@ -1,5 +1,5 @@
 """
-保存文件工具类
+保存文件工具
 Save Utils
 
 Copyright (c) 2024 LuChen Wang
@@ -58,10 +58,12 @@ def save_json(data: dict, file_path):
         json.dump(data, f)
 
 
-def get_timestamp(k=3):
-    """获取当前时间点时间戳"""
-    stamp = datetime.datetime.now().strftime("%m%d%H%M%S")
-    # 为保证不冲突，加入一个k位随机数
-    rn = np.random.randint(10 ** (k - 1), 10 ** k)
-    timestamp = f"{stamp}{rn}"
+def get_timestamp():
+    """获取当前时间点时间戳(月日时分秒毫秒)"""
+    # 获取当前时间
+    now_time = datetime.datetime.now()
+    # 获取微秒值并转换为毫秒值（微秒值除以1000）
+    milliseconds = now_time.microsecond // 1000
+    # 得到时间戳(月日时分秒毫秒)
+    timestamp = datetime.datetime.now().strftime("%m%d%H%M%S") + f"{milliseconds:03d}"
     return timestamp

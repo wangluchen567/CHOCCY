@@ -1,6 +1,7 @@
 from Problems.Single import TSP
 from Algorithms import Evaluator
 from Algorithms.Single import GA, SA, ACO, HGATSP, FI, GFLS
+"""多种算法优化TSP问题的评估测试"""
 
 if __name__ == '__main__':
     problems = [TSP(30)]
