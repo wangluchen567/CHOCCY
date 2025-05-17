@@ -11,7 +11,10 @@ algorithm = DE(pop_size=100, max_iter=100, show_mode=View.LOG)
 algorithm.solve(problem)  # 使用该算法求解问题
 # 获取最优解并打印
 best, best_obj, best_con = algorithm.get_best()
-algorithm.save_best()
 print("最优解：", best)
 print("最优解的目标值：", best_obj)
 print("算法运行时间(秒)：", algorithm.run_time)
+# 保存得到的最优解和种群
+algorithm.save_best()  # 保存优化求解后得到的最优解相关信息
+algorithm.save_pop()  # 保存优化求解后得到的整个种群相关信息
+algorithm.save_history()  # 保存优化求解后得到的种群所有历史相关信息
