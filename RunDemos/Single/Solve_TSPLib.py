@@ -9,7 +9,7 @@ if __name__ == '__main__':
     tsp_data = load_euc_2d("../../Datasets/Single/TSPLIB/eil51.tsp")
     problem = TSP(num_dec=tsp_data['dimension'], data=tsp_data['node_coord'], round_to_int=True)
     # 读取TSPLIB数据集（给定城市坐标的距离矩阵）
-    # tsp_data = load_matrix("../../Datasets/Single/TSPLIB/gr120.tsp")
+    # tsp_data = load_matrix("../../Datasets/Single/TSPLIB/gr24.tsp")
     # problem = TSP(num_dec=tsp_data['dimension'], data=tsp_data['dist_matrix'], is_dist_mat=True, round_to_int=True)
     # 初始化算法字典
     algorithms = dict()

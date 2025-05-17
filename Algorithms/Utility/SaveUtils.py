@@ -20,7 +20,12 @@ import numpy as np
 
 
 def save_array(arr, file_path, save_type='csv'):
-    """将一个数组进行保存"""
+    """
+    将一个数组进行保存
+    :param arr: numpy数组
+    :param file_path: 保存文件路径
+    :param save_type: 保存文件类型
+    """
     if save_type == 'npy':
         # 保存为 npy 文件
         np.save(file_path + '.' + save_type, arr)
@@ -35,7 +40,12 @@ def save_array(arr, file_path, save_type='csv'):
 
 
 def save_arrays(arrays_dict: dict, file_path, save_type='npz'):
-    """将多个数组进行保存"""
+    """
+    将多个数组进行保存
+    :param arrays_dict: numpy数组组成的字典
+    :param file_path: 保存文件路径
+    :param save_type: 保存文件类型
+    """
     if save_type == 'npz':
         # 保存为 npz 文件
         np.savez(file_path, **arrays_dict)
@@ -53,7 +63,11 @@ def save_arrays(arrays_dict: dict, file_path, save_type='npz'):
 
 
 def save_json(data: dict, file_path):
-    """保存为json文件"""
+    """
+    保存为json文件
+    :param data: 要保存的数据
+    :param file_path: 文件路径
+    """
     with open(file_path + ".json", "w") as f:
         json.dump(data, f)
 

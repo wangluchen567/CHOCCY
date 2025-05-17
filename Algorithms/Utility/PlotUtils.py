@@ -19,7 +19,13 @@ from mpl_toolkits.mplot3d import Axes3D
 
 
 def plot_decs(X, n_iter=None, pause=False, pause_time=0.06):
-    """对任意维度数据进行绘图"""
+    """
+    对任意维度决策向量数据进行绘图
+    :param X: 决策向量组成的矩阵
+    :param n_iter: 当前迭代次数
+    :param pause: 是否短暂暂停显示
+    :param pause_time: 短暂暂停的时间
+    """
     plt.clf()
     X_dim = X.shape[1]
     if X_dim == 1:
@@ -64,7 +70,14 @@ def plot_decs(X, n_iter=None, pause=False, pause_time=0.06):
 
 
 def plot_objs(objs, n_iter=None, pause=False, pause_time=0.06, pareto_front=None):
-    """将最优目标值列表绘折线图"""
+    """
+    对任意维度目标向量数据进行绘图
+    :param objs: 目标向量组成的矩阵
+    :param n_iter: 当前迭代次数
+    :param pause: 是否短暂暂停显示
+    :param pause_time: 短暂暂停的时间
+    :param pareto_front: pareto最优前沿
+    """
     # 先确定目标值维度
     if isinstance(objs, list):
         obj_dim = 1
@@ -127,7 +140,17 @@ def plot_objs(objs, n_iter=None, pause=False, pause_time=0.06, pareto_front=None
 
 
 def plot_objs_decs(problem, decs, objs, n_iter=None, pause=False, pause_time=0.06, contour=True, sym=True):
-    """绘制目标空间与决策空间的混合图像方便展示"""
+    """
+    在特定条件下可将目标空间与决策空间绘制到同一空间中
+    :param problem: 问题对象
+    :param decs: 决策向量（必须小于3维）组成的矩阵
+    :param objs: 目标向量（必须等于1维）组成的矩阵
+    :param n_iter: 当前迭代次数
+    :param pause: 是否短暂暂停显示
+    :param pause_time: 短暂暂停的时间
+    :param contour: 是否使用等高线的方式绘制
+    :param sym: 是否进行完全对称图像的绘制
+    """
     decs_dim = decs.shape[1]
     if objs.ndim == 1:
         objs = objs.reshape(-1, 1)
@@ -197,7 +220,14 @@ def plot_objs_decs(problem, decs, objs, n_iter=None, pause=False, pause_time=0.0
 
 
 def plot_scores(scores, score_type=None, n_iter=None, pause=False, pause_time=0.06):
-    """绘制评价指标情况"""
+    """
+    绘制评价指标变化情况
+    :param scores: 评价指标数组
+    :param score_type: 评价指标类型
+    :param n_iter: 当前迭代次数
+    :param pause: 是否短暂暂停显示
+    :param pause_time: 短暂暂停的时间
+    """
     plt.clf()
     plt.plot(np.arange(len(scores)), scores, marker=".", c="red")
     plt.xlabel('n_iter')

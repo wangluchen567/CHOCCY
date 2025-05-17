@@ -19,7 +19,11 @@ import numpy as np
 
 
 def load_array(file_path):
-    """加载保存的一个数组的文件"""
+    """
+    加载保存的一个数组的文件
+    :param file_path: 文件路径
+    :return: numpy数组
+    """
     # 根据文件扩展名判断文件类型
     if file_path.endswith('.npy'):
         # 加载 npy 文件
@@ -37,7 +41,11 @@ def load_array(file_path):
 
 
 def load_arrays(file_path):
-    """加载保存的多个数组的文件"""
+    """
+    加载保存的多个数组的文件
+    :param file_path: 文件路径
+    :return: numpy数组组成的字典
+    """
     # 根据文件扩展名判断文件类型
     if file_path.endswith('.npz'):
         # 加载 npz 文件

@@ -46,7 +46,7 @@ def operator_real(pop, lower, upper, cross_prob=None, mutate_prob=None):
     return offspring
 
 
-def operator_binary(pop, lower, upper, cross_prob=None, mutate_prob=None):
+def operator_binary(pop, lower=None, upper=None, cross_prob=None, mutate_prob=None):
     """
     对二进制问题进行交叉和变异操作(算子)
     :param pop: 要交叉变异的种群
@@ -75,7 +75,7 @@ def operator_binary(pop, lower, upper, cross_prob=None, mutate_prob=None):
     return offspring
 
 
-def operator_permutation(pop, lower, upper, cross_prob=None, mutate_prob=None):
+def operator_permutation(pop, lower=None, upper=None, cross_prob=None, mutate_prob=None):
     """
     对序列问题进行交叉和变异操作(算子)
     :param pop: 要交叉变异的种群
@@ -106,7 +106,7 @@ def operator_permutation(pop, lower, upper, cross_prob=None, mutate_prob=None):
     return offspring
 
 
-def operator_fix_label(pop, lower, upper, cross_prob=None, mutate_prob=None):
+def operator_fix_label(pop, lower=None, upper=None, cross_prob=None, mutate_prob=None):
     """
     对固定类型数的标签问题进行交叉和变异操作(算子)
     :param pop: 要交叉变异的种群

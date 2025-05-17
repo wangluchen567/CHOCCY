@@ -55,7 +55,11 @@ def is_dom(p_objs, q_objs):
 
 
 def get_dom_between_(objs):
-    """得到每对解的支配关系"""
+    """
+    得到每对解的支配关系
+    :param objs: 目标向量组成的矩阵
+    :return: 每对解的支配关系
+    """
     n = len(objs)
     dom_between = np.zeros((n, n), dtype=bool)
     for i in range(n):
@@ -68,7 +72,11 @@ def get_dom_between_(objs):
 
 
 def fast_nd_sort_(objs):
-    """快速非支配排序(非numba加速版)"""
+    """
+    快速非支配排序(非numba加速版)
+    :param objs: 目标向量组成的矩阵
+    :return: 前沿面信息，前沿面排名信息
+    """
     pop_size = len(objs)  # 获取种群数量
     objs = np.array(objs)  # 将目标转换为numpy数组
     fronts = []  # 初始化各前沿面列表
@@ -108,7 +116,12 @@ def fast_nd_sort_(objs):
 
 
 def cal_crowd_dist(objs, fronts):
-    """求拥挤度距离"""
+    """
+    计算拥挤度距离
+    :param objs: 目标向量组成的矩阵
+    :param fronts: 前沿面信息
+    :return: 拥挤度距离
+    """
     pop_size, num_dim = objs.shape
     crowd_dist = np.zeros(pop_size)
     for f in fronts:
@@ -137,7 +150,12 @@ def cal_crowd_dist(objs, fronts):
 
 
 def cal_ranking(ranks, crowd_dist):
-    """根据支配前沿数和拥挤度距离计算个体排名"""
+    """
+    根据支配前沿数和拥挤度距离计算个体排名
+    :param ranks: 前沿面排名信息
+    :param crowd_dist: 拥挤度距离
+    :return: 最终排名
+    """
     # 初始化排序后的种群索引
     indicator = np.hstack((ranks.reshape(-1, 1), -crowd_dist.reshape(-1, 1)))
     # 使用 np.lexsort 对两列指标进行排序

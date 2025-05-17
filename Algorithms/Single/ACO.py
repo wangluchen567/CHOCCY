@@ -17,7 +17,7 @@ from Algorithms import ALGORITHM
 
 
 class ACO(ALGORITHM):
-    def __init__(self, pop_size=None, max_iter=None, alpha=1, beta=4, rho=0.2, q_value=100, show_mode=0):
+    def __init__(self, pop_size=None, max_iter=None, alpha=1, beta=3, rho=0.2, q_value=100, show_mode=0):
         """
         蚁群算法 (蚁周模型 Ant-Cycle)
 
@@ -27,7 +27,7 @@ class ACO(ALGORITHM):
         :param alpha: 信息素因子，反映信息素的重要程度，一般取值[1~4]
         :param beta: 启发函数因子，反映了启发式信息的重要程度，一般取值[3~5]
         :param rho: 信息素挥发因子，一般取值[0.1~0.5]
-        :param q_value: 信息素常量，一般取值[10, 1000]
+        :param q_value: 信息素常量，一般取值[10~1000]
         :param show_mode: 绘图模式
         """
         super().__init__(pop_size, max_iter, None, None, None, show_mode)

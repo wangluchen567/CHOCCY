@@ -61,7 +61,6 @@ class SA(ALGORITHM):
         # 对个体解进行扰动
         new_p = self.perturb(self.p)
         # 得到扰动解的目标值与约束值
-        # 得到扰动解的目标值与约束值
         new_obj = self.cal_objs(new_p)
         new_con = self.cal_cons(new_p)
         new_fit = self.cal_fits(new_obj, new_con)
