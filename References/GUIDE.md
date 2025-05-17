@@ -122,6 +122,8 @@ $$
 
 ## 快速开始
 
+**在正式开始之前，建议先熟悉 类与对象、父类与子类、继承与覆写 等面向对象编程的基本概念，掌握这些基础知识将能够更轻松地扩展和定制项目中的问题和算法**
+
 ### 问题定义与实现
 
 在使用优化器求解问题之前，需要先明确问题的关键信息，以便正确实现问题。这些关键信息包括：
@@ -162,7 +164,13 @@ from Problems import PROBLEM
 
 class Sphere(PROBLEM):
     def __init__(self, num_dec=30, lower=-100, upper=100):
+        # 调用父类 PROBLEM 的构造方法来初始化父类的属性，子类Sphere会继承父类的属性和方法。
         super().__init__(problem_type=PROBLEM.REAL, num_dec=num_dec, num_obj=1, lower=lower, upper=upper)
+        # 在 Python 中，当我们创建一个子类（这里是 Sphere）时，它会继承父类（这里是 PROBLEM）的属性和方法。
+        # 为了确保父类的属性被正确初始化，我们需要调用父类的构造方法（__init__）。
+        # 这样做的好处是：
+        # 1. 确保父类的逻辑被正确执行。
+        # 2. 避免重复代码，因为父类的构造方法已经定义了这些属性的初始化方式。
 ```
 在上述代码中，需要注意三个参数：
 1. **`problem_type`参数**
@@ -241,9 +249,11 @@ class Sphere(PROBLEM):
     """定义问题"""
     def __init__(self, num_dec=30, lower=-100, upper=100):
         num_obj = 1
+        # 调用父类 PROBLEM 的构造方法来初始化父类的属性，子类Sphere会继承父类的属性和方法。
         super().__init__(PROBLEM.REAL, num_dec, num_obj, lower, upper)
         
     def _cal_objs(self, X):
+        # 计算整个种群变量的目标值（覆写PROBLEM父类的方法）
         objs = np.sum(X**2, axis=1)
         return objs
     
