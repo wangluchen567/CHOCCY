@@ -19,6 +19,7 @@ from typing import Union
 from Problems import PROBLEM
 from Algorithms import View
 from Algorithms.Utility.RecordUtils import setup_logger
+from Algorithms.Utility.ReadUtils import load_array, load_arrays
 from Algorithms.Utility.SaveUtils import save_array, save_arrays, get_timestamp, save_json
 from Algorithms.Utility.PlotUtils import plot_scores, plot_decs, plot_objs, plot_objs_decs
 from Algorithms.Utility.SupportUtils import fast_nd_sort, shuffle_matrix_in_row, record_time
@@ -799,3 +800,48 @@ class ALGORITHM(object):
             save_arrays(cons_dict, save_path + "\\cons_history", save_type)
         except Exception as e:
             warnings.warn(f"There is a error with saving: {e}, and the data may not have been fully saved")
+
+    def load_best(self, file_path, save_type='csv'):
+        """
+        加载保存的最优个体解的结果
+        :param file_path: 文件路径(Outputs文件夹下)
+        :param save_type: 之前的保存结果 保存的类型
+        """
+        # 得到项目的根目录
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir]))
+        file_path = project_root + "\\Outputs\\" + file_path  # 从输出文件夹中获取
+        if not (self.best is None and self.best_obj is None and self.best_con is None):
+            warnings.warn("The current best data will be overwritten")
+        self.best = load_array(file_path + "\\best." + save_type)
+        self.best_obj = load_array(file_path + "\\best_obj." + save_type)
+        self.best_con = load_array(file_path + "\\best_con." + save_type)
+
+    def load_pop(self, file_path, save_type='csv'):
+        """
+        加载保存的种群的结果
+        :param file_path: 文件路径(Outputs文件夹下)
+        :param save_type: 之前的保存结果 保存的类型
+        """
+        # 得到项目的根目录
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir]))
+        file_path = project_root + "\\Outputs\\" + file_path  # 从输出文件夹中获取
+        if not (self.pop is None and self.objs is None and self.cons is None):
+            warnings.warn("The current pop data will be overwritten")
+        self.pop = load_array(file_path + "\\pop." + save_type)
+        self.objs = load_array(file_path + "\\objs." + save_type)
+        self.cons = load_array(file_path + "\\cons." + save_type)
+
+    def load_history(self, file_path, save_type='npz'):
+        """
+        加载保存的种群所有历史的结果
+        :param file_path: 文件路径(Outputs文件夹下)
+        :param save_type: 之前的保存结果 保存的类型
+        """
+        # 得到项目的根目录
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir]))
+        file_path = project_root + "\\Outputs\\" + file_path  # 从输出文件夹中获取
+        if len(self.pop_history) or len(self.objs_history) or len(self.cons_history):
+            warnings.warn("The current history data will be overwritten")
+        self.pop_history = list(load_arrays(file_path + "\\pop_history." + save_type).values())
+        self.objs_history = list(load_arrays(file_path + "\\objs_history." + save_type).values())
+        self.cons_history = list(load_arrays(file_path + "\\cons_history." + save_type).values())

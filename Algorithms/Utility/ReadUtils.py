@@ -36,7 +36,9 @@ def load_array(file_path):
         arr = np.loadtxt(file_path, delimiter=',')
     else:
         raise ValueError(f"Unsupported file type: {file_path}")
-
+    if arr.size == 1:
+        # 确保读取为数组类型
+        arr = np.array([arr])
     return arr
 
 
