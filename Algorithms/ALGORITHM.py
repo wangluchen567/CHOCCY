@@ -558,7 +558,7 @@ class ALGORITHM(object):
         elif self.show_mode == self.ALGO:
             self.plot_(n_iter, pause)
         else:
-            raise ValueError("There is no such plotting mode")
+            raise ValueError(f"There is no such plotting mode: {self.show_mode}")
 
     def plot_(self, *args, **kwargs):
         """提供算法自定义绘图的接口"""

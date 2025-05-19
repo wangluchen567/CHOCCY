@@ -240,7 +240,7 @@ class Comparator(ALGORITHM):
         elif self.show_mode == self.SCORE:
             self.plot_scores(n_iter, pause)
         else:
-            raise ValueError("There is no such plotting mode")
+            raise ValueError(f"There is no such plotting mode: {self.show_mode}")
 
     def plot_decs(self, n_iter=None, pause=False, pause_time=0.06):
         """

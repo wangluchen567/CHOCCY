@@ -209,7 +209,12 @@ class Evaluator(object):
 
     @staticmethod
     def get_scores(alg_repeats, score_type):
-        """给定算法集合求算法集合的指定类型分数"""
+        """
+        给定算法集合求算法集合的指定类型分数
+        :param alg_repeats: 算法集合
+        :param score_type: 指定评价指标类型
+        :return: 所有评价指标分数
+        """
         scores = np.zeros(len(alg_repeats))
         if score_type.lower() == 'time':
             # 若是要求显示时间则统计时间
@@ -287,9 +292,35 @@ class Evaluator(object):
         colors = [mcolors.to_hex(c) for c in raw_colors]
         return colors
 
-    def plot_violin(self, problem_name=None, default_color=True, cut=2):
-        """绘制指定问题的小提琴图以对比算法(cut=0时准确绘制)"""
+    def plot(self, mode="violin", default_color=True, accurate=False):
+        """
+        绘制所有问题的指定类型图像
+        :param mode: 绘制图像类型，支持小提琴图"violin"/箱线图"box"/核密度估计图"kde"
+        :param default_color: 是否使用默认绘图颜色
+        :param accurate: 是否按照数据精确绘制(仅小提琴图有效)
+        """
+        for (problem_name, _) in self.problems.items():
+            if mode.lower() == "violin":
+                self.plot_violin(problem_name, default_color, accurate, show=False)
+            elif mode.lower() == "box":
+                self.plot_box(problem_name, default_color, show=False)
+            elif mode.lower() == "kde":
+                self.plot_kde(problem_name, default_color, show=False)
+            else:
+                raise ValueError(f"There is no such plotting mode: {mode}")
+        plt.show()
+
+    def plot_violin(self, problem_name=None, default_color=True, accurate=False, show=True):
+        """
+        绘制指定问题的小提琴图以对比与评估算法
+        :param problem_name: 指定绘图的问题名称
+        :param default_color: 是否使用默认绘图颜色
+        :param accurate: 是否按照数据精确绘制
+        :param show: 是否进行绘图
+        """
         plt.figure()
+        # 设置绘制小提琴图时是否准确绘制
+        cut = 0 if accurate else 2  # cut=0时准确绘制
         if problem_name is None:
             # 若指定问题为空则默认第一个问题
             problem_name = next(iter(self.pairs.keys()))
@@ -311,10 +342,16 @@ class Evaluator(object):
         plt.ylabel(self.score_types[problem_name])
         plt.xticks(ticks, labels)
         # 显示图形
-        plt.show()
+        if show:
+            plt.show()
 
-    def plot_box(self, problem_name=None, default_color=True):
-        """绘制指定问题箱线图以对比算法"""
+    def plot_box(self, problem_name=None, default_color=True, show=True):
+        """
+        绘制指定问题箱线图以对比与评估算法
+        :param problem_name: 指定绘图的问题名称
+        :param default_color: 是否使用默认绘图颜色
+        :param show: 是否进行绘图
+        """
         plt.figure()
         if problem_name is None:
             # 若指定问题为空则默认第一个问题
@@ -337,10 +374,16 @@ class Evaluator(object):
         plt.ylabel(self.score_types[problem_name])
         plt.xticks(ticks, labels)
         # 显示图形
-        plt.show()
+        if show:
+            plt.show()
 
-    def plot_kde(self, problem_name=None, default_color=True):
-        """绘制指定问题核密度估计图以对比算法"""
+    def plot_kde(self, problem_name=None, default_color=True, show=True):
+        """
+        绘制指定问题核密度估计图以对比与评估算法
+        :param problem_name: 指定绘图的问题名称
+        :param default_color: 是否使用默认绘图颜色
+        :param show: 是否进行绘图
+        """
         plt.figure()
         if problem_name is None:
             # 若指定问题为空则默认第一个问题
@@ -364,7 +407,8 @@ class Evaluator(object):
         plt.grid()
         plt.legend()
         # 显示图形
-        plt.show()
+        if show:
+            plt.show()
 
     @staticmethod
     def worker(alg):
