@@ -1,11 +1,9 @@
-# CHOCCY
-
-## 项目名称
+# 🍪 CHOCCY
 
 基于NumPy构建的启发式优化求解器<br>
 Chen's Heuristic Optimizer Constructed with Core numpY
 
-## 项目简介
+## 🔖 项目简介
 
 本项目是一个完全免费且开源的启发式优化求解器，致力于打造一个简单易用、绘图功能丰富、便于算法分析且扩展性强的优化框架。
 本项目提供了大量启发式/元启发式算法的实现细节，支持对`实数`、`整数`、`序列`、`(固定)标签`以及`混合`类型问题的优化，
@@ -16,7 +14,7 @@ Chen's Heuristic Optimizer Constructed with Core numpY
 <br><br>
 **特别说明：`本代码仅供参考学习、竞赛和科学研究等非商业用途，在复制核心代码时请注明出处`**
 
-## 主要特点
+## 🌟 主要特性
 
 - 🌍 支持多种`启发式`和`元启发式`优化算法，适用于广泛的问题类型求解
 - 🚀 支持对多种问题的优化，包括但不限于`实数`、`整数`、`序列`、`(固定)标签`问题
@@ -26,7 +24,7 @@ Chen's Heuristic Optimizer Constructed with Core numpY
 - 📊 支持多种算法对多类问题的优化和求解，并对结果进行比较和可视化
 - ⚡ 使用矩阵操作和`numba`的即时编译对核心部分进行优化，显著提高优化速度 
 
-## 实现算法
+## 🎯 实现算法
 
 - 🧬 遗传(进化)算法
 - 🔥 模拟退火算法
@@ -38,7 +36,7 @@ Chen's Heuristic Optimizer Constructed with Core numpY
 - 🚚 路由优化相关算法
 - 📝 其他参见[实现清单](./References/IMPLES.md)
 
-## 安装教程
+## 📚 安装教程
 
 **详细的安装与使用教程请参见[使用指南](./References/GUIDE.md)** 🔥🔥🔥
 
@@ -77,7 +75,7 @@ Chen's Heuristic Optimizer Constructed with Core numpY
   ```
   注意：如果无法访问上述镜像源，也可以选择其他可用的镜像源，例如中国科技大学、阿里云等。
 
-## 项目结构
+## 📦 项目结构
 
 ```
 CHOCCY/
@@ -146,14 +144,14 @@ CHOCCY/
 └── README.md                   # 项目文档
 ```
 
-**支持的算法集与问题集** 请参见[实现清单](./References/IMPLES.md) 📝<br> 
+**支持的算法集与问题集** 请参见[实现清单](./References/IMPLES.md) 📖<br> 
 
 **PS: 项目中包含本人研究工作** ✨<br>
 Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimization with Millions of Variables (NNDREA), IEEE Transactions on Evolutionary Computation <br>
 原文下载地址：[IEEE xplore](https://ieeexplore.ieee.org/abstract/document/10530207) / [ResearchGate](https://www.researchgate.net/publication/380393707_Neural_Network-Based_Dimensionality_Reduction_for_Large-Scale_Binary_Optimization_with_Millions_of_Variables#:~:text=In%20this%20paper,%20we%20propose%20a%20dimensionality%20reduction%20method%20to) (免费下载)
 
 
-## 快速开始
+## 🚀 快速开始
 
 ### 算法优化指定问题
 
@@ -246,7 +244,7 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 <img src="./References/Pictures/violin.png" width="288" height="220"/>
 <img src="./References/Pictures/kde.png" width="288" height="220"/>
 
-## 更新计划
+## 📝 更新计划
 
 - [x] 更新项目文档
 - [x] 更新使用指南
@@ -260,13 +258,13 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 - [x] 加入保存与读取优化结果功能
 - [x] 使用numba加速超体积指标的计算
 
-## 效果展示
+## 🌈 效果展示
 
 ### 单目标问题优化
 
 #### 算法优化不同类型问题
 
-- 实数问题参考[快速开始](#快速开始)
+- 实数问题参考`快速开始`部分
 - 运行`Run_GA`中的`Solve_TSP()`优化`TSP`问题; 运行`Solve_MixFixLabelCluster()`优化`混合`问题(`实数`+`标签`)
 
     <img src="./References/Pictures/TSP30.gif" width="288" height="230"/>
@@ -339,7 +337,7 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 
 (PS: 可以看到即使问题扩大十倍，NNDREA的效果几乎不变，仍然是收敛快且效果好)
 
-## 数据集优化结果展示
+## 📄 数据集优化结果展示
 
 ### TSP数据集优化结果
 
@@ -362,9 +360,12 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 - **参数设置**：`pop_size=100`, `max_iter=1000`（为了算法尽可能收敛）
 - **随机性**：除FI算法以外，其他算法均具有一定的随机性，再次优化的结果会略有不同
 
-## 项目贡献与支持
+## 🤝 项目贡献
 
 **Author: Luchen Wang**<br>
-<small>（如在使用过程中遇到任何问题，可随时联系邮箱：wangluchen567@qq.com）</small>
+
+## ✉️ 联系我们
+
+**邮箱: wangluchen567@qq.com**
 
 
