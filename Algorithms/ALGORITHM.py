@@ -456,7 +456,13 @@ class ALGORITHM(object):
 
     def get_current_best(self):
         """获取当前种群的最优解"""
-        self.best, self.best_obj, self.best_con = self.get_current_best_(self.pop, self.objs, self.cons)
+        # 若有整数问题则需要对种群进行向下取整
+        if self.INT in self.type_indices:
+            current_pop = self.pop.copy()
+            current_pop[:, self.type_indices[self.INT]] = np.floor(self.pop[:, self.type_indices[self.INT]])
+            self.best, self.best_obj, self.best_con = self.get_current_best_(current_pop, self.objs, self.cons)
+        else:
+            self.best, self.best_obj, self.best_con = self.get_current_best_(self.pop, self.objs, self.cons)
 
     @staticmethod
     def get_current_best_(pop, objs, cons):
