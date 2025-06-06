@@ -692,6 +692,11 @@ class ALGORITHM(object):
         else:
             info += f"[{algo_name}] n_iter = {n_iter}, time = {use_time:.3f} s, "
             info += f"[{prob_name}] {self.score_type} = {self.scores[-1]:.6e}"
+        if self.problem.overwrite_cons:
+            # 如果问题有约束条件(覆写了约束方法)则输出约束情况
+            if self.num_obj == 1:
+                info += f", best_con = {self.best_con[0]:.6e}"
+            info += f", feasible_ratio = {np.sum(self.cons <= 0)}/{self.pop_size}"
         return info
 
     def get_params_info(self):

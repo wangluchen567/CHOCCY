@@ -49,22 +49,24 @@ class PROBLEM(object):
         self.format_range()  # 重整变量上下界(额外处理整数问题)
         self.optimums = self.get_optimum()  # 获取理论最优目标值
         self.pareto_front = self.get_pareto_front()  # 获取帕累托最优前沿
-        self.not_overwrite_cons = True  # 是否 计算约束的方法 均没有被覆写
+        self.overwrite_cons = False  # 是否 计算约束的方法 至少有一个被覆写
         # 覆写函数检查，只能覆写指定的函数
         if type(self).cal_objs != PROBLEM.cal_objs:
             raise TypeError("Method 'cal_objs' cannot be overridden, please overwrite method '_cal_objs'")
         if type(self).cal_cons != PROBLEM.cal_cons:
             raise TypeError("Method 'cal_cons' cannot be overridden, please overwrite method '_cal_cons'")
-        if type(self)._cal_objs == PROBLEM._cal_objs and type(self)._cal_obj == PROBLEM._cal_obj:
-            raise TypeError("At least one of methods '_cal_objs' or '_cal_obj' must be overridden")
-        if type(self)._cal_cons == PROBLEM._cal_cons and type(self)._cal_con == PROBLEM._cal_con:
-            self.not_overwrite_cons = True  # 计算约束的方法 均没有被覆写
         if type(self)._cal_objs != PROBLEM._cal_objs and type(self)._cal_obj != PROBLEM._cal_obj:
             warnings.warn("Both '_cal_objs' and '_cal_obj' have been overridden, "
                           "the current calculation is based on method '_cal_objs'")
         if type(self)._cal_cons != PROBLEM._cal_cons and type(self)._cal_con != PROBLEM._cal_con:
             warnings.warn("Both '_cal_cons' and '_cal_con' have been overridden, "
                           "the current calculation is based on method '_cal_cons'")
+        if type(self)._cal_objs == PROBLEM._cal_objs and type(self)._cal_obj == PROBLEM._cal_obj:
+            raise TypeError("At least one of methods '_cal_objs' or '_cal_obj' must be overridden")
+        if type(self)._cal_cons == PROBLEM._cal_cons and type(self)._cal_con == PROBLEM._cal_con:
+            self.overwrite_cons = False  # 计算约束的方法 至少有一个被覆写
+        else:
+            self.overwrite_cons = True  # 计算约束的方法 均没有被覆写
 
     def format_range(self):
         """重整决策变量取值范围"""
@@ -139,7 +141,7 @@ class PROBLEM(object):
     def _cal_cons(self, X):
         """计算整个种群的约束值(默认无约束)(可覆写)"""
         # 计算约束的方法 均没有被覆写 则使用默认值
-        if self.not_overwrite_cons:
+        if not self.overwrite_cons:
             return -np.ones(len(X))
         pop_size = len(X)
         cons = np.zeros((pop_size, self.num_obj))
