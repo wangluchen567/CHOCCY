@@ -113,7 +113,7 @@ CHOCCY/
 │   ├── __init__.py             # 包初始化文件
 │   ├── ALGORITHM               # 算法函数父类
 │   ├── Comparator.py           # 算法比较器封装类
-│   └── Comparator.py           # 算法评估器封装类
+│   └── Evaluator.py            # 算法评估器封装类
 ├── Datasets/                   # 数据集
 │   ├── Multi/                  # 多目标问题数据集
 │   └── Single/                 # 单目标问题数据集
