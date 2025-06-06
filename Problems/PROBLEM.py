@@ -10,6 +10,7 @@ KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
+import warnings
 import numpy as np
 from typing import Union
 
@@ -48,6 +49,7 @@ class PROBLEM(object):
         self.format_range()  # 重整变量上下界(额外处理整数问题)
         self.optimums = self.get_optimum()  # 获取理论最优目标值
         self.pareto_front = self.get_pareto_front()  # 获取帕累托最优前沿
+        self.not_overwrite_cons = True  # 是否 计算约束的方法 均没有被覆写
         # 覆写函数检查，只能覆写指定的函数
         if type(self).cal_objs != PROBLEM.cal_objs:
             raise TypeError("Method 'cal_objs' cannot be overridden, please overwrite method '_cal_objs'")
@@ -55,21 +57,29 @@ class PROBLEM(object):
             raise TypeError("Method 'cal_cons' cannot be overridden, please overwrite method '_cal_cons'")
         if type(self)._cal_objs == PROBLEM._cal_objs and type(self)._cal_obj == PROBLEM._cal_obj:
             raise TypeError("At least one of methods '_cal_objs' or '_cal_obj' must be overridden")
-        if type(self)._cal_cons == PROBLEM._cal_cons and type(self)._cal_con != PROBLEM._cal_con:
-            raise TypeError("Besides method '_cal_con', method '_cal_cons' must also be overridden")
+        if type(self)._cal_cons == PROBLEM._cal_cons and type(self)._cal_con == PROBLEM._cal_con:
+            self.not_overwrite_cons = True  # 计算约束的方法 均没有被覆写
+        if type(self)._cal_objs != PROBLEM._cal_objs and type(self)._cal_obj != PROBLEM._cal_obj:
+            warnings.warn("Both '_cal_objs' and '_cal_obj' have been overridden, "
+                          "the current calculation is based on method '_cal_objs'")
+        if type(self)._cal_cons != PROBLEM._cal_cons and type(self)._cal_con != PROBLEM._cal_con:
+            warnings.warn("Both '_cal_cons' and '_cal_con' have been overridden, "
+                          "the current calculation is based on method '_cal_cons'")
 
     def format_range(self):
         """重整决策变量取值范围"""
         if isinstance(self.lower, np.ndarray):
             assert self.lower.ndim == 1
             assert self.lower.shape[0] == self.num_dec
+            self.lower = self.lower.astype(float)
         else:
-            self.lower = np.zeros(self.num_dec) + self.lower
+            self.lower = np.zeros(self.num_dec, dtype=float) + self.lower
         if isinstance(self.upper, np.ndarray):
             assert self.upper.ndim == 1
             assert self.upper.shape[0] == self.num_dec
+            self.upper = self.upper.astype(float)
         else:
-            self.upper = np.zeros(self.num_dec) + self.upper
+            self.upper = np.zeros(self.num_dec, dtype=float) + self.upper
         # 整数问题不包含上界
         if PROBLEM.INT in self.type_indices:
             self.upper[self.type_indices[PROBLEM.INT]] -= 1e-9
@@ -119,7 +129,7 @@ class PROBLEM(object):
             return cons
 
     def _cal_objs(self, X):
-        """计算整个种群变量的目标值(建议覆写)"""
+        """计算整个种群的目标值(建议覆写)"""
         pop_size = len(X)
         objs = np.zeros((pop_size, self.num_obj))
         for i in range(pop_size):
@@ -127,16 +137,23 @@ class PROBLEM(object):
         return objs
 
     def _cal_cons(self, X):
-        """计算约束值(默认无约束)(可覆写)"""
-        return -np.ones(len(X))
+        """计算整个种群的约束值(默认无约束)(可覆写)"""
+        # 计算约束的方法 均没有被覆写 则使用默认值
+        if self.not_overwrite_cons:
+            return -np.ones(len(X))
+        pop_size = len(X)
+        cons = np.zeros((pop_size, self.num_obj))
+        for i in range(pop_size):
+            cons[i] = self._cal_con(X[i])
+        return cons
 
     def _cal_obj(self, x):
-        """计算单个决策变量的目标值(可覆写)"""
+        """计算单个决策向量的目标值(可覆写)"""
         pass
 
     def _cal_con(self, x):
-        """计算单个决策变量的约束值(可覆写)"""
-        pass
+        """计算单个决策向量的约束值(可覆写)"""
+        return -1
 
     def get_optimum(self, *args, **kwargs):
         """获取理论最优目标值(或参考点向量)(形状必须为(N*M))"""
