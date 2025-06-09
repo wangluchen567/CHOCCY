@@ -47,7 +47,7 @@ def tournament_selection(fitness, num_next=None, k=2):
 
 def roulette_selection(fitness, num_next=None, replace=True):
     """
-    轮盘赌选择
+    轮盘选择法
     :param fitness: 种群的适应度值(最小化)
     :param num_next: 进入下一步操作的个体数量
     :param replace: 是否可以重复抽取选择

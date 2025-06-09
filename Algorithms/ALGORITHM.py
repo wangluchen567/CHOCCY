@@ -420,7 +420,7 @@ class ALGORITHM(object):
             # 使用锦标赛选择获取匹配池
             return tournament_selection(self.fits, num_next, k)
         else:
-            # 使用轮盘赌选择获取匹配池
+            # 使用轮盘选择法获取匹配池
             return roulette_selection(self.fits, num_next)
 
     def pop_merge(self, offspring):
