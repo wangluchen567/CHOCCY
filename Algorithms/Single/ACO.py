@@ -112,6 +112,15 @@ class ACO(ALGORITHM):
         if (best_con < self.best_con) or (best_con == self.best_con and best_obj < self.best_obj):
             self.best, self.best_obj, self.best_con = best, best_obj, best_con
 
+    def get_params_info(self):
+        """获取参数信息"""
+        info = super().get_params_info()
+        info['q_value'] = self.q_value
+        info['alpha'] = self.alpha
+        info['beta'] = self.beta
+        info['rho'] = self.rho
+        return info
+
     def plot_(self, n_iter=None, pause=False, pause_time=0.06):
         """绘制优化过程中信息素变化情况"""
         if n_iter == 0:

@@ -184,3 +184,11 @@ class NNDREAS(ALGORITHM):
         y[x > 0] = 1.0
         y[x <= 0] = 0.0
         return y
+
+    def get_params_info(self):
+        """获取参数信息"""
+        info = super().get_params_info()
+        info['structure'] = self.structure if isinstance(self.structure, list) else list(self.structure)
+        info['search_range'] = self.search_range if isinstance(self.search_range, list) else list(self.search_range)
+        info['delta'] = self.delta
+        return info

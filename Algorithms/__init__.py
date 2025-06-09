@@ -10,6 +10,12 @@ KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
+# 导入所有父类
+from .ALGORITHM import ALGORITHM
+from .Comparator import Comparator
+from .Evaluator import Evaluator
+
+
 class View:
     """可视化模式的静态参数"""
     NONE = -1  # 不显示
@@ -22,9 +28,3 @@ class View:
     PROB = 6  # 问题自定义绘图
     ALGO = 7  # 算法自定义绘图
     LOG = 10  # 输出日志
-
-
-# 导入所有父类
-from .ALGORITHM import ALGORITHM
-from .Comparator import Comparator
-from .Evaluator import Evaluator

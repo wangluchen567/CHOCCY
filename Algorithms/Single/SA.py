@@ -140,3 +140,10 @@ class SA(ALGORITHM):
             return fix_label_mutation(solutions, mutate_prob)
         else:
             raise ValueError("The problem type does not exist")
+
+    def get_params_info(self):
+        """获取参数信息"""
+        info = super().get_params_info()
+        info['init_temp'] = self.init_temp
+        info['alpha'] = self.alpha
+        return info

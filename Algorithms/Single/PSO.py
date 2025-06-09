@@ -87,3 +87,11 @@ class PSO(ALGORITHM):
         self.objs[better] = particle_objs[better]
         self.cons[better] = particle_cons[better]
         self.fits[better] = particle_fits[better]
+
+    def get_params_info(self):
+        """获取参数信息"""
+        info = super().get_params_info()
+        info['w'] = self.w
+        info['c1'] = self.c1
+        info['c2'] = self.c2
+        return info

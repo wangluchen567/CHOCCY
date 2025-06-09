@@ -99,6 +99,13 @@ class GFLS(ALGORITHM):
         # 记录每步状态
         self.record()
 
+    def get_params_info(self):
+        """获取参数信息"""
+        info = super().get_params_info()
+        info['active_all'] = self.active_all
+        info['alpha'] = self.alpha
+        return info
+
 
 def fast_local_search(tour, dist_mat, bits, p_mat, lamb):
     """快速局部搜索"""
