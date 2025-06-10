@@ -81,65 +81,42 @@ Chen's Heuristic Optimizer Constructed with Core numpY
 CHOCCY/
 ├── Algorithms/                 # 算法集——优化器核心
 │   ├── Multi/                  # 多目标优化算法
-│   │   ├── __init__.py         # 包初始化文件
-│   │   ├── MOEAD.py            # 基于分解的经典进化算法
-│   │   ├── NNDREA.py           # 特殊二进制问题进化算法
-│   │   ├── NSGAII.py           # 经典多目标进化算法
+│   │   ├── NSGAII.py           # 基于快速非支配排序多目标进化算法
+│   │   ├── MOEAD.py            # 一种基于分解的多目标进化算法
 │   │   └── ...                 # 其他算法(详见IMPLES清单)
 │   ├── Single/                 # 单目标优化算法
-│   │   ├── __init__.py         # 包初始化文件
-│   │   ├── ACO.py              # 蚁群算法(TSP)
-│   │   ├── DE.py               # 差分进化算法(实数)
 │   │   ├── GA.py               # 遗传算法(进化算法)
-│   │   ├── GFLS.py             # 引导快速局部搜索算法(TSP)
-│   │   ├── Greedy_KP.py        # 贪婪算法(KP)
-│   │   ├── HGA_TSP.py          # 混合启发式遗传算法(TSP)
-│   │   ├── NNDREAS.py          # 特殊二进制问题算法(单目标)
-│   │   ├── PSO.py              # 粒子群算法(实数)
+│   │   ├── PSO.py              # 粒子群优化算法
+│   │   ├── ACO.py              # 蚁群优化算法
+│   │   ├── DE.py               # 差分进化算法
 │   │   ├── SA.py               # 模拟退火算法
 │   │   └── ...                 # 其他算法(详见IMPLES清单)
 │   ├── Utility/                # 工具和功能函数
-│   │   ├── Crossovers.py       # 交叉算子函数
-│   │   ├── Educations.py       # 教育算子函数
-│   │   ├── Mutations.py        # 变异算子函数
-│   │   ├── Operators.py        # 算子函数(整合)
-│   │   ├── PerfMetrics.py      # 评价指标函数
-│   │   ├── PlotUtils.py        # 绘图工具函数
-│   │   ├── ReadUtils.py        # 读取文件工具函数
-│   │   ├── RecordUtils.py      # 记录信息工具函数
-│   │   ├── SaveUtils.py        # 保存文件工具函数
-│   │   ├── Selections.py       # 选择算子函数
-│   │   └── SupportUtils.py     # 算法支持相关函数
-│   ├── __init__.py             # 包初始化文件
 │   ├── ALGORITHM               # 算法函数父类
-│   ├── Comparator.py           # 算法比较器封装类
-│   └── Evaluator.py            # 算法评估器封装类
-├── Datasets/                   # 数据集
+│   ├── Comparator.py           # 多算法比较器
+│   └── Evaluator.py            # 多算法评估器
+├── Datasets/                   # 数据集文件
 │   ├── Multi/                  # 多目标问题数据集
 │   └── Single/                 # 单目标问题数据集
-├── Outputs/                    # 输出结果集
+├── Outputs/                    # 输出结果文件
 │   ├── Logs/                   # 日志输出结果
 │   ├── Multi/                  # 多目标问题输出结果
 │   └── Single/                 # 单目标问题输出结果
 ├── Problems/                   # 问题集
 │   ├── Multi/                  # 多目标问题集
 │   ├── Single/                 # 单目标问题集
-│   ├── __init__.py             # 包初始化文件
 │   └── PROBLEM.py              # 问题父类
 ├── RunDemos/                   # 算法优化问题示例
 │   ├── Multi/                  # 多目标问题的优化示例
-│   │   ├── Cal_Scores.py       # 计算评价指标示例
-│   │   ├── Eval_ZDT.py         # 多种算法优化与评估ZDT示例
 │   │   ├── Run_NSGAII.py       # 运行NSGAII算法示例
-│   │   ├── Solve_MOKP.py       # 多种算法求解MOKP问题对比示例
 │   │   ├── Solve_ZDT.py        # 多种算法求解ZDT问题对比示例
+│   │   ├── Eval_ZDT.py         # 多种算法优化与评估ZDT示例
 │   │   └── ...                 # 其他示例可自行查看
 │   ├── Single/                 # 单目标问题的优化示例
-│   │   ├── Eval_Ackley.py      # 多种算法优化与评估Ackley示例
-│   │   ├── Run_DE.py           # 运行差分进化算法示例
 │   │   ├── Run_GA.py           # 运行遗传算法示例
-│   │   ├── Solve_Ackley.py     # 多种算法求解Ackley问题对比示例
 │   │   ├── Solve_TSP.py        # 多种算法求解TSP问题对比示例
+│   │   ├── Solve_Ackley.py     # 多种算法求解Ackley问题对比示例
+│   │   ├── Eval_Ackley.py      # 多种算法优化与评估Ackley示例
 │   └── └── ...                 # 其他示例可自行查看
 └── README.md                   # 项目文档
 ```
