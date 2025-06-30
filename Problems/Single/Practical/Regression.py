@@ -18,6 +18,11 @@ from mpl_toolkits.mplot3d import Axes3D
 
 class Regression(PROBLEM):
     def __init__(self, num_dec=2, data_size=100):
+        """
+        回归问题
+        :param num_dec: 决策变量个数
+        :param data_size: 随机的数据集大小
+        """
         if num_dec < 2:
             raise ValueError("The number of decision variables in Regression cannot be less than 2")
         # 继承并初始化父类参数
