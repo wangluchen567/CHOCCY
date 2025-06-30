@@ -32,6 +32,7 @@ Chen's Heuristic Optimizer Constructed with Core numpY
 - 🐜 蚁群优化算法
 - 🌟 粒子群优化算法
 - ⚖️ 多目标优化算法
+- 📉 梯度下降优化算法
 - 🔍 局部搜索相关算法
 - 🚚 路由优化相关算法
 - 📝 其他参见[实现清单](./References/IMPLES.md)
