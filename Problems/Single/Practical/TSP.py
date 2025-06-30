@@ -36,7 +36,7 @@ class TSP(PROBLEM):
         if data is None:
             # 若给定数据为空，则需要先检查是否有数据集
             # 得到项目的根目录
-            project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir] * 2))
+            project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir] * 3))
             # 保存到Datasets中
             file_name = project_root + "\\Datasets\\Single\\TSP-" + str(self.num_dec) + ".txt"
             if os.path.isfile(file_name):

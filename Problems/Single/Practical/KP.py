@@ -38,7 +38,7 @@ class KP(PROBLEM):
         elif (weights is None) and (values is None) and (capacity is None):
             # 若给定参数均为空，则需要检查当前路径是否有数据集
             # 得到项目的根目录
-            project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir] * 2))
+            project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir] * 3))
             # 保存到Datasets中
             file_name = project_root + "\\Datasets\\Single\\KP-" + str(self.num_dec) + ".txt"
             if os.path.isfile(file_name):
