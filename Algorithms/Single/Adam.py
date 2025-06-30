@@ -18,7 +18,7 @@ from Algorithms import ALGORITHM
 class Adam(ALGORITHM):
     def __init__(self, max_iter=100, learning_rate=0.1, beta_1=0.9, beta_2=0.99, show_mode=0):
         """
-        Adam 梯度下降算法
+        自适应矩估计梯度下降算法 (Adam)
 
         Code Author: Luchen Wang
         :param max_iter: 迭代次数
@@ -39,7 +39,6 @@ class Adam(ALGORITHM):
         self.v_ = np.zeros_like(self.pop)  # 初始化一阶矩估计
         self.s_ = np.zeros_like(self.pop)  # 初始化二阶矩估计
 
-
     @ALGORITHM.record_time
     def run_step(self, i):
         """运行算法单步"""
@@ -58,4 +57,3 @@ class Adam(ALGORITHM):
         self.eval_and_update(self.pop)
         # 记录每步状态
         self.record()
-
