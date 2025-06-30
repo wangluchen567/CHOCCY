@@ -18,8 +18,9 @@ from .SA import SA
 
 # 实数问题算法
 from .DE import DE
-from .GD import GD
 from .PSO import PSO
+from .GD import GD
+from .Adam import Adam
 
 # KP问题算法
 from .DP_KP import DPKP
