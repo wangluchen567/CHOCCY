@@ -66,8 +66,7 @@ class FI(ALGORITHM):
                 # 已选的点进行mask
                 mask[chosen] = True
         self.pop = np.array([tour], dtype=int)
-        self.objs = self.cal_objs(self.pop)
-        self.cons = self.cal_cons(self.pop)
+        self.eval_and_update(self.pop)
         # 清空所有记录后重新记录
         self.clear_record()
         self.record()

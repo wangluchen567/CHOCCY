@@ -23,3 +23,6 @@ class Sphere(PROBLEM):
     def _cal_objs(self, X):
         objs = np.sum(X**2, axis=1)
         return objs
+
+    def _cal_objs_grad(self, X):
+        return 2 * X

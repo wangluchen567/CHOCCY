@@ -214,6 +214,14 @@ class ALGORITHM(object):
         """
         return self.problem.cal_cons(pop)
 
+    def cal_grad(self, pop):
+        """
+        计算梯度值
+        :param pop: 给定种群
+        :return: 种群中每个个体的梯度值（矩阵）
+        """
+        return self.problem.cal_grad(pop)
+
     @staticmethod
     def cal_objs_based_cons(objs, cons):
         """
@@ -257,6 +265,13 @@ class ALGORITHM(object):
         cons = self.cal_cons(pop)
         fits = self.cal_fits(objs, cons)
         return objs, cons, fits
+
+    def eval_and_update(self, pop):
+        """
+        给定种群解并对解进行评价(求目标值/约束值/适应度)并进行保存
+        :param pop: 给定种群
+        """
+        self.objs, self.cons, self.fits = self.evaluate(pop)
 
     def set_score_type(self, score_type):
         """

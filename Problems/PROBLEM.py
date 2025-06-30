@@ -64,9 +64,19 @@ class PROBLEM(object):
         if type(self)._cal_objs == PROBLEM._cal_objs and type(self)._cal_obj == PROBLEM._cal_obj:
             raise TypeError("At least one of methods '_cal_objs' or '_cal_obj' must be overridden")
         if type(self)._cal_cons == PROBLEM._cal_cons and type(self)._cal_con == PROBLEM._cal_con:
-            self.overwrite_cons = False  # 计算约束的方法 至少有一个被覆写
+            self.overwrite_cons = False  # 计算约束的方法 均没有被覆写
         else:
-            self.overwrite_cons = True  # 计算约束的方法 均没有被覆写
+            self.overwrite_cons = True  # 计算约束的方法 至少有一个被覆写
+        # 检查计算单个解的目标函数梯度是否被覆写
+        if type(self)._cal_obj_grad == PROBLEM._cal_obj_grad:
+            self.overwrite_obj_grad = False
+        else:
+            self.overwrite_obj_grad = True
+        # 检查计算单个解的约束函数梯度是否被覆写
+        if type(self)._cal_con_grad == PROBLEM._cal_con_grad:
+            self.overwrite_con_grad = False
+        else:
+            self.overwrite_con_grad = True
 
     def format_range(self):
         """重整决策变量取值范围"""
@@ -101,34 +111,46 @@ class PROBLEM(object):
         # 对数据进行浅拷贝，防止其被修改
         X_ = X.copy()
         # 保证二维形状方便并行操作
-        if X_.ndim == 1:
-            X_ = X_.reshape(1, -1)
+        X_ = X_.reshape(1, -1) if X_.ndim == 1 else X_
         # 若为整数问题则需要向下取整
         if PROBLEM.INT in self.type_indices:
-            X_[:, self.type_indices[PROBLEM.INT]] \
-                = np.floor(X_[:, self.type_indices[PROBLEM.INT]])
+            X_[:, self.type_indices[PROBLEM.INT]] = np.floor(X_[:, self.type_indices[PROBLEM.INT]])
         objs = self._cal_objs(X_)
-        if objs.ndim == 1:
-            return objs.reshape(-1, 1)
-        else:
-            return objs
+        # 保证二维形状方便并行操作
+        return objs.reshape(-1, 1) if objs.ndim == 1 else objs
 
     def cal_cons(self, X):
         """计算约束值"""
         # 对数据进行浅拷贝，防止其被修改
         X_ = X.copy()
         # 保证二维形状方便并行操作
-        if X_.ndim == 1:
-            X_ = X_.reshape(1, -1)
+        X_ = X_.reshape(1, -1) if X_.ndim == 1 else X_
         # 若为整数问题则需要向下取整
         if PROBLEM.INT in self.type_indices:
-            X_[:, self.type_indices[PROBLEM.INT]] \
-                = np.floor(X_[:, self.type_indices[PROBLEM.INT]])
+            X_[:, self.type_indices[PROBLEM.INT]] = np.floor(X_[:, self.type_indices[PROBLEM.INT]])
         cons = self._cal_cons(X_)
-        if cons.ndim == 1:
-            return cons.reshape(-1, 1)
-        else:
-            return cons
+        # 保证二维形状方便并行操作
+        return cons.reshape(-1, 1) if cons.ndim == 1 else cons
+
+    def cal_grad(self, X):
+        """
+        计算梯度值
+        :param X: 决策向量
+        :return: 若无约束则返回目标函数梯度，否则返回 (目标函数梯度, 约束函数梯度)
+        """
+        # 对数据进行浅拷贝，防止其被修改
+        X_ = X.copy()
+        # 保证二维形状方便并行操作
+        X_ = X_.reshape(1, -1) if X_.ndim == 1 else X_
+        # 计算目标函数的梯度
+        objs_grad = self._cal_objs_grad(X_)
+        # 若约束计算未被覆写则无需计算约束函数梯度
+        if not self.overwrite_cons:
+            return objs_grad.reshape(-1, 1) if objs_grad.ndim == 1 else objs_grad
+        else:  # 否则若约束计算被覆写则需额外计算约束函数梯度
+            cons_grad = self._cal_cons_grad(X_)
+            return (objs_grad.reshape(-1, 1) if objs_grad.ndim == 1 else objs_grad,
+                    cons_grad.reshape(-1, 1) if cons_grad.ndim == 1 else cons_grad)
 
     def _cal_objs(self, X):
         """计算整个种群的目标值(建议覆写)"""
@@ -149,6 +171,56 @@ class PROBLEM(object):
             cons[i] = self._cal_con(X[i])
         return cons
 
+    def _cal_objs_grad(self, X):
+        """计算整个种群目标函数的梯度"""
+        if self.overwrite_obj_grad:
+            # 若子类覆写了计算单个解的梯度则使用子类的计算
+            pop_size = len(X)
+            objs_grad = np.zeros((pop_size, self.num_dec))
+            for i in range(pop_size):
+                objs_grad[i] = self._cal_obj_grad(X[i])
+            return objs_grad
+        # 否则默认使用有限差分法估计目标函数梯度
+        # obj_grad = f(x + epsilon) - f(x) / (x * epsilon)
+        X[X == 0] = 1.e-12
+        # 初始化目标函数值
+        objs = self.cal_objs(X)
+        # 并对该结果进行变换
+        objs_trans = np.tile(objs, (self.num_obj, 1))
+        # 对决策向量进行扰动
+        X_disturb = np.tile(X, (self.num_dec, 1)) * (1 + np.eye(self.num_dec) * 1.e-6)
+        # 得到扰动后的向量对应的目标值
+        objs_disturb = self.cal_objs(X_disturb)
+        # 使用有限差分法得到目标函数的梯度
+        objs_grad = (objs_disturb - objs_trans).T / X / 1.e-6
+        # 返回目标函数梯度结果
+        return objs_grad
+
+    def _cal_cons_grad(self, X):
+        """计算整个种群约束函数的梯度"""
+        if self.overwrite_obj_grad:
+            # 若子类覆写了计算单个解的梯度则使用子类的计算
+            pop_size = len(X)
+            cons_grad = np.zeros((pop_size, self.num_dec))
+            for i in range(pop_size):
+                cons_grad[i] = self._cal_con_grad(X[i])
+            return cons_grad
+        # 否则默认使用有限差分法估计约束函数梯度
+        # con_grad = g(x + epsilon) - g(x) / (x * epsilon)
+        X[X == 0] = 1.e-12
+        # 初始化约束函数值
+        cons = self.cal_cons(X)
+        # 并对该结果进行变换
+        cons_trans = np.tile(cons, (self.num_obj, 1))
+        # 对决策向量进行扰动
+        X_disturb = np.tile(X, (self.num_dec, 1)) * (1 + np.eye(self.num_dec) * 1.e-6)
+        # 得到扰动后的向量对应的目标值
+        cons_disturb = self.cal_cons(X_disturb)
+        # 使用有限差分法得到约束函数的梯度
+        cons_grad = (cons_disturb - cons_trans).T / X / 1.e-6
+        # 返回约束函数梯度结果
+        return cons_grad
+
     def _cal_obj(self, x):
         """计算单个决策向量的目标值(可覆写)"""
         pass
@@ -156,6 +228,14 @@ class PROBLEM(object):
     def _cal_con(self, x):
         """计算单个决策向量的约束值(可覆写)"""
         return -1
+
+    def _cal_obj_grad(self, x):
+        """计算单个决策向量的目标函数梯度"""
+        pass
+
+    def _cal_con_grad(self, x):
+        """计算单个决策向量的约束函数梯度"""
+        pass
 
     def get_optimum(self, *args, **kwargs):
         """获取理论最优目标值(或参考点向量)(形状必须为(N*M))"""

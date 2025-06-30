@@ -60,8 +60,7 @@ class GreedyKP(ALGORITHM):
         solution = np.zeros(len(self.weights), dtype=int)
         solution[chosen] = 1
         self.pop = np.array([solution])
-        self.objs = self.cal_objs(self.pop)
-        self.cons = self.cal_cons(self.pop)
+        self.eval_and_update(self.pop)
         # 清空所有记录后重新记录
         self.clear_record()
         self.record()

@@ -89,11 +89,8 @@ class ACO(ALGORITHM):
                                                  axis=1, arr=prob_mat)
             # 将产生的下个节点加入访问表，更新蚁群路径
             self.pop[:, j] = chosen_indices
-        # 更新路径长度
-        self.objs = self.cal_objs(self.pop)
-        self.cons = self.cal_cons(self.pop)
-        # 重新计算等价适应度值
-        self.fits = self.cal_fits(self.objs, self.cons)
+        # 对种群进评估并更新相关参数
+        self.eval_and_update(self.pop)
         # 更新信息素矩阵
         delta_tau_mat = np.zeros((self.num_dec, self.num_dec))
         # 使用add.at函数更新delta_tau_mat

@@ -94,8 +94,7 @@ class GFLS(ALGORITHM):
         self.bits[np.where(utils == utils_max)[0][1]] = 1
         if self.tour_cost < self.objs[0]:
             self.pop[0] = self.tour.copy()
-            self.objs[0] = self.tour_cost
-            self.cons = self.cal_cons(self.pop)
+            self.eval_and_update(self.pop)
         # 记录每步状态
         self.record()
 
