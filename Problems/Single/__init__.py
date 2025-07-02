@@ -30,5 +30,6 @@ from .SOP.SOP10 import SOP10
 from .Practical.KP import KP  # 背包问题
 from .Practical.TSP import TSP  # 旅行商问题
 from .Practical.Regression import Regression  # 回归问题
-from .Practical.FixLabelCluster import FixLabelCluster
-from .Practical.MixFixLabelCluster import MixFixLabelCluster
+from .Practical.Classification import Classification  # 分类问题
+from .Practical.FixLabelCluster import FixLabelCluster  # 固定数量聚类问题
+from .Practical.MixFixLabelCluster import MixFixLabelCluster  # 混合变量聚类问题
