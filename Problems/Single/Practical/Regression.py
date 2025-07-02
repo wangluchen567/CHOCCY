@@ -19,14 +19,14 @@ from mpl_toolkits.mplot3d import Axes3D
 class Regression(PROBLEM):
     def __init__(self, num_dec=2, data_size=100):
         """
-        回归问题
+        线性回归问题
         :param num_dec: 决策变量个数
         :param data_size: 随机的数据集大小
         """
         if num_dec < 2:
             raise ValueError("The number of decision variables in Regression cannot be less than 2")
         # 继承并初始化父类参数
-        super().__init__(PROBLEM.REAL, num_dec, num_obj=1, lower=-100, upper=100)
+        super().__init__(PROBLEM.REAL, num_dec, num_obj=1, lower=-10, upper=10)
         # 生成的数据集大小
         self.data_size = data_size
         # 随机生成回归问题数据
@@ -64,11 +64,11 @@ class Regression(PROBLEM):
             ax.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
             ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
             ax.ticklabel_format(style='sci', axis='z', scilimits=(0, 0))
-            ax.scatter(self.x_data[:, 0], self.x_data[:, 1], self.y_data[:, 0], marker="o", c="blue")
             x1_grid, x2_grid = np.meshgrid(np.linspace(0, 10, 10), np.linspace(0, 10, 10))
             x_grid_b = np.concatenate((x1_grid[:, :, np.newaxis], x2_grid[:, :, np.newaxis],
                                        np.ones((x1_grid.shape[0], x1_grid.shape[1], 1))), axis=-1)
             ax.plot_surface(x1_grid, x2_grid, x_grid_b @ best, alpha=0.2, color='red')
+            ax.scatter(self.x_data[:, 0], self.x_data[:, 1], self.y_data[:, 0], marker="o", c="blue")
             ax.set_xlabel('x')
             ax.set_ylabel('y')
             ax.set_zlabel('z')
