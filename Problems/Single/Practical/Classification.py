@@ -82,10 +82,9 @@ class Classification(PROBLEM):
         ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
         ax.ticklabel_format(style='sci', axis='z', scilimits=(0, 0))
         # 绘制面
-        x1_grid, x2_grid = np.meshgrid(np.linspace(-1, 1, 10),
-                                       np.linspace(-1, 1, 10))
-        x_grid_b = np.concatenate((x1_grid[:, :, np.newaxis], x2_grid[:, :, np.newaxis],
-                                   np.ones((x1_grid.shape[0], x1_grid.shape[1], 1))), axis=-1)
+        x1_grid, x2_grid = np.meshgrid(np.linspace(-1, 1, 100),
+                                       np.linspace(-1, 1, 100))
+        x_grid_b = np.stack((x1_grid, x2_grid, np.ones_like(x1_grid)), axis=-1)
         ax.plot_surface(x1_grid, x2_grid, self.sigmoid(x_grid_b @ best), alpha=0.3, cmap='viridis')
         # 绘制点
         positive, negative = np.array(self.y_data == 1).flatten(), np.array(self.y_data == 0).flatten()

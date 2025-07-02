@@ -15,7 +15,7 @@ def GA_solve_(problem, max_iter=100):
 
 
 def GD_solve_(problem, max_iter=100):
-    algorithm = GD(max_iter=max_iter, learning_rate=0.9, show_mode=View.LOG)
+    algorithm = GD(max_iter=max_iter, learning_rate=0.9, show_mode=View.PROB)
     algorithm.solve(problem)
     # 获取最优解并打印
     best, best_obj, best_con = algorithm.get_best()
