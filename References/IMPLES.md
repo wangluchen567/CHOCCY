@@ -23,7 +23,7 @@
 |    DE     |       差分进化算法        |    ✔️    |   ✔️    |    ❌     |    ❌    |     ❌     |
 |    PSO    |       粒子群优化算法       |    ✔️    |   ✔️    |    ❌     |    ❌    |     ❌     |
 |    GD     |      梯度下降优化算法       |    ✔️    |    ❌    |    ❌     |    ❌    |     ❌     |
-|   Adam    |    Adam梯度下降优化算法     |    ✔️    |    ❌    |    ❌     |    ❌    |     ❌     |
+|   Adam    |    自适应矩估计梯度下降算法     |    ✔️    |    ❌    |    ❌     |    ❌    |     ❌     |
 |    ACO    |        蚁群算法         |    ❌     |    ❌    |    ❌     |   ✔️    |     ❌     |
 |  HGA_TSP  |     混合遗传算法(TSP)     |    ❌     |    ❌    |    ❌     |   ✔️    |     ❌     |
 |    FI     |     最远插入算法(TSP)     |    ❌     |    ❌    |    ❌     |   ✔️    |     ❌     |
@@ -52,5 +52,7 @@
 |       Sphere       |       实数(REAL)       |  1   |   无    | 
 |         KP         |       二进制(BIN)       |  1   |   有    | 
 |        TSP         |       序列(PMU)        |  1   |   无    | 
+|     Regression     |       实数(REAL)       |  1   |   无    | 
+|   Classification   |       实数(REAL)       |  1   |   无    | 
 |  FixLabelCluster   |      固定标签(FIX)       |  1   | 有等式约束  | 
 | MixFixLabelCluster | 实数(REAL) + 固定标签(FIX) |  1   | 有等式约束  | 
