@@ -16,8 +16,8 @@ import warnings
 import numpy as np
 from tqdm import tqdm
 from typing import Union
-from Problems import PROBLEM
 from scipy.stats import qmc
+from Problems import PROBLEM
 from Algorithms import View
 from Algorithms.Utility.RecordUtils import setup_logger
 from Algorithms.Utility.ReadUtils import load_array, load_arrays
