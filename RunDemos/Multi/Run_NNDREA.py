@@ -9,5 +9,6 @@ if __name__ == '__main__':
     algorithm.solve(problem)
     print("HV: ", algorithm.cal_score('HV'))
     print("time(s): ", algorithm.run_time)
+    print(algorithm.get_params_info())
     algorithm.plot(show_mode=1)
     algorithm.plot_scores()

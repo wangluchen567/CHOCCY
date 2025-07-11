@@ -231,11 +231,11 @@ class PROBLEM(object):
 
     def _cal_obj_grad(self, x):
         """计算单个决策向量的目标函数梯度"""
-        pass
+        return 0
 
     def _cal_con_grad(self, x):
         """计算单个决策向量的约束函数梯度"""
-        pass
+        return 0
 
     def get_optimum(self, *args, **kwargs):
         """获取理论最优目标值(或参考点向量)(形状必须为(N*M))"""
