@@ -17,6 +17,7 @@ import numpy as np
 from tqdm import tqdm
 from typing import Union
 from Problems import PROBLEM
+from scipy.stats import qmc
 from Algorithms import View
 from Algorithms.Utility.RecordUtils import setup_logger
 from Algorithms.Utility.ReadUtils import load_array, load_arrays
@@ -346,16 +347,24 @@ class ALGORITHM(object):
 
     def init_pop_real(self):
         """初始化求解实数或整数问题的种群"""
-        pop = np.random.uniform(self.lower[self.type_indices[ALGORITHM.REAL]],
-                                self.upper[self.type_indices[ALGORITHM.REAL]],
-                                size=(self.pop_size, len(self.type_indices[ALGORITHM.REAL])))
+        # pop = np.random.uniform(self.lower[self.type_indices[ALGORITHM.REAL]],
+        #                         self.upper[self.type_indices[ALGORITHM.REAL]],
+        #                         size=(self.pop_size, len(self.type_indices[ALGORITHM.REAL])))
+        # 使用 拉丁超立方采样 初始化种群
+        pop = qmc.scale(qmc.LatinHypercube(d=len(self.type_indices[ALGORITHM.REAL])).random(self.pop_size),
+                        self.lower[self.type_indices[ALGORITHM.REAL]],
+                        self.upper[self.type_indices[ALGORITHM.REAL]])
         return pop
 
     def init_pop_integer(self):
         """初始化求解实数或整数问题的种群"""
-        pop = np.random.uniform(self.lower[self.type_indices[ALGORITHM.INT]],
-                                self.upper[self.type_indices[ALGORITHM.INT]],
-                                size=(self.pop_size, len(self.type_indices[ALGORITHM.INT])))
+        # pop = np.random.uniform(self.lower[self.type_indices[ALGORITHM.INT]],
+        #                         self.upper[self.type_indices[ALGORITHM.INT]],
+        #                         size=(self.pop_size, len(self.type_indices[ALGORITHM.INT])))
+        # 使用 拉丁超立方采样 初始化种群
+        pop = qmc.scale(qmc.LatinHypercube(d=len(self.type_indices[ALGORITHM.INT])).random(self.pop_size),
+                        self.lower[self.type_indices[ALGORITHM.INT]],
+                        self.upper[self.type_indices[ALGORITHM.INT]])
         return pop
 
     def init_pop_binary(self):
