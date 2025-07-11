@@ -69,7 +69,6 @@ class TSP(PROBLEM):
         return objs
 
     def plot(self, best, n_iter=None, pause=False, pause_time=0.06):
-        plt.clf()
         if self.points is None:
             raise ValueError("Not given the position of each point")
         num_points = len(self.points)
