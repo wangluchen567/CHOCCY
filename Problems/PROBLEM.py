@@ -100,6 +100,13 @@ class PROBLEM(object):
         """重整问题类型并确定混合位置"""
         if isinstance(self.problem_type, int):
             self.problem_type = np.zeros(self.num_dec, dtype=int) + self.problem_type
+        elif isinstance(self.problem_type, list):
+            self.problem_type = np.array(self.problem_type, dtype=int)
+        elif isinstance(self.problem_type, np.ndarray):
+            self.problem_type = self.problem_type.astype(int)
+        else:
+            raise ValueError("problem_type must be an int, a list, or a numpy.ndarray")
+        # 得到类型的种类情况
         self.unique_type = np.unique(self.problem_type)
         # 确定每个问题类别对应的位置
         self.type_indices = dict()

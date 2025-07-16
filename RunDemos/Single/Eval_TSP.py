@@ -19,7 +19,7 @@ if __name__ == '__main__':
     print('*** Obj ***')
     evaluator.prints(stats_test=True)
     # 绘制小提琴图(设置为准确绘制)
-    evaluator.plot_violin(cut=0)
+    evaluator.plot_violin(accurate=True)
     # 绘制箱线图
     evaluator.plot_box()
     # 打印时间对比
