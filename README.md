@@ -222,7 +222,7 @@ time(s)      3.272367e-02    2.751327e-02    2.319741e-02
 <img src="./References/Pictures/violin.png" width="288" height="220"/>
 <img src="./References/Pictures/kde.png" width="288" height="220"/>
 
-## 📝 更新计划
+## 📅 更新计划
 
 - [x] 更新项目文档
 - [x] 更新使用指南
