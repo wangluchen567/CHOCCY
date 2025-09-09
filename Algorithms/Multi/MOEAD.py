@@ -28,7 +28,7 @@ class MOEAD(ALGORITHM):
         References:
             MOEA/D: A multi-objective evolutionary algorithm based on decomposition,
             Q. Zhang and H. Li
-        Code Author:
+        Code Maintainer:
             Luchen Wang
         :param pop_size: 种群大小
         :param max_iter: 迭代次数

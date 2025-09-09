@@ -24,7 +24,7 @@ class SPEA2(ALGORITHM):
         References:
             SPEA2: Improving the strength Pareto evolutionary algorithm,
             E. Zitzler, M. Laumanns, and L. Thiele
-        Code Author:
+        Code Maintainer:
             Luchen Wang
         :param pop_size: 种群大小
         :param max_iter: 迭代次数

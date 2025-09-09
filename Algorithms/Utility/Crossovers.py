@@ -41,9 +41,10 @@ def simulated_binary_crossover(parents1, parents2, lower, upper, cross_prob, eta
         (parents1 + parents2) / 2 + beta * (parents1 - parents2) / 2,
         (parents1 + parents2) / 2 - beta * (parents1 - parents2) / 2
     ))
+    # 根据上下界进行裁剪
     if isinstance(lower, int) or isinstance(lower, float):
-        lowers = np.ones((2 * p_size, num_dec)) * lower
-        uppers = np.ones((2 * p_size, num_dec)) * upper
+        lowers = np.zeros((2 * p_size, num_dec)) + lower
+        uppers = np.zeros((2 * p_size, num_dec)) + upper
     else:
         lowers = lower.reshape(1, -1).repeat(2 * p_size, 0)
         uppers = upper.reshape(1, -1).repeat(2 * p_size, 0)

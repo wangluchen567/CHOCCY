@@ -19,7 +19,7 @@ class GreedyKP(ALGORITHM):
         """
         贪婪算法求解背包问题(KP)
 
-        Code Author: Luchen Wang
+        Code Maintainer: Luchen Wang
         :param show_mode: 绘图模式
         """
         super().__init__(pop_size=1, max_iter=None, show_mode=show_mode)

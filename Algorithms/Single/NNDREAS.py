@@ -25,7 +25,7 @@ class NNDREAS(ALGORITHM):
         References:
             Neural Network-Based Dimensionality Reduction for LargeScale Binary Optimization With Millions of Variables,
             Ye Tian, Luchen Wang, Shangshang Yang, Jinliang Ding, Yaochu Jin, Xingyi Zhang
-        Code Author:
+        Code Maintainer:
             Luchen Wang
         :param pop_size: 种群大小
         :param max_iter: 迭代次数

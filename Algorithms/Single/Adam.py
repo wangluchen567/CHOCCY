@@ -19,7 +19,7 @@ class Adam(ALGORITHM):
         """
         自适应矩估计梯度下降算法 (Adam)
 
-        Code Author: Luchen Wang
+        Code Maintainer: Luchen Wang
         :param max_iter: 迭代次数
         :param learning_rate: 学习率
         :param beta_1: 历史梯度衰减系数

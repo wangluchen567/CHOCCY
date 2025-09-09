@@ -21,7 +21,7 @@ class ACO(ALGORITHM):
         """
         蚁群算法 (蚁周模型 Ant-Cycle)
 
-        Code Author: Luchen Wang
+        Code Maintainer: Luchen Wang
         :param pop_size: 种群大小(蚁群大小)
         :param max_iter: 迭代次数
         :param alpha: 信息素因子，反映信息素的重要程度，一般取值[1~4]

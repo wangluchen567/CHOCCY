@@ -18,7 +18,7 @@ class GD(ALGORITHM):
         """
         梯度下降算法
 
-        Code Author: Luchen Wang
+        Code Maintainer: Luchen Wang
         :param max_iter: 迭代次数
         :param learning_rate: 学习率
         :param show_mode: 绘图模式

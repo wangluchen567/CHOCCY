@@ -15,16 +15,17 @@ from Algorithms import ALGORITHM
 
 
 class PSO(ALGORITHM):
-    def __init__(self, pop_size=None, max_iter=None, w=0.7298, c1=1.5, c2=1.5, show_mode=0):
+    def __init__(self, pop_size=None, max_iter=None, w=0.7298, c1=1.5, c2=1.5, k=0.3, show_mode=0):
         """
         粒子群优化算法
 
-        Code Author: Luchen Wang
+        Code Maintainer: Luchen Wang
         :param pop_size: 种群大小
         :param max_iter: 迭代次数
         :param w: 惯性权重
         :param c1: 个体学习权重
         :param c2: 社会学习权重
+        :param k: 控制粒子速度的比例因子
         :param show_mode: 绘图模式
         """
         super().__init__(pop_size, max_iter, None, None, None, show_mode)
@@ -33,14 +34,29 @@ class PSO(ALGORITHM):
         self.w = w  # 惯性权重
         self.c1 = c1  # 个体学习权重
         self.c2 = c2  # 社会学习权重
+        self.k = k  # 控制粒子速度的比例因子
         self.particle = None  # 粒子群位置
         self.velocity = None  # 粒子群速度
+        # 用于后续速度上下界裁剪
+        self.v_min, self.v_max = None, None
+        # 用于后续上下界裁剪
+        self.lower_, self.upper_ = None, None
 
     def init_algorithm(self, problem, pop=None):
         super().init_algorithm(problem, pop)
         # 初始化粒子群位置和速度
         self.particle = self.pop.copy()
         self.velocity = np.zeros_like(self.particle)
+        # 设置速度上下界，以方便后续用于裁剪
+        self.v_min = self.k * (self.lower - self.upper).reshape(1, -1).repeat(len(self.particle), 0)
+        self.v_max = self.k * (self.upper - self.lower).reshape(1, -1).repeat(len(self.particle), 0)
+        # 预处理上下界，以方便后续用于裁剪
+        if isinstance(self.lower, int) or isinstance(self.lower, float):
+            self.lower_ = np.zeros(self.particle.shape) + self.lower
+            self.upper_ = np.zeros(self.particle.shape) + self.upper
+        else:
+            self.lower_ = self.lower.reshape(1, -1).repeat(len(self.particle), 0)
+            self.upper_ = self.upper.reshape(1, -1).repeat(len(self.particle), 0)
 
     @ALGORITHM.record_time
     def run_step(self, i):
@@ -55,24 +71,21 @@ class PSO(ALGORITHM):
     def operator_pso(self):
         """重写算子为粒子群优化算子"""
         pop_size, num_dec = self.pop.shape
-        # 得到两个随机矩阵以引入随机性
+        # 创建两个随机矩阵以引入随机性（学习因子）
         r1 = np.random.uniform(size=(pop_size, num_dec))
         r2 = np.random.uniform(size=(pop_size, num_dec))
         # 计算下一代粒子群速度
         self.velocity = (self.w * self.velocity +
                          r1 * self.c1 * (self.pop - self.particle) +
                          r2 * self.c2 * (self.best - self.particle))
+        # 对粒子群速度进行裁剪
+        self.velocity[self.velocity < self.v_min] = self.v_min[self.velocity < self.v_min]
+        self.velocity[self.velocity > self.v_max] = self.v_max[self.velocity > self.v_max]
         # 计算下一代粒子群位置
         self.particle = self.particle + self.velocity
-        # 对上下界进行裁剪
-        if isinstance(self.lower, int) or isinstance(self.lower, float):
-            lower_ = np.ones((pop_size, num_dec)) * self.lower
-            upper_ = np.ones((pop_size, num_dec)) * self.upper
-        else:
-            lower_ = self.lower.reshape(1, -1).repeat(pop_size, 0)
-            upper_ = self.upper.reshape(1, -1).repeat(pop_size, 0)
-        self.particle[self.particle < lower_] = lower_[self.particle < lower_]
-        self.particle[self.particle > upper_] = upper_[self.particle > upper_]
+        # 根据上下界对位置进行裁剪
+        self.particle[self.particle < self.lower_] = self.lower_[self.particle < self.lower_]
+        self.particle[self.particle > self.upper_] = self.upper_[self.particle > self.upper_]
 
     def update_particle(self):
         """更新粒子群个体最优位置"""

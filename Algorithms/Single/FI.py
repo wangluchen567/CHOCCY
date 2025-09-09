@@ -19,7 +19,7 @@ class FI(ALGORITHM):
         """
         最远插入启发式算法(Farthest Insertion)
 
-        Code Author: Luchen Wang
+        Code Maintainer: Luchen Wang
         :param show_mode: 绘图模式
         """
         super().__init__(pop_size=1, max_iter=None, show_mode=show_mode)

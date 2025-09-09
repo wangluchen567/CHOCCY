@@ -31,7 +31,7 @@ class PROBLEM(object):
                  upper: Union[float, np.ndarray]):
         """
         问题父类
-        *Code Author: LuChen Wang
+        *Code Maintainer: LuChen Wang
         :param problem_type: 问题类型 (0:实数, 1:整数, 2:二进制, 3:序列, 4:固定标签)(可混合)
         :param num_dec: 决策变量个数(维度)
         :param num_obj: 目标个数
@@ -95,6 +95,10 @@ class PROBLEM(object):
         # 整数问题不包含上界
         if PROBLEM.INT in self.type_indices:
             self.upper[self.type_indices[PROBLEM.INT]] -= 1e-9
+        # 二进制问题上下界范围为[0-1]
+        if PROBLEM.BIN in self.type_indices:
+            self.lower[self.type_indices[PROBLEM.BIN]] = 0
+            self.upper[self.type_indices[PROBLEM.BIN]] = 1
 
     def format_type(self):
         """重整问题类型并确定混合位置"""

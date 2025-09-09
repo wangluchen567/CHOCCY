@@ -27,9 +27,10 @@ def polynomial_mutation(offspring, lower, upper, mutate_prob, eta=20):
     :return: 变异后的子代种群
     """
     o_size, num_dec = offspring.shape
+    # 根据上下界进行裁剪
     if isinstance(lower, int) or isinstance(lower, float):
-        lowers = np.ones((o_size, num_dec)) * lower
-        uppers = np.ones((o_size, num_dec)) * upper
+        lowers = np.zeros((o_size, num_dec)) + lower
+        uppers = np.zeros((o_size, num_dec)) + upper
     else:
         lowers = lower.reshape(1, -1).repeat(o_size, 0)
         uppers = upper.reshape(1, -1).repeat(o_size, 0)

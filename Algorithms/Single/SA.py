@@ -19,7 +19,7 @@ class SA(ALGORITHM):
         """
         模拟退火算法
 
-        Code Author: Luchen Wang
+        Code Maintainer: Luchen Wang
         :param max_iter: 迭代次数
         :param init_temp: 初始温度
         :param alpha: 温度衰减系数

@@ -22,7 +22,7 @@ class GFLS(ALGORITHM):
         References:
             GUIDED LOCAL SEARCH,
             Christos Voudouris, Edward P. K. Tsang and Abdullah Alsheddy
-        Code Author:
+        Code Maintainer:
             Luchen Wang
         :param max_iter: 迭代次数
         :param alpha: 用于更新lambda的超参数

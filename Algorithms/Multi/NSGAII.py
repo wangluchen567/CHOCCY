@@ -23,7 +23,7 @@ class NSGAII(ALGORITHM):
         References:
             A fast and elitist multi-objective genetic algorithm: NSGA-II,
             K. Deb, A. Pratap, S. Agarwal, and T. Meyarivan
-        Code Author:
+        Code Maintainer:
             Luchen Wang
         :param pop_size: 种群大小
         :param max_iter: 迭代次数
