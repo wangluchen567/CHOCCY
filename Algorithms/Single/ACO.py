@@ -44,8 +44,6 @@ class ACO(ALGORITHM):
     @ALGORITHM.record_time
     def init_algorithm(self, problem, pop=None):
         """初始化算法"""
-        # 初始化目标值和约束值为无穷大
-        self.best_obj, self.best_con = np.inf, np.inf
         # 初始化算法参数
         super().init_algorithm(problem, pop)
         # 问题必须提供距离矩阵
@@ -106,7 +104,7 @@ class ACO(ALGORITHM):
         # 若满足约束则指定约束为0
         best_con = best_con if best_con > 0 else 0
         # 若解更满足约束或者目标值更好则更新解
-        if (best_con < self.best_con) or (best_con == self.best_con and best_obj < self.best_obj):
+        if self.best is None or best_con < self.best_con or (best_con == self.best_con and best_obj < self.best_obj):
             self.best, self.best_obj, self.best_con = best, best_obj, best_con
 
     def get_params_info(self):

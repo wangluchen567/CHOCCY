@@ -322,13 +322,6 @@ class ALGORITHM(object):
         """
         return record_time(method)
 
-    def get_best(self):
-        """获取种群最优解与其目标值约束值"""
-        if self.num_obj == 1:
-            return self.best, self.best_obj[0], self.best_con[0]
-        else:
-            return self.best, self.best_obj, self.best_con
-
     def init_pop(self):
         """初始化种群"""
         init_dict = {ALGORITHM.REAL: self.init_pop_real,
@@ -521,6 +514,13 @@ class ALGORITHM(object):
         best_obj = objs_sat[min_index]
         best_con = cons_sat[min_index]
         return best, best_obj, best_con
+
+    def get_best(self):
+        """获取种群最优解与其目标值约束值"""
+        if self.num_obj == 1:
+            return self.best, self.best_obj[0], self.best_con[0]
+        else:
+            return self.best, self.best_obj, self.best_con
 
     def record(self):
         """记录当前种群的信息"""

@@ -15,7 +15,7 @@ from Algorithms import ALGORITHM
 
 
 class PSO(ALGORITHM):
-    def __init__(self, pop_size=None, max_iter=None, w=0.7298, c1=1.5, c2=1.5, k=0.3, show_mode=0):
+    def __init__(self, pop_size=None, max_iter=None, w=0.7298, c1=1.5, c2=1.5, k=0.15, show_mode=0):
         """
         粒子群优化算法
 
@@ -44,19 +44,20 @@ class PSO(ALGORITHM):
 
     def init_algorithm(self, problem, pop=None):
         super().init_algorithm(problem, pop)
-        # 初始化粒子群位置和速度
+        # 初始化粒子群位置
         self.particle = self.pop.copy()
-        self.velocity = np.zeros_like(self.particle)
         # 设置速度上下界，以方便后续用于裁剪
         self.v_min = self.k * (self.lower - self.upper).reshape(1, -1).repeat(len(self.particle), 0)
         self.v_max = self.k * (self.upper - self.lower).reshape(1, -1).repeat(len(self.particle), 0)
+        # 初始化粒子群速度为随机值
+        self.velocity = np.random.uniform(self.v_min, self.v_max, size=self.particle.shape)
         # 预处理上下界，以方便后续用于裁剪
         if isinstance(self.lower, int) or isinstance(self.lower, float):
             self.lower_ = np.zeros(self.particle.shape) + self.lower
             self.upper_ = np.zeros(self.particle.shape) + self.upper
         else:
-            self.lower_ = self.lower.reshape(1, -1).repeat(len(self.particle), 0)
-            self.upper_ = self.upper.reshape(1, -1).repeat(len(self.particle), 0)
+            self.lower_ = np.full((len(self.particle), len(self.lower)), self.lower)
+            self.upper_ = np.full((len(self.particle), len(self.upper)), self.upper)
 
     @ALGORITHM.record_time
     def run_step(self, i):
@@ -70,22 +71,19 @@ class PSO(ALGORITHM):
 
     def operator_pso(self):
         """重写算子为粒子群优化算子"""
-        pop_size, num_dec = self.pop.shape
         # 创建两个随机矩阵以引入随机性（学习因子）
-        r1 = np.random.uniform(size=(pop_size, num_dec))
-        r2 = np.random.uniform(size=(pop_size, num_dec))
-        # 计算下一代粒子群速度
+        r1 = np.random.uniform(size=(self.pop_size, self.num_dec))
+        r2 = np.random.uniform(size=(self.pop_size, self.num_dec))
+        # 计算下一代粒子群速度（当前种群 pop 作为 p_best）
         self.velocity = (self.w * self.velocity +
                          r1 * self.c1 * (self.pop - self.particle) +
                          r2 * self.c2 * (self.best - self.particle))
         # 对粒子群速度进行裁剪
-        self.velocity[self.velocity < self.v_min] = self.v_min[self.velocity < self.v_min]
-        self.velocity[self.velocity > self.v_max] = self.v_max[self.velocity > self.v_max]
+        self.velocity = np.clip(self.velocity, self.v_min, self.v_max)
         # 计算下一代粒子群位置
         self.particle = self.particle + self.velocity
         # 根据上下界对位置进行裁剪
-        self.particle[self.particle < self.lower_] = self.lower_[self.particle < self.lower_]
-        self.particle[self.particle > self.upper_] = self.upper_[self.particle > self.upper_]
+        self.particle = np.clip(self.particle, self.lower_, self.upper_)
 
     def update_particle(self):
         """更新粒子群个体最优位置"""
@@ -95,11 +93,20 @@ class PSO(ALGORITHM):
         particle_fits = self.cal_fits(particle_objs, particle_cons)
         # 得到更优的个体下标
         better = particle_fits < self.fits
-        # 更新个体最优位置
+        # 更新个体最优位置（更新 p_best）
         self.pop[better] = self.particle[better]
         self.objs[better] = particle_objs[better]
         self.cons[better] = particle_cons[better]
         self.fits[better] = particle_fits[better]
+
+    def get_current_best(self):
+        """覆写获取最优解，这里获取的是历史最优解"""
+        best, best_obj, best_con = self.get_current_best_(self.pop, self.objs, self.cons)
+        # 若满足约束则指定约束为0
+        best_con = best_con if best_con > 0 else 0
+        # 若解更满足约束或者目标值更好则更新解
+        if self.best is None or best_con < self.best_con or (best_con == self.best_con and best_obj < self.best_obj):
+            self.best, self.best_obj, self.best_con = best, best_obj, best_con
 
     def get_params_info(self):
         """获取参数信息"""
@@ -107,4 +114,5 @@ class PSO(ALGORITHM):
         info['w'] = self.w
         info['c1'] = self.c1
         info['c2'] = self.c2
+        info['k'] = self.k
         return info
