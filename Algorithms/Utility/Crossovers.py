@@ -41,15 +41,15 @@ def simulated_binary_crossover(parents1, parents2, lower, upper, cross_prob, eta
         (parents1 + parents2) / 2 + beta * (parents1 - parents2) / 2,
         (parents1 + parents2) / 2 - beta * (parents1 - parents2) / 2
     ))
-    # 根据上下界进行裁剪
+    # 将上下界重整为相同形状
     if isinstance(lower, int) or isinstance(lower, float):
         lowers = np.zeros((2 * p_size, num_dec)) + lower
         uppers = np.zeros((2 * p_size, num_dec)) + upper
     else:
         lowers = lower.reshape(1, -1).repeat(2 * p_size, 0)
         uppers = upper.reshape(1, -1).repeat(2 * p_size, 0)
-    offspring[offspring < lowers] = lowers[offspring < lowers]
-    offspring[offspring > uppers] = uppers[offspring > uppers]
+    # 按照上下界对超出部分进行裁剪
+    offspring = np.clip(offspring, lowers, uppers)
     return offspring
 
 
@@ -193,15 +193,15 @@ def de_rand_1(offspring, parents1, parents2, lower, upper, cross_prob, factor):
     p_size, num_dec = parents1.shape
     site = np.random.random((p_size, num_dec)) < cross_prob
     offspring[site] = offspring[site] + factor * (parents1[site] - parents2[site])
-    # 上下界裁剪
+    # 将上下界重整为相同形状
     if isinstance(lower, int) or isinstance(lower, float):
         lowers = np.ones((p_size, num_dec)) * lower
         uppers = np.ones((p_size, num_dec)) * upper
     else:
         lowers = lower.reshape(1, -1).repeat(p_size, 0)
         uppers = upper.reshape(1, -1).repeat(p_size, 0)
-    offspring[offspring < lowers] = lowers[offspring < lowers]
-    offspring[offspring > uppers] = uppers[offspring > uppers]
+    # 按照上下界对超出部分进行裁剪
+    offspring = np.clip(offspring, lowers, uppers)
     return offspring
 
 
@@ -225,15 +225,15 @@ def de_rand_2(offspring, parents1, parents2, parents3, parents4, lower, upper, c
     site = np.random.random((p_size, num_dec)) < cross_prob
     offspring[site] = (offspring[site] + factor * (parents1[site] - parents2[site]) +
                        factor * (parents3[site] - parents4[site]))
-    # 上下界裁剪
+    # 将上下界重整为相同形状
     if isinstance(lower, int) or isinstance(lower, float):
         lowers = np.ones((p_size, num_dec)) * lower
         uppers = np.ones((p_size, num_dec)) * upper
     else:
         lowers = lower.reshape(1, -1).repeat(p_size, 0)
         uppers = upper.reshape(1, -1).repeat(p_size, 0)
-    offspring[offspring < lowers] = lowers[offspring < lowers]
-    offspring[offspring > uppers] = uppers[offspring > uppers]
+    # 按照上下界对超出部分进行裁剪
+    offspring = np.clip(offspring, lowers, uppers)
     return offspring
 
 
@@ -255,15 +255,15 @@ def de_best_1(best, parents1, parents2, lower, upper, cross_prob, factor):
     site = np.random.random((p_size, num_dec)) < cross_prob
     offspring = np.repeat(best[np.newaxis, :], p_size, axis=0)
     offspring[site] = offspring[site] + factor * (parents1[site] - parents2[site])
-    # 上下界裁剪
+    # 将上下界重整为相同形状
     if isinstance(lower, int) or isinstance(lower, float):
         lowers = np.ones((p_size, num_dec)) * lower
         uppers = np.ones((p_size, num_dec)) * upper
     else:
         lowers = lower.reshape(1, -1).repeat(p_size, 0)
         uppers = upper.reshape(1, -1).repeat(p_size, 0)
-    offspring[offspring < lowers] = lowers[offspring < lowers]
-    offspring[offspring > uppers] = uppers[offspring > uppers]
+    # 按照上下界对超出部分进行裁剪
+    offspring = np.clip(offspring, lowers, uppers)
     return offspring
 
 
@@ -288,15 +288,15 @@ def de_best_2(best, parents1, parents2, parents3, parents4, lower, upper, cross_
     offspring = np.repeat(best[np.newaxis, :], p_size, axis=0)
     offspring[site] = (offspring[site] + factor * (parents1[site] - parents2[site]) +
                        factor * (parents3[site] - parents4[site]))
-    # 上下界裁剪
+    # 将上下界重整为相同形状
     if isinstance(lower, int) or isinstance(lower, float):
         lowers = np.ones((p_size, num_dec)) * lower
         uppers = np.ones((p_size, num_dec)) * upper
     else:
         lowers = lower.reshape(1, -1).repeat(p_size, 0)
         uppers = upper.reshape(1, -1).repeat(p_size, 0)
-    offspring[offspring < lowers] = lowers[offspring < lowers]
-    offspring[offspring > uppers] = uppers[offspring > uppers]
+    # 按照上下界对超出部分进行裁剪
+    offspring = np.clip(offspring, lowers, uppers)
     return offspring
 
 
