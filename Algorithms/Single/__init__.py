@@ -13,6 +13,7 @@ See the Mulan PSL v2 for more details.
 # 导入所有算法模块
 
 # 通用问题算法
+# (实数/整数/二进制/序列/固定标签)
 from .GA import GA
 from .SA import SA
 
@@ -21,6 +22,9 @@ from .DE import DE
 from .PSO import PSO
 from .GD import GD
 from .Adam import Adam
+
+# 二进制问题算法
+from .BPSO import BPSO
 
 # KP问题算法
 from .DP_KP import DPKP
