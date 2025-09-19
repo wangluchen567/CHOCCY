@@ -517,10 +517,16 @@ class ALGORITHM(object):
 
     def get_best(self):
         """获取种群最优解与其目标值约束值"""
-        if self.num_obj == 1:
-            return self.best, self.best_obj[0], self.best_con[0]
+        best = self.best.copy()
+        if self.num_obj == 1 and isinstance(self.best_obj, np.ndarray):
+            best_obj = self.best_obj[0]
         else:
-            return self.best, self.best_obj, self.best_con
+            best_obj = self.best_obj
+        if self.num_obj == 1 and isinstance(self.best_con, np.ndarray):
+            best_con = self.best_con[0]
+        else:
+            best_con = self.best_con
+        return best, best_obj, best_con
 
     def record(self):
         """记录当前种群的信息"""
@@ -880,3 +886,46 @@ class ALGORITHM(object):
         self.pop_history = list(load_arrays(file_path + "\\pop_history." + save_type).values())
         self.objs_history = list(load_arrays(file_path + "\\objs_history." + save_type).values())
         self.cons_history = list(load_arrays(file_path + "\\cons_history." + save_type).values())
+
+    def print_best_info(self, need_format=True):
+        """打印最优个体解信息(可格式化打印)"""
+        best, best_obj, best_con = self.get_best()
+        info = ''
+        if need_format:
+            # 若格式化则输出为字符串
+            info += f'best: {self.format_array(best)}\n'
+            info += f'best_obj: {self.format_array(best_obj)}\n'
+            info += f'best_con: {self.format_array(best_con)}\n'
+        else:
+            info += f'best: {best}\n'
+            info += f'best_obj: {best_obj}\n'
+            info += f'best_con: {best_con}\n'
+        print(info)
+
+    @staticmethod
+    def format_array(arr):
+        """
+        格式化打印数组，在每个元素之间添加逗号分隔
+        :param arr: 输入的数组，可以是列表、元组、numpy数组等
+        :return: 格式化后的字符串
+        """
+
+        def _format_recursive(data):
+            # 如果是嵌套的数组/列表
+            if isinstance(data, (list, tuple, np.ndarray)):
+                # 检查当前层是否包含嵌套结构
+                has_nested = any(isinstance(item, (list, tuple, np.ndarray)) for item in data)
+
+                if has_nested:
+                    # 对于嵌套结构，递归处理每个元素
+                    elements = [_format_recursive(item) for item in data]
+                    return '[' + ', '.join(elements) + ']'
+                else:
+                    # 对于最内层，直接格式化元素
+                    elements = [str(item) for item in data]
+                    return '[' + ', '.join(elements) + ']'
+            else:
+                # 单个元素
+                return str(data)
+
+        return _format_recursive(arr)
