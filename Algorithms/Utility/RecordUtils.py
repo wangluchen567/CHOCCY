@@ -13,6 +13,7 @@ KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
+import os
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -29,6 +30,9 @@ def setup_logger(log_path=None, to_file=False, to_console=True):
     # 设置日志级别为INFO
     # 只接收INFO以上级别，不包括DEBUG
     logger.setLevel(logging.INFO)
+    # 清除已有的 handler
+    if logger.hasHandlers():
+        logger.handlers.clear()
     # 创建一个格式器，日志格式为 [时间] 日志内容
     formatter = logging.Formatter(
         '[%(asctime)s] %(message)s',
@@ -38,6 +42,10 @@ def setup_logger(log_path=None, to_file=False, to_console=True):
     if to_file:
         if log_path is None:
             raise ValueError("Please specify the log output path !")
+        # 检查日志文件路径，若不存在则自动创建日志目录
+        log_dir = os.path.dirname(log_path)
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
         # 创建 RotatingFileHandler
         file_handler = RotatingFileHandler(
             log_path,
@@ -52,7 +60,7 @@ def setup_logger(log_path=None, to_file=False, to_console=True):
         # 将文件处理器添加到 logger
         logger.addHandler(file_handler)
     # 判断是否输出日志到控制台
-    if not to_file and to_console:
+    if to_console:
         # 创建一个控制台处理器，将日志输出到控制台
         console_handler = logging.StreamHandler()
         # 设置控制台处理器的日志级别
