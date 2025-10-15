@@ -147,7 +147,7 @@ class ALGORITHM(object):
         self.cross_prob = 1.0 if self.cross_prob is None else self.cross_prob
         self.educate_prob = 0.5 if self.educate_prob is None else self.educate_prob
         self.mutate_prob = 1 / self.num_dec if self.mutate_prob is None else self.mutate_prob
-        self.logger = setup_logger() if self.show_mode == self.LOG else None  # 设置日志记录器
+        self.logger = setup_logger() if self.show_mode == self.LOG and self.logger is None else self.logger
 
     def check_feasibility(self):
         """检查算法是否可求解该问题"""
