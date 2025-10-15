@@ -66,7 +66,8 @@ class AppLogger:
         # 避免单例模式下的重复初始化
         if self.singleton_mode and self._initialized:
             return
-        self.logger = None  # 日志记录对象
+        # 日志记录对象
+        self.logger = None
         # 使用参数或默认值
         self.log_path = log_path
         self.to_file = to_file
