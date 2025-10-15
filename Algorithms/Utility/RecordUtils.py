@@ -30,7 +30,7 @@ def setup_logger(log_path=None, to_file=True, to_console=True, singleton=False):
         log_path=log_path,
         to_file=to_file,
         to_console=to_console,
-        singleton=singleton  # 单例模式开关
+        singleton=singleton
     )
     return app_logger.get_logger()
 
@@ -53,15 +53,16 @@ class AppLogger:
         # 返回实例
         return instance
 
-    def __init__(self, log_path=None, to_file=True, to_console=True, singleton=True):
+    def __init__(self, log_path=None, to_file=True, to_console=True, singleton=False):
         """
         支持单例模式的日志类
         :param log_path: 输出日志的文件路径
         :param to_file: 是否输出日志到指定路径
         :param to_console: 是否输出日志到控制台
-        :param singleton: 是否启用单例模式(默认启用)
+        :param singleton: 是否启用单例模式(默认不启用)
         """
-        self.singleton_mode = singleton  # 是否启用单例模式
+        # 是否启用单例模式
+        self.singleton_mode = singleton
         # 避免单例模式下的重复初始化
         if self.singleton_mode and self._initialized:
             return
