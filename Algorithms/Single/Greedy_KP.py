@@ -36,28 +36,23 @@ class GreedyKP(ALGORITHM):
         self.max_iter = self.num_dec
         # 问题必须为背包问题
         if hasattr(self.problem, 'weights') and hasattr(self.problem, 'values') and hasattr(self.problem, 'capacity'):
-            self.weights = self.problem.weights
-            self.values = self.problem.values
+            self.weights = self.problem.weights.flatten()
+            self.values = self.problem.values.flatten()
             self.capacity = self.problem.capacity
         else:
             raise ValueError("This method can only solve knapsack problems")
 
     @ALGORITHM.record_time
     def run(self):
-        cost = (self.values / self.weights).flatten()
-        cost_sort = np.argsort(-cost)
-        sum_weight = 0
-        chosen = []
-        for i in self.get_iterator():
-            if sum_weight == self.capacity:
-                break
-            if sum_weight > self.capacity:
-                last = chosen.pop()
-                sum_weight -= self.weights[last]
-                break
-            chosen.append(cost_sort[i])
-            sum_weight += self.weights[cost_sort[i]]
+        # 计算每单位重量物品的价值
+        cost = self.values / self.weights
+        # 将价值从大到小进行排序，得到排序下标
+        sort_indices = np.argsort(-cost)
+        # 选择排序下标中求和不超出背包容量的部分
+        chosen = sort_indices[np.cumsum(self.weights[sort_indices]) <= self.capacity]
+        # 初始化解
         solution = np.zeros(len(self.weights), dtype=int)
+        # 根据选择的下标为解进行赋值
         solution[chosen] = 1
         self.pop = np.array([solution])
         self.eval_and_update(self.pop)
