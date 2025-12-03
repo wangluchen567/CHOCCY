@@ -16,48 +16,48 @@ See the Mulan PSL v2 for more details.
 import numpy as np
 
 
-def elitist_selection(fitness, num_next=None):
+def elitist_selection(fitness, next_size=None):
     """
     精英选择策略
     :param fitness: 种群的适应度值(最小化)
-    :param num_next: 进入下一步操作的个体数量
+    :param next_size: 进入下一步操作的个体数量
     :return: 选择的优秀个体进入下一步操作
     """
-    if num_next is None:
-        num_next = len(fitness)
-    best_indices = np.argsort(fitness)[:num_next]
+    if next_size is None:
+        next_size = len(fitness)
+    best_indices = np.argsort(fitness)[:next_size]
     return best_indices
 
 
-def tournament_selection(fitness, num_next=None, k=2):
+def tournament_selection(fitness, next_size=None, k=2):
     """
     k元锦标赛选择
     :param fitness: 种群的适应度值(最小化)
-    :param num_next: 进入下一步操作的个体数量
+    :param next_size: 进入下一步操作的个体数量
     :param k: 参数k(默认值为2)
     :return: 选择的优秀个体进入下一步操作
     """
-    if num_next is None:
-        num_next = len(fitness)
-    indices = np.random.randint(0, len(fitness), (num_next, k))
+    if next_size is None:
+        next_size = len(fitness)
+    indices = np.random.randint(0, len(fitness), (next_size, k))
     best = np.argmin(fitness.flatten()[indices], axis=1)
-    best_indices = indices[range(num_next), best]
+    best_indices = indices[range(next_size), best]
     return best_indices
 
 
-def roulette_selection(fitness, num_next=None, replace=True):
+def roulette_selection(fitness, next_size=None, replace=True):
     """
     轮盘选择法
     :param fitness: 种群的适应度值(最小化)
-    :param num_next: 进入下一步操作的个体数量
+    :param next_size: 进入下一步操作的个体数量
     :param replace: 是否可以重复抽取选择
     :return: 选择的优秀个体进入下一步操作
     """
-    if num_next is None:
-        num_next = len(fitness)
+    if next_size is None:
+        next_size = len(fitness)
     # 对适应度取倒数并进行概率化
     fits = 1 / (fitness + 1e-9)
     prob = fits / np.sum(fits)
-    best_indices = np.random.choice(np.arange(len(fitness)), size=num_next,
+    best_indices = np.random.choice(np.arange(len(fitness)), size=next_size,
                                     replace=replace, p=prob.flatten())
     return best_indices

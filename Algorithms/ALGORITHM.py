@@ -139,8 +139,6 @@ class ALGORITHM(object):
         # 决策变量示例(固定标签问题)
         if hasattr(self.problem, 'example_dec'):
             self.example_dec = self.problem.example_dec
-        # 初始化评价指标类型(单目标为适应度, 多目标默认为超体积指标)
-        self.score_type = 'Fitness' if self.num_obj == 1 else 'HV'
         # 初始化算法参数
         self.pop_size = 100 if self.pop_size is None else self.pop_size
         self.max_iter = 100 if self.max_iter is None else self.max_iter
@@ -148,6 +146,8 @@ class ALGORITHM(object):
         self.educate_prob = 0.5 if self.educate_prob is None else self.educate_prob
         self.mutate_prob = 1 / self.num_dec if self.mutate_prob is None else self.mutate_prob
         self.logger = setup_logger() if self.show_mode == self.LOG and self.logger is None else self.logger
+        # 初始化评价指标类型(单目标默认为适应度, 多目标默认为超体积指标)
+        self.score_type = ('Fitness' if self.num_obj == 1 else 'HV') if self.score_type is None else self.score_type
 
     def check_feasibility(self):
         """检查算法是否可求解该问题"""
@@ -424,21 +424,21 @@ class ALGORITHM(object):
         """对子代进行教育"""
         pass
 
-    def mating_pool_selection(self, num_next=None, k=2):
+    def mating_pool_selection(self, next_size=None, k=2):
         """
         匹配池选择
-        :param num_next: 下一代种群的个体数量
+        :param next_size: 下一代种群的个体数量
         :param k: 用于锦标赛选择，K元锦标赛
         :return: 匹配池（下标）
         """
-        if num_next is None:
-            num_next = self.pop_size
+        if next_size is None:
+            next_size = self.pop_size
         if k >= 2:
             # 使用锦标赛选择获取匹配池
-            return tournament_selection(self.fits, num_next, k)
+            return tournament_selection(self.fits, next_size, k)
         else:
             # 使用轮盘选择法获取匹配池
-            return roulette_selection(self.fits, num_next)
+            return roulette_selection(self.fits, next_size)
 
     def pop_merge(self, offspring):
         """
