@@ -10,6 +10,7 @@ KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
+import warnings
 import numpy as np
 from Algorithms import ALGORITHM
 
@@ -70,8 +71,7 @@ class GFLS(ALGORITHM):
             utils_max = np.max(utils)
             # 开始只激活最长边端点的子领域
             self.bits = np.zeros(len(self.tour))
-            self.bits[np.where(utils == utils_max)[0][0]] = 1
-            self.bits[np.where(utils == utils_max)[0][1]] = 1
+            self.bits[np.argwhere(utils == utils_max).ravel()] = 1
 
     @ALGORITHM.record_time
     def run_step(self, i):
@@ -90,8 +90,7 @@ class GFLS(ALGORITHM):
         self.lamb = self.alpha * self.tour_cost / (len(self.tour) + 1)
         # 激活端点子领域
         self.bits = np.zeros(len(self.tour))
-        self.bits[np.where(utils == utils_max)[0][0]] = 1
-        self.bits[np.where(utils == utils_max)[0][1]] = 1
+        self.bits[np.argwhere(utils == utils_max).ravel()] = 1
         if self.tour_cost < self.objs[0]:
             self.pop[0] = self.tour.copy()
             self.eval_and_update(self.pop)
@@ -106,7 +105,7 @@ class GFLS(ALGORITHM):
         return info
 
 
-def fast_local_search(tour, dist_mat, bits, p_mat, lamb):
+def fast_local_search_(tour, dist_mat, bits, p_mat, lamb):
     """快速局部搜索"""
     while np.sum(bits) > 0:
         for i in range(len(tour)):
@@ -123,7 +122,7 @@ def two_opt(tour, dist_mat, p_mat, lamb, i):
     """搜索第i个城市的邻域"""
     improved = False
     active_set = []
-    idx = np.where(np.array(tour) == i)[0][0]
+    idx = np.where(tour == i)[0][0]
     tour = np.concatenate((tour[idx:], tour[:idx]))
     for j in range(3, len(tour)):
         n1, n2, n3, n4 = tour[0], tour[1], tour[j - 1], tour[j]
@@ -142,3 +141,89 @@ def cost_change(dist_mat, p_mat, lamb, n1, n2, n3, n4):
     p = p_mat[n1, n3] + p_mat[n2, n4] - p_mat[n1, n2] - p_mat[n3, n4]
     total = result + lamb * p
     return total
+
+
+try:
+    # 尝试导入numba
+    from numba import jit
+
+
+    @jit(nopython=True, cache=True)
+    def fast_local_search_jit(tour, dist_mat, bits, p_mat, lamb):
+        """
+        快速局部搜索
+        :param tour: TSP回路
+        :param dist_mat: 距离矩阵
+        :param bits: 子邻域激活情况
+        :param p_mat: 惩罚矩阵
+        :param lamb: 超参数
+        :return: 搜索结果
+        """
+        while np.sum(bits) > 0:
+            # 搜索激活的子邻域
+            for i in range(len(tour)):
+                if bits[i]:
+                    tour, improved, active_set = two_opt_jit(tour, dist_mat, p_mat, lamb, i)
+                    if improved:  # 如果有提升，则激活其子邻域
+                        bits[active_set] = 1
+                    else:  # 否则冻结其子领域
+                        bits[i] = 0
+        # 返回搜索后的回路
+        return tour
+
+
+    def fast_local_search(tour, dist_mat, bits, p_mat, lamb):
+        return fast_local_search_jit(tour, dist_mat, bits, p_mat, lamb)
+
+
+    @jit(nopython=True, cache=True)
+    def two_opt_jit(tour, dist_mat, p_mat, lamb, i):
+        """
+        搜索第i个节点的邻域
+        :param tour: TSP回路
+        :param dist_mat: 距离矩阵
+        :param p_mat: 惩罚矩阵
+        :param lamb: 超参数
+        :param i: 第i个节点
+        :return: 搜索后的结果
+        """
+        improved = False
+        active_set = np.zeros(4, dtype=np.int32)
+        idx = np.where(tour == i)[0][0]
+        tour = np.concatenate((tour[idx:], tour[:idx]))
+        for j in range(3, len(tour)):
+            n1, n2, n3, n4 = tour[0], tour[1], tour[j - 1], tour[j]
+            # 记录要激活的子邻域
+            active_set = np.array([n1, n2, n3, n4])
+            if cost_change_jit(dist_mat, p_mat, lamb, n1, n2, n3, n4) < -1e-9:
+                tour[1:j] = tour[j - 1:0:-1]
+                improved = True
+                # 如果有提示则直接返回结果
+                return tour, improved, active_set
+        # 返回搜索后的回路，是否有提升，激活的子邻域
+        return tour, improved, active_set
+
+
+    @jit(nopython=True, cache=True)
+    def cost_change_jit(dist_mat, p_mat, lamb, n1, n2, n3, n4):
+        """
+        计算带惩罚的2-opt后的收益值
+        :param dist_mat: 距离矩阵
+        :param p_mat: 惩罚矩阵
+        :param lamb: 超参数
+        :param n1: 2-opt的节点1
+        :param n2: 2-opt的节点2
+        :param n3: 2-opt的节点3
+        :param n4: 2-opt的节点4
+        :return: 收益值
+        """
+        result = dist_mat[n1, n3] + dist_mat[n2, n4] - dist_mat[n1, n2] - dist_mat[n3, n4]
+        p = p_mat[n1, n3] + p_mat[n2, n4] - p_mat[n1, n2] - p_mat[n3, n4]
+        total = result + lamb * p
+        return total
+
+
+except ImportError:
+    # 如果导入numba加速库失败，使用原始的函数
+    warnings.warn("Optimizing problems without using numba acceleration...")
+    fast_local_search = fast_local_search_
