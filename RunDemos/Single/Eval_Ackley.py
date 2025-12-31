@@ -6,14 +6,14 @@ from Algorithms.Single import GA, SA, DE, PSO
 if __name__ == '__main__':
     problems = [Ackley(num_dec=30)]
     algorithms = dict()
-    pop_size, max_iter = 100, 100
+    pop_size, max_iter = 50, 200
     algorithms['GA'] = GA(pop_size, max_iter)
     algorithms['SA'] = SA(pop_size, max_iter)
     algorithms['PSO'] = PSO(pop_size, max_iter)
-    algorithms['DE/rand/1'] = DE(pop_size, max_iter, operator_type=DE.RAND1)
-    algorithms['DE/rand/2'] = DE(pop_size, max_iter, operator_type=DE.RAND2)
-    algorithms['DE/best/1'] = DE(pop_size, max_iter, operator_type=DE.BEST1)
-    algorithms['DE/best/2'] = DE(pop_size, max_iter, operator_type=DE.BEST2)
+    algorithms['DE/rand/1'] = DE(pop_size, max_iter, operator_type=DE.RAND_1)
+    algorithms['DE/rand/2'] = DE(pop_size, max_iter, operator_type=DE.RAND_2)
+    algorithms['DE/best/1'] = DE(pop_size, max_iter, operator_type=DE.BEST_1)
+    algorithms['DE/best/2'] = DE(pop_size, max_iter, operator_type=DE.BEST_2)
     evaluator = Evaluator(problems, algorithms, num_run=30, same_init=True)
     evaluator.run()
     # # 使用多核CPU并行优化
