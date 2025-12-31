@@ -17,7 +17,7 @@ from Problems import PROBLEM
 class Ackley(PROBLEM):
     def __init__(self, num_dec=30):
         num_obj = 1
-        super().__init__(PROBLEM.REAL, num_dec, num_obj, lower=-32, upper=32)
+        super().__init__(PROBLEM.REAL, num_dec, num_obj, lower=-32.768, upper=32.768)
 
     def _cal_objs(self, X):
         objs = -20 * np.exp(-0.2 * np.sqrt(np.sum(X ** 2, axis=1) / self.num_dec)) - np.exp(
