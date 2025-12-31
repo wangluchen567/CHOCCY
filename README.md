@@ -197,8 +197,8 @@ algorithms = dict()  # 将多个算法放入字典
 pop_size, max_iter = 100, 100  # 定义所有算法的参数
 # 实例化所有算法
 algorithms['GA'] = GA(pop_size, max_iter)
-algorithms['DE/rand/1'] = DE(pop_size, max_iter, operator_type=DE.RAND1)
-algorithms['DE/best/1'] = DE(pop_size, max_iter, operator_type=DE.BEST1)
+algorithms['DE/rand/1'] = DE(pop_size, max_iter, operator_type=DE.RAND_1)
+algorithms['DE/best/1'] = DE(pop_size, max_iter, operator_type=DE.BEST_1)
 # 定义算法对比类，并指定绘图模式为决策向量与目标向量绘制到同一个二维图像上
 comparator = Comparator(problem, algorithms, show_mode=View.MIX2D, same_init=True)
 comparator.run()  # 运行所有算法进行比较，实时对比算法运行情况
