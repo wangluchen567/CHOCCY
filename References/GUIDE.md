@@ -226,7 +226,7 @@ def _cal_obj(self, x):
 
 ```python
 import numpy as np
-
+"""请注意：这里只是介绍源码"""
 def _cal_objs(self, X):
     """计算整个种群变量的目标值(建议覆写)"""
     pop_size = len(X)
@@ -539,10 +539,10 @@ if __name__ == '__main__':
     algorithms['GA'] = GA(pop_size, max_iter)
     algorithms['SA'] = SA(pop_size, max_iter)
     algorithms['PSO'] = PSO(pop_size, max_iter)
-    algorithms['DE/rand/1'] = DE(pop_size, max_iter, operator_type=DE.RAND1)
-    algorithms['DE/rand/2'] = DE(pop_size, max_iter, operator_type=DE.RAND2)
-    algorithms['DE/best/1'] = DE(pop_size, max_iter, operator_type=DE.BEST1)
-    algorithms['DE/best/2'] = DE(pop_size, max_iter, operator_type=DE.BEST2)
+    algorithms['DE/rand/1'] = DE(pop_size, max_iter, operator_type=DE.RAND_1)
+    algorithms['DE/rand/2'] = DE(pop_size, max_iter, operator_type=DE.RAND_2)
+    algorithms['DE/best/1'] = DE(pop_size, max_iter, operator_type=DE.BEST_1)
+    algorithms['DE/best/2'] = DE(pop_size, max_iter, operator_type=DE.BEST_2)
     # 使用比较器比较算法，并展示各个算法目标值的效果比较
     comparator = Comparator(problem, algorithms, show_mode=View.OBJ, same_init=True)
     comparator.run()
@@ -576,10 +576,10 @@ if __name__ == '__main__':
     algorithms['GA'] = GA(pop_size, max_iter)
     algorithms['SA'] = SA(pop_size, max_iter)
     algorithms['PSO'] = PSO(pop_size, max_iter)
-    algorithms['DE/rand/1'] = DE(pop_size, max_iter, operator_type=DE.RAND1)
-    algorithms['DE/rand/2'] = DE(pop_size, max_iter, operator_type=DE.RAND2)
-    algorithms['DE/best/1'] = DE(pop_size, max_iter, operator_type=DE.BEST1)
-    algorithms['DE/best/2'] = DE(pop_size, max_iter, operator_type=DE.BEST2)
+    algorithms['DE/rand/1'] = DE(pop_size, max_iter, operator_type=DE.RAND_1)
+    algorithms['DE/rand/2'] = DE(pop_size, max_iter, operator_type=DE.RAND_2)
+    algorithms['DE/best/1'] = DE(pop_size, max_iter, operator_type=DE.BEST_1)
+    algorithms['DE/best/2'] = DE(pop_size, max_iter, operator_type=DE.BEST_2)
     # 使用评估器评估多种算法在多个问题上的表现
     evaluator = Evaluator(problems, algorithms, num_run=30, same_init=True)
     evaluator.run()
