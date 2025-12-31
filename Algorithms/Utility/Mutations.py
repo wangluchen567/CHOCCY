@@ -34,18 +34,33 @@ def polynomial_mutation(offspring, lower, upper, mutate_prob, eta=20):
     else:
         lowers = lower.reshape(1, -1).repeat(o_size, 0)
         uppers = upper.reshape(1, -1).repeat(o_size, 0)
-    site = np.random.random((o_size, num_dec)) < mutate_prob
+    mask = np.random.random((o_size, num_dec)) < mutate_prob
     mu = np.random.random((o_size, num_dec))
-    temp = site * (mu <= 0.5)
+    temp = mask * (mu <= 0.5)
     offspring[temp] = offspring[temp] + (uppers[temp] - lowers[temp]) * ((2 * mu[temp] + (1 - 2 * mu[temp]) * (
-                1 - (offspring[temp] - lowers[temp]) / (uppers[temp] - lowers[temp])) ** (eta + 1)) ** (
-                                                                                     1 / (eta + 1)) - 1)
-    temp = site * (mu > 0.5)
+            1 - (offspring[temp] - lowers[temp]) / (uppers[temp] - lowers[temp])) ** (eta + 1)) ** (
+                                                                                 1 / (eta + 1)) - 1)
+    temp = mask * (mu > 0.5)
     offspring[temp] = offspring[temp] + (uppers[temp] - lowers[temp]) * (1 - (
-                2 * (1 - mu[temp]) + 2 * (mu[temp] - 0.5) * (
-                    1 - (uppers[temp] - offspring[temp]) / (uppers[temp] - lowers[temp])) ** (eta + 1)) ** (
-                                                                                     1 / (eta + 1)))
+            2 * (1 - mu[temp]) + 2 * (mu[temp] - 0.5) * (
+            1 - (uppers[temp] - offspring[temp]) / (uppers[temp] - lowers[temp])) ** (eta + 1)) ** (
+                                                                                 1 / (eta + 1)))
     return offspring
+
+
+def diff_mutation(parents, factor):
+    """
+    差分变异(实数问题)
+    :param parents: 进行差分变异的个体(目标向量)
+    :param factor: 缩放因子(差分变异的超参数)
+    :return: 变异后的子代个体
+    """
+    if parents.shape[0] == 3:
+        return parents[0] + factor * (parents[1] - parents[2])
+    elif parents.shape[0] == 5:
+        return parents[0] + factor * (parents[1] - parents[2]) + factor * (parents[3] - parents[4])
+    else:
+        raise ValueError("The given number of parent populations does not match the required number")
 
 
 def bit_mutation(offspring, mutate_prob):
@@ -74,8 +89,8 @@ def exchange_mutation(offspring, mutate_prob):
     # 要满足变异概率才可变异
     mask = np.random.rand(o_size) < mutate_prob
     exchanges = exchanges * mask.reshape(-1, 1).repeat(2, axis=1)
-    offspring[np.arange(o_size), exchanges[:, 0]], offspring[np.arange(o_size), exchanges[:, 1]] = offspring[
-        np.arange(o_size), exchanges[:, 1]], offspring[np.arange(o_size), exchanges[:, 0]]
+    offspring[np.arange(o_size), exchanges[:, 0]], offspring[np.arange(o_size), exchanges[:, 1]] \
+        = offspring[np.arange(o_size), exchanges[:, 1]], offspring[np.arange(o_size), exchanges[:, 0]]
     return offspring
 
 
@@ -120,6 +135,6 @@ def fix_label_mutation(offspring, mutate_prob):
     need_mutate = np.where(np.sum(mask, axis=1) > 0)[0]
     points = np.random.randint(num_dec, size=(o_size, 2))
     # 进行交换
-    offspring[need_mutate, points[need_mutate, 0]], offspring[need_mutate, points[need_mutate, 1]] = offspring[
-        need_mutate, points[need_mutate, 1]], offspring[need_mutate, points[need_mutate, 0]]
+    offspring[need_mutate, points[need_mutate, 0]], offspring[need_mutate, points[need_mutate, 1]] \
+        = offspring[need_mutate, points[need_mutate, 1]], offspring[need_mutate, points[need_mutate, 0]]
     return offspring

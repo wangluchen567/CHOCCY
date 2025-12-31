@@ -53,6 +53,41 @@ def simulated_binary_crossover(parents1, parents2, lower, upper, cross_prob, eta
     return offspring
 
 
+def diff_crossover(base_pop, vari_pop, lower, upper, cross_prob):
+    """
+    差分交叉(实数问题)
+    :param base_pop: 原始种群
+    :param vari_pop: 变异后种群
+    :param lower: 取值范围的下界
+    :param upper: 取值范围的上界
+    :param cross_prob: 交叉概率
+    :return: 交叉后的子代种群
+    """
+    # 获取种群形状
+    p_size, num_dec = base_pop.shape
+    # 根据概率创建交叉掩码
+    mask = np.random.random((p_size, num_dec)) < cross_prob
+    # 强制至少有一个维度交叉
+    random_dims = np.random.randint(0, num_dec, p_size)
+    # 创建索引矩阵来设置强制交叉位
+    row_indices = np.arange(p_size)[:, np.newaxis]
+    col_indices = random_dims[:, np.newaxis]
+    # 使用花式索引设置强制交叉位
+    mask[row_indices, col_indices] = True
+    # 交叉得到子代种群
+    offspring = np.where(mask, vari_pop, base_pop)
+    # 将上下界重整为相同形状
+    if isinstance(lower, int) or isinstance(lower, float):
+        lowers = np.ones((p_size, num_dec)) * lower
+        uppers = np.ones((p_size, num_dec)) * upper
+    else:
+        lowers = lower.reshape(1, -1).repeat(p_size, 0)
+        uppers = upper.reshape(1, -1).repeat(p_size, 0)
+    # 按照上下界对超出部分进行裁剪
+    offspring = np.clip(offspring, lowers, uppers)
+    return offspring
+
+
 def binary_crossover(parents1, parents2, cross_prob):
     """
     二进制均匀交叉(二进制问题)
@@ -173,130 +208,6 @@ def fix_label_cx_(parents1, parents2, labels_type, labels_num, cross_prob):
                 offspring2[i][j] = r2
                 last_labels2[k2] -= 1
     offspring = np.vstack((offspring1, offspring2))
-    return offspring
-
-
-def de_rand_1(offspring, parents1, parents2, lower, upper, cross_prob, factor):
-    """
-    差分进化算法随机算子1 (DE/rand/1)
-    :param offspring: 要进行交叉的种群
-    :param parents1: 差分的父代1
-    :param parents2: 差分的父代2
-    :param lower: 取值范围的下界
-    :param upper: 取值范围的上界
-    :param cross_prob: 交叉概率
-    :param factor: 缩放因子
-    :return: 子代种群
-    """
-    if not (offspring.shape == parents1.shape == parents2.shape):
-        raise ValueError("The shape of the two parent populations is not equal")
-    p_size, num_dec = parents1.shape
-    site = np.random.random((p_size, num_dec)) < cross_prob
-    offspring[site] = offspring[site] + factor * (parents1[site] - parents2[site])
-    # 将上下界重整为相同形状
-    if isinstance(lower, int) or isinstance(lower, float):
-        lowers = np.ones((p_size, num_dec)) * lower
-        uppers = np.ones((p_size, num_dec)) * upper
-    else:
-        lowers = lower.reshape(1, -1).repeat(p_size, 0)
-        uppers = upper.reshape(1, -1).repeat(p_size, 0)
-    # 按照上下界对超出部分进行裁剪
-    offspring = np.clip(offspring, lowers, uppers)
-    return offspring
-
-
-def de_rand_2(offspring, parents1, parents2, parents3, parents4, lower, upper, cross_prob, factor):
-    """
-    差分进化算法随机算子2 (DE/rand/2)
-    :param offspring: 要进行交叉的种群
-    :param parents1: 差分的父代1
-    :param parents2: 差分的父代2
-    :param parents3: 差分的父代3
-    :param parents4: 差分的父代4
-    :param lower: 取值范围的下界
-    :param upper: 取值范围的上界
-    :param cross_prob: 交叉概率
-    :param factor: 缩放因子
-    :return: 子代种群
-    """
-    if not (offspring.shape == parents1.shape == parents2.shape == parents3.shape == parents4.shape):
-        raise ValueError("The shape of the two parent populations is not equal")
-    p_size, num_dec = parents1.shape
-    site = np.random.random((p_size, num_dec)) < cross_prob
-    offspring[site] = (offspring[site] + factor * (parents1[site] - parents2[site]) +
-                       factor * (parents3[site] - parents4[site]))
-    # 将上下界重整为相同形状
-    if isinstance(lower, int) or isinstance(lower, float):
-        lowers = np.ones((p_size, num_dec)) * lower
-        uppers = np.ones((p_size, num_dec)) * upper
-    else:
-        lowers = lower.reshape(1, -1).repeat(p_size, 0)
-        uppers = upper.reshape(1, -1).repeat(p_size, 0)
-    # 按照上下界对超出部分进行裁剪
-    offspring = np.clip(offspring, lowers, uppers)
-    return offspring
-
-
-def de_best_1(best, parents1, parents2, lower, upper, cross_prob, factor):
-    """
-    差分进化算法最优个体算子1 (DE/best/1)
-    :param best: 父代中最优个体
-    :param parents1: 差分的父代1
-    :param parents2: 差分的父代2
-    :param lower: 取值范围的下界
-    :param upper: 取值范围的上界
-    :param cross_prob: 交叉概率
-    :param factor: 缩放因子
-    :return: 子代种群
-    """
-    if not (parents1.shape == parents2.shape):
-        raise ValueError("The shape of the two parent populations is not equal")
-    p_size, num_dec = parents1.shape
-    site = np.random.random((p_size, num_dec)) < cross_prob
-    offspring = np.repeat(best[np.newaxis, :], p_size, axis=0)
-    offspring[site] = offspring[site] + factor * (parents1[site] - parents2[site])
-    # 将上下界重整为相同形状
-    if isinstance(lower, int) or isinstance(lower, float):
-        lowers = np.ones((p_size, num_dec)) * lower
-        uppers = np.ones((p_size, num_dec)) * upper
-    else:
-        lowers = lower.reshape(1, -1).repeat(p_size, 0)
-        uppers = upper.reshape(1, -1).repeat(p_size, 0)
-    # 按照上下界对超出部分进行裁剪
-    offspring = np.clip(offspring, lowers, uppers)
-    return offspring
-
-
-def de_best_2(best, parents1, parents2, parents3, parents4, lower, upper, cross_prob, factor):
-    """
-    差分进化算法最优个体算子2 (DE/best/2)
-    :param best: 父代中最优个体
-    :param parents1: 差分的父代1
-    :param parents2: 差分的父代2
-    :param parents3: 差分的父代3
-    :param parents4: 差分的父代4
-    :param lower: 取值范围的下界
-    :param upper: 取值范围的上界
-    :param cross_prob: 交叉概率
-    :param factor: 缩放因子
-    :return: 子代种群
-    """
-    if not (parents1.shape == parents2.shape):
-        raise ValueError("The shape of the two parent populations is not equal")
-    p_size, num_dec = parents1.shape
-    site = np.random.random((p_size, num_dec)) < cross_prob
-    offspring = np.repeat(best[np.newaxis, :], p_size, axis=0)
-    offspring[site] = (offspring[site] + factor * (parents1[site] - parents2[site]) +
-                       factor * (parents3[site] - parents4[site]))
-    # 将上下界重整为相同形状
-    if isinstance(lower, int) or isinstance(lower, float):
-        lowers = np.ones((p_size, num_dec)) * lower
-        uppers = np.ones((p_size, num_dec)) * upper
-    else:
-        lowers = lower.reshape(1, -1).repeat(p_size, 0)
-        uppers = upper.reshape(1, -1).repeat(p_size, 0)
-    # 按照上下界对超出部分进行裁剪
-    offspring = np.clip(offspring, lowers, uppers)
     return offspring
 
 
