@@ -431,8 +431,8 @@ class ALGORITHM(object):
         :param k: 用于锦标赛选择，K元锦标赛
         :return: 匹配池（下标）
         """
-        if next_size is None:
-            next_size = self.pop_size
+        # 设置默认下一代种群的个体数量
+        next_size = self.pop_size if next_size is None else next_size
         if k >= 2:
             # 使用锦标赛选择获取匹配池
             return tournament_selection(self.fits, next_size, k)
