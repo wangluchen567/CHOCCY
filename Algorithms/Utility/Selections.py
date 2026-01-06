@@ -16,7 +16,7 @@ See the Mulan PSL v2 for more details.
 import numpy as np
 
 
-def elitist_selection(fitness, next_size=None):
+def select_by_elitism(fitness, next_size=None):
     """
     精英选择策略
     :param fitness: 种群的适应度值(最小化)
@@ -29,7 +29,7 @@ def elitist_selection(fitness, next_size=None):
     return best_indices
 
 
-def tournament_selection(fitness, next_size=None, k=2):
+def select_by_tournament(fitness, next_size=None, k=2):
     """
     k元锦标赛选择
     :param fitness: 种群的适应度值(最小化)
@@ -45,7 +45,7 @@ def tournament_selection(fitness, next_size=None, k=2):
     return best_indices
 
 
-def roulette_selection(fitness, next_size=None, replace=True):
+def select_by_roulette(fitness, next_size=None, replace=True):
     """
     轮盘选择法
     :param fitness: 种群的适应度值(最小化)

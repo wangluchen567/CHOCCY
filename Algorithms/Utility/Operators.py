@@ -54,7 +54,7 @@ def operator_diff(base_pop, parents, lower, upper, cross_prob=None, factor=None)
     :return: 变异交叉得到的子代
     """
     # 设置默认交叉概率和缩放因子
-    cross_prob = 0.2 if cross_prob is None else cross_prob
+    cross_prob = 0.5 if cross_prob is None else cross_prob
     factor = 0.5 if factor is None else factor
     # 进行差分变异得到变异子代
     vari_pop = diff_mutation(parents, factor)
