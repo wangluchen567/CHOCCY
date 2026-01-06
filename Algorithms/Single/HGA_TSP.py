@@ -10,13 +10,19 @@ KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
+from typing import Optional
 from Algorithms import ALGORITHM
 from Algorithms.Utility.Educations import educate_tsp
 
 
 class HGATSP(ALGORITHM):
-    def __init__(self, pop_size=None, max_iter=None,
-                 cross_prob=None, mutate_prob=None, educate_prob=None, show_mode=0):
+    def __init__(self,
+                 pop_size: Optional[int] = None,
+                 max_iter: Optional[int] = None,
+                 cross_prob: Optional[float] = None,
+                 mutate_prob: Optional[float] = None,
+                 educate_prob: Optional[float] = None,
+                 show_mode: Optional[str] = None):
         """
         混合遗传算法(求解TSP问题)
 
@@ -35,17 +41,17 @@ class HGATSP(ALGORITHM):
     @ALGORITHM.record_time
     def run_step(self, i):
         """运行算法单步"""
-        # 获取匹配池
-        mating_pool = self.mating_pool_selection()
-        # 交叉变异生成子代
-        offspring = self.operator(mating_pool)
-        # 对子代进行教育
-        offspring_ = self.educate(offspring)
-        # 进行环境选择
-        self.environmental_selection(offspring_)
-        # 记录每步状态
+        # 选择阶段：从当前种群中选择父代个体组成配对池
+        parent_indices = self.get_mating_indices()
+        # 衍生阶段：对配对池中个体应用交叉和变异生成子代
+        offspring = self.apply_operator(parent_indices)
+        # 教育阶段：对子代进行教育（等价于局部搜索操作）
+        offspring_educated = self.apply_education(offspring)
+        # 环境选择阶段：合并父代与子代，选择下一代种群
+        self.environmental_selection(offspring_educated)
+        # 监控并记录每步状态
         self.record()
 
-    def educate(self, offspring):
+    def apply_education(self, offspring):
         """对子代进行教育"""
         return educate_tsp(self.problem, offspring, self.educate_prob)

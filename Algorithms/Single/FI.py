@@ -11,11 +11,12 @@ NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
 import numpy as np
+from typing import Optional
 from Algorithms import ALGORITHM
 
 
 class FI(ALGORITHM):
-    def __init__(self, show_mode=0):
+    def __init__(self, show_mode: Optional[str] = None):
         """
         最远插入启发式算法(Farthest Insertion)
 
@@ -28,8 +29,8 @@ class FI(ALGORITHM):
         self.dist_mat = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self, problem, pop=None):
-        super().init_algorithm(problem, pop)
+    def init_algorithm(self, problem):
+        super().init_algorithm(problem)
         # 问题必须提供距离矩阵
         if not hasattr(self.problem, 'dist_mat'):
             raise ValueError("The problem must provide the distance matrix")

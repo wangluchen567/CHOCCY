@@ -11,11 +11,19 @@ NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
 import numpy as np
+from typing import Optional
 from Algorithms import ALGORITHM
 
 
 class BPSO(ALGORITHM):
-    def __init__(self, pop_size=None, max_iter=None, w=1.0, c1=1.0, c2=1.0, k=6, show_mode=0):
+    def __init__(self,
+                 pop_size: Optional[int] = None,
+                 max_iter: Optional[int] = None,
+                 w: float = 1.0,
+                 c1: float = 1.0,
+                 c2: float = 1.0,
+                 k: float = 6.0,
+                 show_mode: Optional[str] = None):
         """
         粒子群优化算法（求解二进制版本）
 
@@ -46,8 +54,9 @@ class BPSO(ALGORITHM):
         # 用于后续上下界裁剪
         self.lower_, self.upper_ = None, None
 
-    def init_algorithm(self, problem, pop=None):
-        super().init_algorithm(problem, pop)
+    @ALGORITHM.record_time
+    def init_and_eval_pop(self, pop=None):
+        super().init_and_eval_pop(pop)
         # 初始化粒子群位置
         self.particle = self.pop.copy()
         # 设置速度上下界，以方便后续用于裁剪
@@ -91,17 +100,7 @@ class BPSO(ALGORITHM):
 
     def update_particle(self):
         """更新粒子群个体最优位置"""
-        # 计算目标值、约束值和适应度值
-        particle_objs = self.cal_objs(self.particle)
-        particle_cons = self.cal_cons(self.particle)
-        particle_fits = self.cal_fits(particle_objs, particle_cons)
-        # 得到更优的个体下标
-        better = particle_fits < self.fits
-        # 更新个体最优位置（更新 p_best）
-        self.pop[better] = self.particle[better]
-        self.objs[better] = particle_objs[better]
-        self.cons[better] = particle_cons[better]
-        self.fits[better] = particle_fits[better]
+        self.local_selection(self.particle)
 
     def get_current_best(self):
         """覆写获取最优解，这里获取的是历史最优解"""

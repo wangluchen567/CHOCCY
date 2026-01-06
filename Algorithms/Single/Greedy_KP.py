@@ -11,11 +11,12 @@ NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
 import numpy as np
+from typing import Optional
 from Algorithms import ALGORITHM
 
 
 class GreedyKP(ALGORITHM):
-    def __init__(self, show_mode=0):
+    def __init__(self, show_mode: Optional[str] = None):
         """
         贪婪算法求解背包问题(KP)
 
@@ -30,8 +31,8 @@ class GreedyKP(ALGORITHM):
         self.capacity = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self, problem, pop=None):
-        super().init_algorithm(problem, pop)
+    def init_algorithm(self, problem):
+        super().init_algorithm(problem)
         # 初始化迭代次数
         self.max_iter = self.num_dec
         # 问题必须为背包问题

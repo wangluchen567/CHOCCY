@@ -12,11 +12,16 @@ See the Mulan PSL v2 for more details.
 """
 import warnings
 import numpy as np
+from typing import Optional
 from Algorithms import ALGORITHM
 
 
 class GFLS(ALGORITHM):
-    def __init__(self, max_iter=1000, alpha=1 / 4, active_all=True, show_mode=0):
+    def __init__(self,
+                 max_iter: Optional[int] = 1000,
+                 alpha: float = 1 / 4,
+                 active_all: bool = True,
+                 show_mode: Optional[str] = None):
         """
         引导快速局部搜索(Guided Fast Local Search)
 
@@ -43,17 +48,21 @@ class GFLS(ALGORITHM):
         self.tour_cost = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self, problem, pop=None):
-        super().init_algorithm(problem, pop)
-        # 问题必须提供距离矩阵
-        if not hasattr(self.problem, 'dist_mat'):
-            raise ValueError("The problem must provide the distance matrix")
+    def init_algorithm(self, problem):
+        super().init_algorithm(problem)
         # 获取问题的距离矩阵
         self.dist_mat = self.problem.dist_mat  # type: ignore
         # 初始化lambda值
         self.lamb = 0
         # 初始化惩罚矩阵
         self.p_mat = np.zeros(self.dist_mat.shape)
+
+    @ALGORITHM.record_time
+    def init_and_eval_pop(self, pop=None):
+        super().init_and_eval_pop(pop)
+        # 问题必须提供距离矩阵
+        if not hasattr(self.problem, 'dist_mat'):
+            raise ValueError("The problem must provide the distance matrix")
         # 获取当前路由状态
         self.tour = self.pop[0].astype(int)
         # 初始化子领域

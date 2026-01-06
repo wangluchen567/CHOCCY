@@ -10,11 +10,15 @@ KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
+from typing import Optional
 from Algorithms import ALGORITHM
 
 
 class GD(ALGORITHM):
-    def __init__(self, max_iter=100, learning_rate=0.01, show_mode=0):
+    def __init__(self,
+                 max_iter: Optional[int] = 100,
+                 learning_rate: float = 0.01,
+                 show_mode: Optional[str] = None):
         """
         梯度下降算法
 

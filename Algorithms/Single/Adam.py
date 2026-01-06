@@ -11,11 +11,17 @@ NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
 import numpy as np
+from typing import Optional
 from Algorithms import ALGORITHM
 
 
 class Adam(ALGORITHM):
-    def __init__(self, max_iter=100, learning_rate=0.1, beta_1=0.9, beta_2=0.99, show_mode=0):
+    def __init__(self,
+                 max_iter: Optional[int] = None,
+                 learning_rate: float = 0.1,
+                 beta_1: float = 0.9,
+                 beta_2: float = 0.99,
+                 show_mode: Optional[str] = None):
         """
         自适应矩估计梯度下降算法 (Adam)
 

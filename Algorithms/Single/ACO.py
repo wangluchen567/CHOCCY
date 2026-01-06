@@ -14,10 +14,19 @@ import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 from Algorithms import ALGORITHM
+from Problems import PROBLEM
+from typing import Optional
 
 
 class ACO(ALGORITHM):
-    def __init__(self, pop_size=None, max_iter=None, alpha=1, beta=3, rho=0.2, q_value=100, show_mode=0):
+    def __init__(self,
+                 pop_size: Optional[int] = None,
+                 max_iter: Optional[int] = None,
+                 alpha: float = 1.0,
+                 beta: float = 3.0,
+                 rho: float = 0.2,
+                 q_value: float = 100.0,
+                 show_mode: Optional[str] = None):
         """
         蚁群算法 (蚁周模型 Ant-Cycle)
 
@@ -41,11 +50,9 @@ class ACO(ALGORITHM):
         self.eta_mat = None
         self.tau_mat = None
 
-    @ALGORITHM.record_time
-    def init_algorithm(self, problem, pop=None):
+    def init_algorithm(self, problem: PROBLEM):
         """初始化算法"""
-        # 初始化算法参数
-        super().init_algorithm(problem, pop)
+        super().init_algorithm(problem)
         # 问题必须提供距离矩阵
         if not hasattr(self.problem, 'dist_mat'):
             raise ValueError("The problem must provide the distance matrix")
@@ -59,6 +66,11 @@ class ACO(ALGORITHM):
         np.fill_diagonal(self.eta_mat, 0)
         # 路径上的信息素矩阵，初始化为1
         self.tau_mat = np.ones((self.num_dec, self.num_dec))
+
+    @ALGORITHM.record_time
+    def init_and_eval_pop(self, pop=None):
+        """初始化种群"""
+        super().init_and_eval_pop(pop)
         # 蚁群路径(路径记录表, 记录已经访问过的节点)
         self.pop = np.zeros((self.pop_size, self.num_dec), dtype=int)
 

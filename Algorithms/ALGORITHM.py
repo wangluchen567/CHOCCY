@@ -15,8 +15,8 @@ import time
 import warnings
 import numpy as np
 from tqdm import tqdm
-from typing import Union
 from scipy.stats import qmc
+from typing import Optional
 from Problems import PROBLEM
 from Algorithms import View
 from Algorithms.Utility.RecordUtils import setup_logger
@@ -25,7 +25,7 @@ from Algorithms.Utility.SaveUtils import save_array, save_arrays, get_timestamp,
 from Algorithms.Utility.PlotUtils import plot_scores, plot_decs, plot_objs, plot_objs_decs
 from Algorithms.Utility.SupportUtils import fast_nd_sort, shuffle_matrix_in_row, record_time
 from Algorithms.Utility.PerfMetrics import cal_gd, cal_igd, cal_gd_plus, cal_igd_plus, cal_hv
-from Algorithms.Utility.Selections import elitist_selection, tournament_selection, roulette_selection
+from Algorithms.Utility.Selections import select_by_elitism, select_by_tournament, select_by_roulette
 from Algorithms.Utility.Operators import operator_real, operator_binary, operator_permutation, operator_fix_label
 
 
@@ -51,12 +51,12 @@ class ALGORITHM(object):
     score_types = ['HV', 'GD', 'IGD', 'GD+', 'IGD+']
 
     def __init__(self,
-                 pop_size: Union[int, None] = None,
-                 max_iter: Union[int, None] = None,
-                 cross_prob: Union[float, None] = None,
-                 mutate_prob: Union[float, None] = None,
-                 educate_prob: Union[float, None] = None,
-                 show_mode: Union[int, View] = BAR):
+                 pop_size: Optional[int] = None,
+                 max_iter: Optional[int] = None,
+                 cross_prob: Optional[float] = None,
+                 mutate_prob: Optional[float] = None,
+                 educate_prob: Optional[float] = None,
+                 show_mode: Optional[str] = None):
         """
         算法父类
 
@@ -71,7 +71,6 @@ class ALGORITHM(object):
         # 初始化给定参数
         self.pop_size = pop_size
         self.max_iter = max_iter
-        self.show_mode = show_mode
         # 初始化交叉、变异和教育概率
         self.cross_prob = cross_prob
         self.mutate_prob = mutate_prob
@@ -106,20 +105,19 @@ class ALGORITHM(object):
         self.example_dec = None
         # 初始化评价指标记录与评价指标类型
         self.scores, self.score_type = np.empty(0), None
+        # 初始化绘图模式(默认为None时使用进度条展示)
+        self.show_mode = show_mode.lower() if show_mode is not None else None
 
     @record_time
-    def init_algorithm(self, problem: PROBLEM, pop=None):
+    def init_algorithm(self, problem: PROBLEM):
         """
         初始化算法
         :param problem: 问题对象
-        :param pop: 指定种群用于初始化
         """
         # 初始化算法所有参数
         self.init_params(problem)
         # 检查算法是否可求解该问题
         self.check_feasibility()
-        # 初始化种群并对种群进行评价
-        self.init_and_eval(pop)
 
     def init_params(self, problem: PROBLEM):
         """
@@ -156,10 +154,11 @@ class ALGORITHM(object):
         if not np.all(np.isin(self.unique_type, self.solvable_type)):
             raise ValueError("This algorithm does not support solving this type of problem")
 
-    def init_and_eval(self, pop=None):
+    @record_time
+    def init_and_eval_pop(self, pop: Optional[np.ndarray] = None):
         """
         初始化种群并对种群中解进行评价
-        :param pop: 指定种群用于初始化
+        :param pop: 可指定先验种群用于初始化
         """
         # 若给定种群中个体数量太多则进行裁剪
         pop = pop[:self.pop_size] if pop is not None else None
@@ -172,15 +171,22 @@ class ALGORITHM(object):
 
     def get_iterator(self):
         """构建迭代器"""
-        if self.show_mode == 0:
+        if (self.show_mode is None or
+                self.show_mode == self.BAR):
             return tqdm(range(self.max_iter))
         else:
             return range(self.max_iter)
 
-    def solve(self, problem: PROBLEM):
-        """算法求解问题(主入口函数)"""
-        # 初始化算法
+    def solve(self, problem: PROBLEM, pop: Optional[np.ndarray] = None):
+        """
+        算法求解问题(主入口函数)
+        :param problem: 需要求解的问题对象
+        :param pop: 可指定先验种群用于初始化
+        """
+        # 初始化算法相关参数
         self.init_algorithm(problem)
+        # 初始化种群并对种群进行评价
+        self.init_and_eval_pop(pop)
         # 运行算法求解问题
         self.run()
 
@@ -199,7 +205,7 @@ class ALGORITHM(object):
         """运行算法单步"""
         self.record()
 
-    def cal_objs(self, pop):
+    def cal_objs(self, pop: np.ndarray):
         """
         计算目标值
         :param pop: 给定种群
@@ -207,7 +213,7 @@ class ALGORITHM(object):
         """
         return self.problem.cal_objs(pop)
 
-    def cal_cons(self, pop):
+    def cal_cons(self, pop: np.ndarray):
         """
         计算约束值
         :param pop: 给定种群
@@ -215,7 +221,7 @@ class ALGORITHM(object):
         """
         return self.problem.cal_cons(pop)
 
-    def cal_grad(self, pop):
+    def cal_grad(self, pop: np.ndarray):
         """
         计算梯度值
         :param pop: 给定种群
@@ -224,7 +230,7 @@ class ALGORITHM(object):
         return self.problem.cal_grad(pop)
 
     @staticmethod
-    def cal_objs_based_cons(objs, cons):
+    def cal_objs_based_cons(objs: np.ndarray, cons: np.ndarray):
         """
         计算约束松弛后的目标值
         :param objs: 种群中每个个体目标值（矩阵）
@@ -243,7 +249,7 @@ class ALGORITHM(object):
 
         return objs_based_cons
 
-    def cal_fits(self, objs, cons):
+    def cal_fits(self, objs: np.ndarray, cons: np.ndarray):
         """
         根据给定目标值和约束值得到适应度值(默认是单目标情况)
         :param objs: 种群中每个个体目标值（矩阵）
@@ -256,7 +262,7 @@ class ALGORITHM(object):
         else:
             return self.cal_objs_based_cons(objs, cons).flatten()
 
-    def evaluate(self, pop):
+    def evaluate(self, pop: np.ndarray):
         """
         给定种群解并对解进行评价(求目标值/约束值/适应度)
         :param pop: 给定种群
@@ -267,14 +273,14 @@ class ALGORITHM(object):
         fits = self.cal_fits(objs, cons)
         return objs, cons, fits
 
-    def eval_and_update(self, pop):
+    def eval_and_update(self, pop: np.ndarray):
         """
         给定种群解并对解进行评价(求目标值/约束值/适应度)并进行保存
         :param pop: 给定种群
         """
         self.objs, self.cons, self.fits = self.evaluate(pop)
 
-    def set_score_type(self, score_type):
+    def set_score_type(self, score_type: str):
         """
         重新设置评价指标分数类型(多目标)
         :param score_type: 评价指标(分数)类型
@@ -386,22 +392,22 @@ class ALGORITHM(object):
         pop = np.array(pop, dtype=int)
         return pop
 
-    def operator(self, mating_pool):
+    def apply_operator(self, mating_indices: np.ndarray):
         """
         进行交叉变异生成子代
-        :param mating_pool: 匹配池(下标)
+        :param mating_indices: 配对池索引
         :return: 子代种群
         """
-        offspring = self.pop[mating_pool]
+        offspring = self.pop[mating_indices]
         for t in self.unique_type:
-            offspring[:, self.type_indices[t]] = self.operator_(t)(offspring[:, self.type_indices[t]],
-                                                                   self.lower[self.type_indices[t]],
-                                                                   self.upper[self.type_indices[t]],
-                                                                   self.cross_prob, self.mutate_prob)
+            offspring[:, self.type_indices[t]] = self.apply_operator_(t)(offspring[:, self.type_indices[t]],
+                                                                         self.lower[self.type_indices[t]],
+                                                                         self.upper[self.type_indices[t]],
+                                                                         self.cross_prob, self.mutate_prob)
         return offspring
 
     @staticmethod
-    def operator_(problem_type):
+    def apply_operator_(problem_type: int):
         """
         根据问题类型返回对应函数
         :param problem_type: 问题类型
@@ -420,56 +426,97 @@ class ALGORITHM(object):
         else:
             raise ValueError(f"The problem type {problem_type} does not exist")
 
-    def educate(self, *args, **kwargs):
-        """对子代进行教育"""
+    def apply_education(self, *args, **kwargs):
+        """对子代进行教育(等价于局部搜索)"""
         pass
 
-    def mating_pool_selection(self, next_size=None, k=2):
+    def get_mating_indices(self, next_size: Optional[int] = None, p: Optional[int] = 2):
         """
-        匹配池选择
+        配对池选择
         :param next_size: 下一代种群的个体数量
-        :param k: 用于锦标赛选择，K元锦标赛
-        :return: 匹配池（下标）
+        :param p: 额外参数, 锦标赛参数k/轮盘赌选择是否可重复选
+        :return: 配对池（下标）
         """
         # 设置默认下一代种群的个体数量
         next_size = self.pop_size if next_size is None else next_size
-        if k >= 2:
-            # 使用锦标赛选择获取匹配池
-            return tournament_selection(self.fits, next_size, k)
+        if isinstance(p, int) and p >= 2:
+            # 使用锦标赛选择法获取配对池
+            mating_indices = select_by_tournament(self.fits, next_size, p)
+        elif isinstance(p, bool):
+            # 使用轮盘选择法获取配对池
+            mating_indices = select_by_roulette(self.fits, next_size, p)
         else:
-            # 使用轮盘选择法获取匹配池
-            return roulette_selection(self.fits, next_size)
+            raise ValueError(f"The parameter setting error: {p}")
+        return mating_indices
 
-    def pop_merge(self, offspring):
+    def pop_merge(self, offspring: np.ndarray):
         """
-        当前种群与其子代合并
-        :param offspring:
+        当前种群与子代种群合并
+        :param offspring: 子代种群
         :return: 新种群及其目标值/约束值/适应度值
         """
-        # 先计算子代目标值与约束值
+        # 计算子代目标值与约束值
         off_objs = self.cal_objs(offspring)
         off_cons = self.cal_cons(offspring)
         # 将父代与子代合并获得新种群
         new_pop = np.vstack((self.pop, offspring))
         new_objs = np.vstack((self.objs, off_objs))
         new_cons = np.vstack((self.cons, off_cons))
-        # 重新计算合并种群的的等价适应度值
+        # 重新计算合并种群的等价适应度值
         new_fits = self.cal_fits(new_objs, new_cons)
         return new_pop, new_objs, new_cons, new_fits
 
-    def environmental_selection(self, offspring):
+    def apply_selection(self,
+                        objs: np.ndarray,
+                        cons: np.ndarray,
+                        fits: np.ndarray,
+                        next_size: int):
         """
-        进行环境选择
+        使用选择策略选择进入下一代新种群的个体索引
+        :param objs: 种群目标值(矩阵)
+        :param cons: 种群约束值(矩阵)
+        :param fits: 种群适应度值(矩阵)
+        :param next_size: 进入下一代种群的个体数量
+        :return: 进入下一代新种群的个体索引
+        """
+        # 默认使用精英选择策略
+        return select_by_elitism(fits, next_size)
+
+    def global_selection(self, offspring: np.ndarray):
+        """
+        将父代与子代种群合并后进行全局竞争选择
+        :param offspring: 子代种群
+        :return: 下一代种群与目标值/约束值/适应度值
+        """
+        # 将当前种群与其子代种群合并
+        new_pop, new_objs, new_cons, new_fits = self.pop_merge(offspring)
+        # 使用选择策略选择进入下一代新种群的个体索引
+        better = self.apply_selection(new_objs, new_cons, new_fits, self.pop_size)
+        # 全局竞争后的优胜者进入下一代种群
+        self.pop, self.objs, self.cons, self.fits \
+            = new_pop[better], new_objs[better], new_cons[better], new_fits[better]
+
+    def local_selection(self, offspring: np.ndarray):
+        """
+        父代与子代种群不合并而进行一对一的局部竞争选择
+        :param offspring: 子代种群
+        :return: 下一代种群与目标值/约束值/适应度值
+        """
+        # 计算子代种群的目标值/约束值/适应度值
+        off_objs, off_cons, off_fits = self.evaluate(offspring)
+        # 得到更优的算子标记
+        better = off_fits <= self.fits
+        # 局部竞争竞争后的优胜者进入下一代种群
+        self.pop[better], self.objs[better], self.cons[better], self.fits[better] \
+            = offspring[better], off_objs[better], off_cons[better], off_fits[better]
+
+    def environmental_selection(self, offspring: np.ndarray):
+        """
+        进行环境选择（默认使用全局竞争）
         :param offspring: 子代种群
         """
-        # 将当前种群与其子代合并
-        new_pop, new_objs, new_cons, new_fits = self.pop_merge(offspring)
-        # 使用选择策略(默认精英选择)选择进入下一代新种群的个体
-        best_indices = elitist_selection(new_fits, self.pop_size)
-        self.pop = new_pop[best_indices]
-        self.objs = new_objs[best_indices]
-        self.cons = new_cons[best_indices]
-        self.fits = new_fits[best_indices]
+        # 通过环境竞争选择得到下一代种群
+        self.global_selection(offspring)
 
     def get_current_best(self):
         """获取当前种群的最优解"""
@@ -482,7 +529,9 @@ class ALGORITHM(object):
             self.best, self.best_obj, self.best_con = self.get_current_best_(self.pop, self.objs, self.cons)
 
     @staticmethod
-    def get_current_best_(pop, objs, cons):
+    def get_current_best_(pop: np.ndarray,
+                          objs: np.ndarray,
+                          cons: np.ndarray):
         """
         获取给定种群的最优解
         :param pop: 给定种群
@@ -562,7 +611,11 @@ class ALGORITHM(object):
         # 记录评价指标
         self.scores = np.empty(0)
 
-    def plot(self, show_mode=None, n_iter=None, pause=False, sym=True):
+    def plot(self,
+             show_mode: Optional[str] = None,
+             n_iter: Optional[int] = None,
+             pause: bool = False,
+             sym: bool = True):
         """
         绘图函数，根据不同模式进行绘图
         :param show_mode: 绘图模式，参见View类
@@ -574,8 +627,11 @@ class ALGORITHM(object):
             # 最后一次迭代不再使用停顿展示
             pause = False
         if show_mode is not None:
-            self.show_mode = show_mode
-        if self.show_mode == self.NONE or self.show_mode == self.BAR:
+            self.show_mode = show_mode.lower()
+        # 根据设置的绘图参数进行绘图
+        if (self.show_mode is None or
+                self.show_mode == self.NONE or
+                self.show_mode == self.BAR):
             pass
         elif self.show_mode == self.LOG:
             self.logger.info(self.get_log_info(n_iter))
@@ -600,7 +656,10 @@ class ALGORITHM(object):
         """提供算法自定义绘图的接口"""
         pass
 
-    def plot_decs(self, n_iter=None, pause=False, pause_time=0.06):
+    def plot_decs(self,
+                  n_iter: Optional[int] = None,
+                  pause: bool = False,
+                  pause_time: float = 0.06):
         """
         绘制种群个体决策向量
         :param n_iter: 迭代次数，绘制指定迭代次数下的图像
@@ -612,7 +671,10 @@ class ALGORITHM(object):
         else:
             plot_decs(self.pop_history[n_iter], n_iter, pause, pause_time)
 
-    def plot_objs(self, n_iter=None, pause=False, pause_time=0.06):
+    def plot_objs(self,
+                  n_iter: Optional[int] = None,
+                  pause: bool = False,
+                  pause_time: float = 0.06):
         """
         绘制种群目标值
         :param n_iter: 迭代次数，绘制指定迭代次数下的图像
@@ -632,7 +694,12 @@ class ALGORITHM(object):
             else:
                 plot_objs(self.objs_history[n_iter], n_iter, pause, pause_time, self.problem.pareto_front)
 
-    def plot_objs_decs(self, n_iter=None, pause=False, pause_time=0.06, contour=True, sym=True):
+    def plot_objs_decs(self,
+                       n_iter: Optional[int] = None,
+                       pause: bool = False,
+                       pause_time: float = 0.06,
+                       contour: bool = True,
+                       sym: bool = True):
         """
         在特定条件下可将目标空间与决策空间绘制到同一空间中
         :param n_iter: 迭代次数，绘制指定迭代次数下的图像
@@ -663,7 +730,10 @@ class ALGORITHM(object):
             self.scores[i] = self.cal_score(best_obj=self.best_obj_his[i])
         return self.scores
 
-    def plot_scores(self, n_iter=None, pause=False, pause_time=0.06):
+    def plot_scores(self,
+                    n_iter: Optional[int] = None,
+                    pause: bool = False,
+                    pause_time: float = 0.06):
         """
         绘制指标的变化情况
         :param n_iter: 迭代次数，绘制指定迭代次数下的图像
@@ -677,7 +747,7 @@ class ALGORITHM(object):
         else:
             plot_scores(self.scores[:n_iter + 1], self.score_type, n_iter, pause, pause_time)
 
-    def plot_by_problem(self, n_iter=None, pause=False):
+    def plot_by_problem(self, n_iter: Optional[int] = None, pause: bool = False):
         """
         使用问题给定的绘图函数绘图
         :param n_iter: 迭代次数，绘制指定迭代次数下的图像
@@ -688,7 +758,7 @@ class ALGORITHM(object):
         else:
             self.problem.plot(self.best_history[n_iter], n_iter, pause)
 
-    def enable_file_logging(self, log_name=None):
+    def enable_file_logging(self, log_name: Optional[str] = None):
         """
         打开输出日志到文件功能
         :param log_name: 输出日志文件的名称
@@ -705,7 +775,7 @@ class ALGORITHM(object):
         save_path = project_root + "\\Outputs\\Logs\\" + log_name
         self.logger = setup_logger(save_path, to_file=True)
 
-    def get_log_info(self, n_iter):
+    def get_log_info(self, n_iter: int):
         """
         获取当前状态信息
         :param n_iter: 迭代次数
@@ -740,7 +810,7 @@ class ALGORITHM(object):
             'only_solve_single': self.only_solve_single
         }
 
-    def save_best(self, save_type='csv'):
+    def save_best(self, save_type: str = 'csv'):
         """
         保存最优个体解的结果
         :param save_type: 保存文件类型
@@ -772,7 +842,7 @@ class ALGORITHM(object):
         except Exception as e:
             warnings.warn(f"There is a error with saving: {e}, and the data may not have been fully saved")
 
-    def save_pop(self, save_type='csv'):
+    def save_pop(self, save_type: str = 'csv'):
         """
         保存当前代种群的结果
         :param save_type:  保存文件类型
@@ -804,7 +874,7 @@ class ALGORITHM(object):
         except Exception as e:
             warnings.warn(f"There is a error with saving: {e}, and the data may not have been fully saved")
 
-    def save_history(self, save_type='npz'):
+    def save_history(self, save_type: str = 'npz'):
         """
         保存种群所有历史的结果
         :param save_type:  保存文件类型
@@ -842,7 +912,7 @@ class ALGORITHM(object):
         except Exception as e:
             warnings.warn(f"There is a error with saving: {e}, and the data may not have been fully saved")
 
-    def load_best(self, file_path, save_type='csv'):
+    def load_best(self, file_path: str, save_type: str = 'csv'):
         """
         加载保存的最优个体解的结果
         :param file_path: 文件路径(Outputs文件夹下)
@@ -857,7 +927,7 @@ class ALGORITHM(object):
         self.best_obj = load_array(file_path + "\\best_obj." + save_type)
         self.best_con = load_array(file_path + "\\best_con." + save_type)
 
-    def load_pop(self, file_path, save_type='csv'):
+    def load_pop(self, file_path: str, save_type: str = 'csv'):
         """
         加载保存的种群的结果
         :param file_path: 文件路径(Outputs文件夹下)
@@ -872,7 +942,7 @@ class ALGORITHM(object):
         self.objs = load_array(file_path + "\\objs." + save_type)
         self.cons = load_array(file_path + "\\cons." + save_type)
 
-    def load_history(self, file_path, save_type='npz'):
+    def load_history(self, file_path: str, save_type: str = 'npz'):
         """
         加载保存的种群所有历史的结果
         :param file_path: 文件路径(Outputs文件夹下)
@@ -887,7 +957,7 @@ class ALGORITHM(object):
         self.objs_history = list(load_arrays(file_path + "\\objs_history." + save_type).values())
         self.cons_history = list(load_arrays(file_path + "\\cons_history." + save_type).values())
 
-    def print_best_info(self, need_format=True):
+    def print_best_info(self, need_format: bool = True):
         """打印最优个体解信息(可格式化打印)"""
         best, best_obj, best_con = self.get_best()
         info = ''

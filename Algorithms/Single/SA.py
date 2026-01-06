@@ -10,12 +10,19 @@ KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
+from typing import Optional
 from Algorithms import ALGORITHM
 from Algorithms.Utility.Mutations import *
 
 
 class SA(ALGORITHM):
-    def __init__(self, pop_size=1, max_iter=10000, init_temp=1e4, alpha=0.99, perturb_prob=None, show_mode=0):
+    def __init__(self,
+                 pop_size: Optional[int] = 1,
+                 max_iter: Optional[int] = 10000,
+                 init_temp: float = 1.e4,
+                 alpha: float = 0.99,
+                 perturb_prob: Optional[float] = None,
+                 show_mode: Optional[str] = None):
         """
         模拟退火算法
 
@@ -36,8 +43,9 @@ class SA(ALGORITHM):
         self.con = None
         self.fit = None
 
-    def init_algorithm(self, problem, pop=None):
-        super().init_algorithm(problem, pop)
+    @ALGORITHM.record_time
+    def init_and_eval_pop(self, pop=None):
+        super().init_and_eval_pop(pop)
         self.p = self.pop[0].reshape(1, -1)
         self.obj = self.cal_objs(self.p)
         self.con = self.cal_cons(self.p)
@@ -117,12 +125,11 @@ class SA(ALGORITHM):
         # 防止影响原数据
         new_solutions = solutions.copy()
         for t in self.unique_type:
-            # 若是序列问题建议扰动概率为0.5，这里默认直接设置为0.5
-            mutate_prob = 0.5 if t == self.PMU else self.mutate_prob
+            # 若是序列问题建议扰动概率为0.5
             new_solutions[:, self.type_indices[t]] = self.mutate_(t, new_solutions[:, self.type_indices[t]],
                                                                   self.lower[self.type_indices[t]],
                                                                   self.upper[self.type_indices[t]],
-                                                                  mutate_prob)
+                                                                  self.mutate_prob)
         return new_solutions
 
     @staticmethod

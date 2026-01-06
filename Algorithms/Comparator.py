@@ -32,7 +32,7 @@ class Comparator(ALGORITHM):
                  max_iter: Union[int, None] = None,
                  same_init: bool = False,
                  show_colors: Union[list, None] = None,
-                 show_mode: Union[int, View] = 0):
+                 show_mode: Union[str, View] = None):
         """
         算法比较器(用于对比多个算法效果)
         :param problem: 问题对象
@@ -47,9 +47,10 @@ class Comparator(ALGORITHM):
         self.problem = problem
         self.max_iter_ = max_iter
         self.same_init = same_init
-        self.show_mode = show_mode
         self.algorithms = self._format(algorithms)
         self.colors = self.get_colors() if show_colors is None else show_colors
+        # 初始化绘图模式(默认为None时使用进度条展示)
+        self.show_mode = show_mode.lower() if show_mode is not None else None
         # 初始化评价指标类型(单目标为适应度, 多目标默认为超体积指标)
         self.score_type = 'Fitness' if self.problem.num_obj == 1 else 'HV'
         # 若没有指定种群大小则默认使用算法集合中第一个算法的种群大小(可能会有bug)
@@ -74,17 +75,19 @@ class Comparator(ALGORITHM):
         # 初始化所有算法
         for alg in self.algorithms.values():
             # 对比算法时各个算法的进度条关闭
-            alg.show_mode = -1
+            alg.show_mode = self.NONE
             # 初始化算法
             if self.same_init:
                 # 若使用相同初始化
-                alg.init_algorithm(self.problem, pop.copy())
+                alg.init_algorithm(self.problem)
+                alg.init_and_eval_pop(pop.copy())
             else:
                 alg.init_algorithm(self.problem)
+                alg.init_and_eval_pop()
             # 检查是否有单独运行一步
             if 'run_step' not in type(alg).__dict__:
                 # 如果算法没有覆写单独运行一步，则全部运行
-                alg.show_mode = 0  # 若全部运行则展示bar
+                alg.show_mode = self.BAR  # 若全部运行则展示bar
                 alg.run()
             else:
                 # 得到最大迭代次数
@@ -221,13 +224,11 @@ class Comparator(ALGORITHM):
             # 最后一次迭代不再使用停顿展示
             pause = False
         if show_mode is not None:
-            self.show_mode = show_mode
-        if show_mode == self.SCORE:
-            # 若单独指定展示指标分数，则检查并计算评价指标
-            for alg in self.algorithms.values():
-                if len(alg.scores) == 0:
-                    alg.get_scores()
-        if self.show_mode == self.NONE or self.show_mode == self.BAR:
+            self.show_mode = show_mode.lower()
+        # 根据设置的绘图参数进行绘图
+        if (self.show_mode is None or
+                self.show_mode == self.NONE or
+                self.show_mode == self.BAR):
             pass
         elif self.show_mode == self.OBJ:
             self.plot_objs(n_iter, pause)
@@ -238,6 +239,10 @@ class Comparator(ALGORITHM):
         elif self.show_mode == self.MIX3D:
             self.plot_objs_decs(n_iter, pause, sym=sym, contour=False)
         elif self.show_mode == self.SCORE:
+            # 若单独指定展示指标分数，则检查并计算评价指标
+            for alg in self.algorithms.values():
+                if len(alg.scores) == 0:
+                    alg.get_scores()
             self.plot_scores(n_iter, pause)
         else:
             raise ValueError(f"There is no such plotting mode: {self.show_mode}")

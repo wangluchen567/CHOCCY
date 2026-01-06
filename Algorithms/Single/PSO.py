@@ -11,11 +11,19 @@ NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
 import numpy as np
+from typing import Optional
 from Algorithms import ALGORITHM
 
 
 class PSO(ALGORITHM):
-    def __init__(self, pop_size=None, max_iter=None, w=0.7298, c1=1.5, c2=1.5, k=0.15, show_mode=0):
+    def __init__(self,
+                 pop_size: Optional[int] = None,
+                 max_iter: Optional[int] = None,
+                 w: float = 0.7298,
+                 c1: float = 1.494,
+                 c2: float = 1.494,
+                 k: float = 0.15,
+                 show_mode: Optional[str] = None):
         """
         粒子群优化算法
 
@@ -42,8 +50,8 @@ class PSO(ALGORITHM):
         # 用于后续上下界裁剪
         self.lower_, self.upper_ = None, None
 
-    def init_algorithm(self, problem, pop=None):
-        super().init_algorithm(problem, pop)
+    def init_and_eval_pop(self, pop=None):
+        super().init_and_eval_pop(pop)
         # 初始化粒子群位置
         self.particle = self.pop.copy()
         # 设置速度上下界，以方便后续用于裁剪
@@ -63,14 +71,14 @@ class PSO(ALGORITHM):
     def run_step(self, i):
         """运行算法单步"""
         # 优化得到新粒子群
-        self.operator_pso()
+        self.apply_operator_pso()
         # 更新粒子群个体最优位置
         self.update_particle()
         # 记录每步状态
         self.record()
 
-    def operator_pso(self):
-        """重写算子为粒子群优化算子"""
+    def apply_operator_pso(self):
+        """粒子群优化算子"""
         # 创建两个随机矩阵以引入随机性（学习因子）
         r1 = np.random.uniform(size=(self.pop_size, self.num_dec))
         r2 = np.random.uniform(size=(self.pop_size, self.num_dec))
@@ -87,17 +95,8 @@ class PSO(ALGORITHM):
 
     def update_particle(self):
         """更新粒子群个体最优位置"""
-        # 计算目标值、约束值和适应度值
-        particle_objs = self.cal_objs(self.particle)
-        particle_cons = self.cal_cons(self.particle)
-        particle_fits = self.cal_fits(particle_objs, particle_cons)
-        # 得到更优的个体下标
-        better = particle_fits < self.fits
-        # 更新个体最优位置（更新 p_best）
-        self.pop[better] = self.particle[better]
-        self.objs[better] = particle_objs[better]
-        self.cons[better] = particle_cons[better]
-        self.fits[better] = particle_fits[better]
+        # 根据上下界对位置进行裁剪
+        self.local_selection(self.particle)
 
     def get_current_best(self):
         """覆写获取最优解，这里获取的是历史最优解"""

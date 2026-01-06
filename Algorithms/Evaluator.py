@@ -90,15 +90,18 @@ class Evaluator(object):
                 # 创建一个算法对象用于初始化种群
                 alg_temp = ALGORITHM(self.pop_size)
                 alg_temp.init_algorithm(problem)
+                alg_temp.init_and_eval_pop()
                 pop = alg_temp.pop  # 得到种群
             for (alg_name, alg) in self.algorithms.items():
                 # 不修改算法原来参数
                 alg_ = copy.deepcopy(alg)
-                alg_.show_mode = -1
+                alg_.show_mode = 'none'
                 if self.same_init:
-                    alg_.init_algorithm(problem, pop.copy())
+                    alg_.init_algorithm(problem)
+                    alg_.init_and_eval_pop(pop.copy())
                 else:
                     alg_.init_algorithm(problem)
+                    alg_.init_and_eval_pop()
                 # 将算法复制多次以运行num_run次
                 self.pairs[problem_name][alg_name] = [copy.deepcopy(alg_) for _ in range(self.num_run)]
 

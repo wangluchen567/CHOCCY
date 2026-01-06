@@ -10,11 +10,17 @@ KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
+from typing import Optional
 from Algorithms import ALGORITHM
 
 
 class GA(ALGORITHM):
-    def __init__(self, pop_size=100, max_iter=100, cross_prob=None, mutate_prob=None, show_mode=0):
+    def __init__(self,
+                 pop_size: Optional[int] = None,
+                 max_iter: Optional[int] = None,
+                 cross_prob: Optional[float] = None,
+                 mutate_prob: Optional[float] = None,
+                 show_mode: Optional[str] = None):
         """
         遗传算法
 
@@ -31,11 +37,11 @@ class GA(ALGORITHM):
     @ALGORITHM.record_time
     def run_step(self, i):
         """运行算法单步"""
-        # 获取匹配池
-        mating_pool = self.mating_pool_selection()
-        # 交叉变异生成子代
-        offspring = self.operator(mating_pool)
-        # 进行环境选择
+        # 选择阶段：从当前种群中选择父代个体组成配对池
+        parent_indices = self.get_mating_indices()
+        # 衍生阶段：对配对池中个体应用交叉和变异生成子代
+        offspring = self.apply_operator(parent_indices)
+        # 环境选择阶段：合并父代与子代，选择下一代种群
         self.environmental_selection(offspring)
-        # 记录每步状态
+        # 监控并记录每步状态
         self.record()
