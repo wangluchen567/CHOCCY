@@ -1,6 +1,5 @@
 import numpy as np
 from Problems import PROBLEM
-from Algorithms import View
 from Algorithms.Single import DE
 
 
@@ -26,7 +25,7 @@ class QuadProblem(PROBLEM):
 if __name__ == '__main__':
     problem = QuadProblem(num_dec=10)  # 实例化问题，并指定决策向量大小
     # 实例化算法并设置种群大小为100，迭代次数为100，优化过程展示为目标值变化情况
-    algorithm = DE(pop_size=100, max_iter=100, show_mode=View.LOG)
+    algorithm = DE(pop_size=100, max_iter=100, show_mode='log')
     algorithm.solve(problem)  # 使用该算法求解问题
     # 获取最优解并打印
     best, best_obj, best_con = algorithm.get_best()
