@@ -11,13 +11,19 @@ NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
 import numpy as np
+from typing import Optional
 from Algorithms import ALGORITHM
 from scipy.spatial import distance_matrix
 from Algorithms.Utility.SupportUtils import get_dom_between
 
 
 class SPEA2(ALGORITHM):
-    def __init__(self, pop_size=None, max_iter=None, cross_prob=None, mutate_prob=None, show_mode=0):
+    def __init__(self,
+                 pop_size: Optional[int] = None,
+                 max_iter: Optional[int] = None,
+                 cross_prob: Optional[float] = None,
+                 mutate_prob: Optional[float] = None,
+                 show_mode: Optional[str] = None):
         """
         改进的基于优势的帕累托进化算法
 
@@ -37,13 +43,13 @@ class SPEA2(ALGORITHM):
     @ALGORITHM.record_time
     def run_step(self, i):
         """运行算法单步"""
-        # 获取匹配池
-        mating_pool = self.mating_pool_selection()
-        # 交叉变异生成子代
-        offspring = self.operator(mating_pool)
-        # 进行环境选择
+        # 选择阶段：从当前种群中选择父代个体组成配对池
+        parent_indices = self.get_mating_indices()
+        # 衍生阶段：对配对池中个体应用交叉和变异生成子代
+        offspring = self.apply_operator(parent_indices)
+        # 环境选择阶段：合并父代与子代，选择下一代种群
         self.environmental_selection(offspring)
-        # 记录每步状态
+        # 监控并记录每步状态
         self.record()
 
     def cal_fits(self, objs, cons):
@@ -73,30 +79,25 @@ class SPEA2(ALGORITHM):
         fits = r_values + d_values
         return fits
 
-    def environmental_selection(self, offspring):
-        """SPEA2环境选择"""
-        # 将当前种群与其子代合并
-        new_pop, new_objs, new_cons, new_fits = self.pop_merge(offspring)
-        # 为了能求解约束问题这里对根据约束计算的新目标值进行计算
-        new_objs_ = self.cal_objs_based_cons(new_objs, new_cons)
-        # 使用SPEA2选择策略进行选择
-        chosen = np.array(new_fits < 1)
+    def apply_selection(self, objs, cons, fits, next_size):
+        """覆写为SPEA2的选择策略进行选择"""
+        # 初始化要选择的个体
+        chosen = np.array(fits < 1)
         num_chosen = np.sum(chosen)
         if num_chosen < self.pop_size:
             # 默认可选数量过少则进行补充
-            ranking = np.argsort(new_fits)
+            ranking = np.argsort(fits)
             chosen[ranking[:self.pop_size]] = True
         elif num_chosen > self.pop_size:
             # 若可选数量过多则进行裁剪
-            del_indices = self.truncation(new_objs_[chosen], num_chosen - self.pop_size)
+            # 为了能求解约束问题这里对根据约束计算的新目标值进行计算
+            objs_based_cons = self.cal_objs_based_cons(objs, cons)
+            del_indices = self.truncation(objs_based_cons[chosen], num_chosen - self.pop_size)
             chosen_indices = np.where(chosen)[0]
             chosen[chosen_indices[del_indices]] = False
         else:
             pass
-        self.pop = new_pop[chosen]
-        self.objs = new_objs[chosen]
-        self.cons = new_cons[chosen]
-        self.fits = new_fits[chosen]
+        return chosen
 
     @staticmethod
     def truncation(objs, k):

@@ -11,12 +11,18 @@ NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
 import numpy as np
+from typing import Optional
 from Algorithms import ALGORITHM
 from Algorithms.Utility.SupportUtils import fast_nd_sort, cal_crowd_dist, cal_ranking
 
 
 class NSGAII(ALGORITHM):
-    def __init__(self, pop_size=None, max_iter=None, cross_prob=None, mutate_prob=None, show_mode=0):
+    def __init__(self,
+                 pop_size: Optional[int] = None,
+                 max_iter: Optional[int] = None,
+                 cross_prob: Optional[float] = None,
+                 mutate_prob: Optional[float] = None,
+                 show_mode: Optional[str] = None):
         """
         基于快速非支配排序多目标遗传算法
 
@@ -36,17 +42,22 @@ class NSGAII(ALGORITHM):
     @ALGORITHM.record_time
     def run_step(self, i):
         """运行算法单步"""
-        # 获取匹配池
-        mating_pool = self.mating_pool_selection()
-        # 交叉变异生成子代
-        offspring = self.operator(mating_pool)
-        # 进行环境选择
+        # 选择阶段：从当前种群中选择父代个体组成配对池
+        parent_indices = self.get_mating_indices()
+        # 衍生阶段：对配对池中个体应用交叉和变异生成子代
+        offspring = self.apply_operator(parent_indices)
+        # 环境选择阶段：合并父代与子代，选择下一代种群
         self.environmental_selection(offspring)
-        # 记录每步状态
+        # 监控并记录每步状态
         self.record()
 
     def cal_fits(self, objs, cons):
-        """根据给定目标值和约束值得到适应度值"""
+        """
+        根据给定目标值和约束值得到适应度值
+        :param objs: 种群目标值(矩阵)
+        :param cons: 种群约束值(矩阵)
+        :return: 种群适应度值(矩阵)
+        """
         # 检查是否均满足约束，若均满足约束则无需考虑约束
         if np.all(cons <= 0):
             objs_based_cons = objs

@@ -11,15 +11,23 @@ NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
 import numpy as np
+from typing import Optional
 from Algorithms import ALGORITHM
-from Algorithms.Utility.Selections import elitist_selection
+from Algorithms.Utility.Selections import select_by_elitism
 from Algorithms.Utility.Operators import operator_real, operator_binary
 from Algorithms.Utility.SupportUtils import fast_nd_sort, cal_crowd_dist, cal_ranking
 
 
 class NNDREA(ALGORITHM):
-    def __init__(self, pop_size=None, max_iter=None, structure=None, search_range=None, delta=0.5,
-                 cross_prob=None, mutate_prob=None, show_mode=0):
+    def __init__(self,
+                 pop_size: Optional[int] = None,
+                 max_iter: Optional[int] = None,
+                 cross_prob: Optional[float] = None,
+                 mutate_prob: Optional[float] = None,
+                 structure: Optional[list] = None,
+                 search_range: Optional[np.ndarray] = None,
+                 search_delta: float = 0.5,
+                 show_mode: Optional[str] = None):
         """
         基于神经网络降维的大规模二进制优化算法
 
@@ -30,11 +38,11 @@ class NNDREA(ALGORITHM):
             Luchen Wang
         :param pop_size: 种群大小
         :param max_iter: 迭代次数
-        :param structure: 神经网络结构
-        :param search_range: 权重搜索范围
-        :param delta: 第一阶段搜索占比
         :param cross_prob: 交叉概率
         :param mutate_prob: 变异概率
+        :param structure: 神经网络结构
+        :param search_range: 权重搜索范围
+        :param search_delta: 第一阶段搜索占比
         :param show_mode: 绘图模式
         """
         # 初始化相关参数(调用父类初始化)
@@ -42,7 +50,7 @@ class NNDREA(ALGORITHM):
         self.solvable_type = [self.BIN]
         self.structure = structure
         self.search_range = search_range
-        self.delta = delta
+        self.search_delta = search_delta
         # 初始化参数
         self.instance = None
         self.shapes = None
@@ -50,9 +58,9 @@ class NNDREA(ALGORITHM):
         self.delta_iter = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self, problem, pop=None):
+    def init_algorithm(self, problem):
         """初始化算法"""
-        super().init_algorithm(problem, pop)
+        super().init_algorithm(problem)
         # 问题必须提供实例数据集
         if not hasattr(self.problem, 'instance'):
             raise ValueError("The problem must provide an instance dataset")
@@ -86,6 +94,12 @@ class NNDREA(ALGORITHM):
         # 初始化交叉和变异概率
         self.cross_prob = 1.0
         self.mutate_prob = 1 / self.num_dec
+        # 按照delta占比分为两个阶段
+        self.delta_iter = self.search_delta * self.max_iter
+
+    @ALGORITHM.record_time
+    def init_and_eval_pop(self, pop=None):
+        """初始化种群"""
         # 初始化权重种群，计算目标值和约束值
         self.pop_weights = self.init_pop_weights()
         # 经过神经网络权重计算得到真实种群，并计算目标值
@@ -95,8 +109,6 @@ class NNDREA(ALGORITHM):
         self.fits = self.cal_fits(self.objs, self.cons)
         # 记录当前种群信息
         self.record()
-        # 按照delta占比分为两个阶段
-        self.delta_iter = self.delta * self.max_iter
 
     def init_pop_weights(self):
         pop_weights = np.random.uniform(self.upper, self.lower, size=(self.pop_size, self.num_dec))
@@ -106,18 +118,18 @@ class NNDREA(ALGORITHM):
     def run_step(self, i):
         """运行算法单步"""
         if i <= self.delta_iter:
-            # 获取匹配池
-            mating_pool = self.mating_pool_selection()
-            # 交叉变异生成子代
-            offspring_weights = self.operator_weights(mating_pool)
-            # 进行环境选择
+            # 选择阶段：从当前种群中选择父代个体组成配对池
+            parent_indices = self.get_mating_indices()
+            # 衍生阶段：对配对池中个体应用交叉和变异生成子代
+            offspring_weights = self.operator_weights(parent_indices)
+            # 环境选择阶段：合并父代与子代，选择下一代种群
             self.environmental_selection_weights(offspring_weights)
         else:
-            # 获取匹配池
-            mating_pool = self.mating_pool_selection()
-            # 交叉变异生成子代
-            offspring = self.operator_origin(mating_pool)
-            # 进行环境选择
+            # 选择阶段：从当前种群中选择父代个体组成配对池
+            parent_indices = self.get_mating_indices()
+            # 衍生阶段：对配对池中个体应用交叉和变异生成子代
+            offspring = self.operator_origin(parent_indices)
+            # 环境选择阶段：合并父代与子代，选择下一代种群
             self.environmental_selection(offspring)
         # 记录每步状态
         self.record()
@@ -158,7 +170,7 @@ class NNDREA(ALGORITHM):
         # 重新计算合并种群的的等价适应度值
         new_fits = self.cal_fits(new_objs, new_cons)
         # 使用选择策略(默认精英选择)选择进入下一代新种群的个体
-        best_indices = elitist_selection(new_fits, self.pop_size)
+        best_indices = select_by_elitism(new_fits, self.pop_size)
         # 取目标值最优的个体组成新的种群
         self.pop = new_pop[best_indices]
         self.objs = new_objs[best_indices]
@@ -207,5 +219,5 @@ class NNDREA(ALGORITHM):
         info = super().get_params_info()
         info['structure'] = self.structure if isinstance(self.structure, list) else list(self.structure)
         info['search_range'] = self.search_range if isinstance(self.search_range, list) else list(self.search_range)
-        info['delta'] = self.delta
+        info['search_delta'] = self.search_delta
         return info

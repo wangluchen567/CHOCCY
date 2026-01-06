@@ -11,6 +11,7 @@ NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
 import numpy as np
+from typing import Optional
 from Algorithms import ALGORITHM
 from scipy.spatial import distance_matrix
 from Algorithms.Utility.SupportUtils import get_uniform_vectors
@@ -21,7 +22,14 @@ class MOEAD(ALGORITHM):
     TCH = 2  # 切比雪夫聚合方法
     WSM = 3  # 线性聚合方法
 
-    def __init__(self, pop_size=100, max_iter=None, agg_type=PBI, cross_prob=None, mutate_prob=None, show_mode=0):
+    def __init__(self,
+                 pop_size: Optional[int] = None,
+                 max_iter: Optional[int] = None,
+                 cross_prob: Optional[float] = None,
+                 mutate_prob: Optional[float] = None,
+                 agg_type: int = PBI,
+                 num_near: Optional[int] = None,
+                 show_mode: Optional[str] = None):
         """
         一种基于分解的多目标进化算法
 
@@ -32,25 +40,26 @@ class MOEAD(ALGORITHM):
             Luchen Wang
         :param pop_size: 种群大小
         :param max_iter: 迭代次数
-        :param agg_type: 聚合函数类型
         :param cross_prob: 交叉概率
         :param mutate_prob: 变异概率
+        :param agg_type: 聚合函数类型
+        :param num_near: 最近邻居的数量
         :param show_mode: 绘图模式
         """
         # 初始化相关参数(调用父类初始化)
         super().__init__(pop_size, max_iter, cross_prob, mutate_prob, None, show_mode)
         # 聚合函数类型
         self.agg_type = agg_type
-        self.num_near = None
+        self.num_near = num_near
         self.vectors = None
         self.indexes = None
         self.ref = None
 
     @ALGORITHM.record_time
-    def init_algorithm(self, problem, pop=None):
+    def init_algorithm(self, problem):
         """初始化算法"""
         # 选择的最近邻居的数量
-        self.num_near = int(np.ceil(self.pop_size / 10))
+        self.num_near = self.num_near if self.num_near else int(np.ceil(self.pop_size / 10))
         # 均匀生成权重向量
         self.vectors = get_uniform_vectors(self.pop_size, problem.num_obj)
         # 获取每个权重向量的前T个邻居向量的下标
@@ -58,7 +67,10 @@ class MOEAD(ALGORITHM):
         # 根据权重向量个数重新确定种群大小(必须匹配)
         self.pop_size = len(self.vectors)
         # 调用父类的初始化函数
-        super().init_algorithm(problem, pop)
+        super().init_algorithm(problem)
+
+    def init_and_eval_pop(self, pop=None):
+        super().init_and_eval_pop(pop)
         # 初始化参考点
         self.ref = np.min(self.objs, axis=0)
 
@@ -79,20 +91,20 @@ class MOEAD(ALGORITHM):
     def run_step(self, i):
         """运行算法单步"""
         for j in range(self.pop_size):
-            # 随机选择两个个体作为父代个体
-            mating_pool = self.selection_single(j)
-            # 进行交叉变异得到一个新的子代
-            offspring = self.operator(mating_pool)[0]
-            # 进行环境选择更新种群
-            self.environmental_selection_single(offspring, j)
+            # 选择阶段：随机选择两个个体作为父代个体
+            parent_indices = self.get_pair_indices(j)
+            # 衍生阶段：对选择的个体应用交叉和变异生成子代
+            offspring = self.apply_operator(parent_indices)
+            # 环境选择阶段：父代与子代竞争选择下一代幸存者
+            self.survival_selection(offspring[0], j)
         # 记录每步状态
         self.record()
 
-    def selection_single(self, j):
+    def get_pair_indices(self, j):
         """随机选择两个个体作为父代"""
         return np.random.choice(self.indexes[j], size=2, replace=False)
 
-    def environmental_selection_single(self, offspring, j):
+    def survival_selection(self, offspring, j):
         """进行环境选择(分解式)"""
         # 计算该子代的目标值
         offspring_obj = self.cal_objs(offspring)
