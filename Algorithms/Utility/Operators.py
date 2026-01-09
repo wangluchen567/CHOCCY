@@ -42,10 +42,10 @@ def operator_real(pop, lower, upper, cross_prob=None, mutate_prob=None):
     return offspring
 
 
-def operator_diff(base_pop, parents, lower, upper, cross_prob=None, factor=None):
+def operator_differential(population, parents, lower, upper, cross_prob=None, factor=None):
     """
     差分进化算子
-    :param base_pop: 原始种群
+    :param population: 原始种群
     :param parents: 要差分的父代
     :param lower: 取值范围的下界
     :param upper: 取值范围的上界
@@ -57,9 +57,9 @@ def operator_diff(base_pop, parents, lower, upper, cross_prob=None, factor=None)
     cross_prob = 0.5 if cross_prob is None else cross_prob
     factor = 0.5 if factor is None else factor
     # 进行差分变异得到变异子代
-    vari_pop = diff_mutation(parents, factor)
+    variation = differential_mutation(parents, factor)
     # 进行差分交叉得到最终子代
-    offspring = diff_crossover(base_pop, vari_pop, lower, upper, cross_prob)
+    offspring = differential_crossover(population, variation, lower, upper, cross_prob)
     return offspring
 
 

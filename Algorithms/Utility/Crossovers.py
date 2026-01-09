@@ -17,90 +17,98 @@ import warnings
 import numpy as np
 
 
-def simulated_binary_crossover(parents1, parents2, lower, upper, cross_prob, eta=20):
+def simulated_binary_crossover(parents1: np.ndarray,
+                               parents2: np.ndarray,
+                               lowers: np.ndarray,
+                               uppers: np.ndarray,
+                               cross_prob: float,
+                               eta: float = 20.0) -> np.ndarray:
     """
     模拟二进制交叉(实数问题)
-    :param parents1: 父代种群1
-    :param parents2: 父代种群2
-    :param lower: 取值范围的下界
-    :param upper: 取值范围的上界
-    :param cross_prob: 交叉概率
-    :param eta: 超参数
-    :return: 子代种群
+    :param parents1: 父代种群1(解集)，形状: (pop_size, num_dec)
+    :param parents2: 父代种群2(解集)，形状: (pop_size, num_dec)
+    :param lowers: 取值范围的下界(数组)，可以是1D或2D数组
+    :param uppers: 取值范围的上界(数组)，可以是1D或2D数组
+    :param cross_prob: 交叉概率，范围: [0, 1]
+    :param eta: 分布指数，控制子代与父代的接近程度，越大子代越接近父代
+    :return: 交叉后的子代种群(解集)，形状: (2 * pop_size, num_dec)
     """
     if parents1.shape != parents2.shape:
-        raise ValueError("The shape of the two parent populations is not equal")
-    p_size, num_dec = parents1.shape
-    beta = np.zeros((p_size, num_dec))
-    mu = np.random.random((p_size, num_dec))
-    beta[mu <= 0.5] = np.power((2 * mu[mu <= 0.5]), 1 / (eta + 1))
-    beta[mu > 0.5] = np.power((2 - 2 * mu[mu > 0.5]), -1 / (eta + 1))
-    beta = beta * np.power(-1, np.random.randint(2, size=(p_size, num_dec)))
-    beta[np.random.random((p_size, 1)).repeat(num_dec, 1) > cross_prob] = 1
-    offspring = np.concatenate((
-        (parents1 + parents2) / 2 + beta * (parents1 - parents2) / 2,
-        (parents1 + parents2) / 2 - beta * (parents1 - parents2) / 2
-    ))
-    # 将上下界重整为相同形状
-    if isinstance(lower, int) or isinstance(lower, float):
-        lowers = np.zeros((2 * p_size, num_dec)) + lower
-        uppers = np.zeros((2 * p_size, num_dec)) + upper
-    else:
-        lowers = lower.reshape(1, -1).repeat(2 * p_size, 0)
-        uppers = upper.reshape(1, -1).repeat(2 * p_size, 0)
-    # 按照上下界对超出部分进行裁剪
+        raise ValueError(f"Parent populations must have same shape, "
+                         f"got {parents1.shape} and {parents2.shape}")
+    # 父代形状信息
+    pop_size, num_dec = parents1.shape
+    # 生成beta值
+    mu = np.random.random((pop_size, num_dec))
+    beta = np.where(mu <= 0.5,
+                    (2 * mu) ** (1 / (eta + 1)),
+                    (2 - 2 * mu) ** (-1 / (eta + 1)))
+    # 随机正负号
+    beta *= np.where(np.random.randint(0, 2, (pop_size, num_dec)), 1, -1)
+    # 应用交叉概率
+    mask = np.random.random((pop_size, 1)) < cross_prob
+    beta = np.where(mask, beta, 1)
+    # 计算子代
+    center = (parents1 + parents2) / 2  # 父代中点，交叉中心
+    spread = beta * (parents1 - parents2) / 2  # 扩散距离，受beta控制的偏移量
+    # 生成两个子代：中心 ± 扩散
+    offspring = np.vstack([
+        center + spread,  # 子代1: 中点正向偏移
+        center - spread  # 子代2: 中点负向偏移
+    ])
+    # 边界裁剪
     offspring = np.clip(offspring, lowers, uppers)
     return offspring
 
 
-def diff_crossover(base_pop, vari_pop, lower, upper, cross_prob):
+def differential_crossover(population: np.ndarray,
+                           variation: np.ndarray,
+                           lowers: np.ndarray,
+                           uppers: np.ndarray,
+                           cross_prob: float) -> np.ndarray:
     """
-    差分交叉(实数问题)
-    :param base_pop: 原始种群
-    :param vari_pop: 变异后种群
-    :param lower: 取值范围的下界
-    :param upper: 取值范围的上界
-    :param cross_prob: 交叉概率
-    :return: 交叉后的子代种群
+    差分交叉(实数问题)(用于差分进化算法)
+    :param population: 原始种群(解集)，形状: (pop_size, num_dec)
+    :param variation: 变异后种群(解集)，形状: (pop_size, num_dec)
+    :param lowers: 取值范围的下界(数组)，可以是1D或2D数组
+    :param uppers: 取值范围的上界(数组)，可以是1D或2D数组
+    :param cross_prob: 交叉概率，范围 [0, 1]
+    :return: 交叉后的子代种群(解集)，形状: (pop_size, num_dec)
     """
     # 获取种群形状
-    p_size, num_dec = base_pop.shape
+    pop_size, num_dec = population.shape
     # 根据概率创建交叉掩码
-    mask = np.random.random((p_size, num_dec)) < cross_prob
+    mask = np.asarray(np.random.random((pop_size, num_dec)) < cross_prob)
     # 强制至少有一个维度交叉
-    random_dims = np.random.randint(0, num_dec, p_size)
+    random_dims = np.random.randint(0, num_dec, pop_size)
     # 创建索引矩阵来设置强制交叉位
-    row_indices = np.arange(p_size)[:, np.newaxis]
+    row_indices = np.arange(pop_size)[:, np.newaxis]
     col_indices = random_dims[:, np.newaxis]
     # 使用花式索引设置强制交叉位
     mask[row_indices, col_indices] = True
     # 交叉得到子代种群
-    offspring = np.where(mask, vari_pop, base_pop)
-    # 将上下界重整为相同形状
-    if isinstance(lower, int) or isinstance(lower, float):
-        lowers = np.ones((p_size, num_dec)) * lower
-        uppers = np.ones((p_size, num_dec)) * upper
-    else:
-        lowers = lower.reshape(1, -1).repeat(p_size, 0)
-        uppers = upper.reshape(1, -1).repeat(p_size, 0)
+    offspring = np.where(mask, variation, population)
     # 按照上下界对超出部分进行裁剪
     offspring = np.clip(offspring, lowers, uppers)
     return offspring
 
 
-def binary_crossover(parents1, parents2, cross_prob):
+def binary_crossover(parents1: np.ndarray,
+                     parents2: np.ndarray,
+                     cross_prob: float) -> np.ndarray:
     """
     二进制均匀交叉(二进制问题)
-    :param parents1: 父代种群1
-    :param parents2: 父代种群2
-    :param cross_prob: 交叉概率
-    :return: 子代种群
+    :param parents1: 父代种群1(解集)，形状: (pop_size, num_dec)
+    :param parents2: 父代种群2(解集)，形状: (pop_size, num_dec)
+    :param cross_prob: 交叉概率，范围: [0, 1]
+    :return: 交叉后的子代种群(解集)，形状: (2 * pop_size, num_dec)
     """
     if parents1.shape != parents2.shape:
-        raise ValueError("The shape of the two parent populations is not equal")
-    p_size, num_dec = parents1.shape
+        raise ValueError(f"Parent populations must have same shape, "
+                         f"got {parents1.shape} and {parents2.shape}")
+    pop_size, num_dec = parents1.shape
     # 维度方面均匀交叉，个数方面按照交叉概率交叉
-    mask = (np.random.rand(p_size, num_dec) < 0.5) & (np.random.rand(p_size, 1) < cross_prob)
+    mask = (np.random.rand(pop_size, num_dec) < 0.5) & (np.random.rand(pop_size, 1) < cross_prob)
     # 若mask为true则取第一个矩阵元素,否则取第二个矩阵中元素
     offspring1 = np.where(mask, parents2, parents1)
     offspring2 = np.where(mask, parents1, parents2)
@@ -108,26 +116,29 @@ def binary_crossover(parents1, parents2, cross_prob):
     return offspring
 
 
-def order_crossover(parents1, parents2, cross_prob):
+def order_crossover(parents1: np.ndarray,
+                    parents2: np.ndarray,
+                    cross_prob: float) -> np.ndarray:
     """
     顺序交叉(序列问题)
-    :param parents1: 父代种群1
-    :param parents2: 父代种群2
-    :param cross_prob: 交叉概率
-    :return: 子代种群
+    :param parents1: 父代种群1(解集)，形状: (pop_size, num_dec)
+    :param parents2: 父代种群2(解集)，形状: (pop_size, num_dec)
+    :param cross_prob: 交叉概率，范围: [0, 1]
+    :return: 交叉后的子代种群(解集)，形状: (2 * pop_size, num_dec)
     """
     if parents1.shape != parents2.shape:
-        raise ValueError("The shape of the two parent populations is not equal")
-    p_size, num_dec = parents1.shape
-    offspring1 = parents1.copy()
-    offspring2 = parents2.copy()
+        raise ValueError(f"Parent populations must have same shape, "
+                         f"got {parents1.shape} and {parents2.shape}")
+    pop_size, num_dec = parents1.shape
+    offspring1 = parents1.copy()  # 浅拷贝，防止原数据被修改
+    offspring2 = parents2.copy()  # 浅拷贝，防止原数据被修改
     # 生成所有需要的随机数
-    crossover_mask = np.random.random(p_size) < cross_prob
-    starts1 = np.random.randint(0, num_dec, size=p_size)
-    ends1 = np.random.randint(starts1 + 1, num_dec + 1, size=p_size)
-    starts2 = np.random.randint(0, num_dec, size=p_size)
-    ends2 = np.random.randint(starts2 + 1, num_dec + 1, size=p_size)
-    for i in range(p_size):
+    crossover_mask = np.asarray(np.random.random(pop_size) < cross_prob)
+    starts1 = np.random.randint(0, num_dec, size=pop_size)
+    ends1 = np.random.randint(starts1 + 1, num_dec + 1, size=pop_size)
+    starts2 = np.random.randint(0, num_dec, size=pop_size)
+    ends2 = np.random.randint(starts2 + 1, num_dec + 1, size=pop_size)
+    for i in range(pop_size):
         if crossover_mask[i]:
             # 进行顺序交叉
             offspring1_ = list(dict.fromkeys(np.concatenate((parents1[i][starts1[i]:ends1[i]],
@@ -140,35 +151,40 @@ def order_crossover(parents1, parents2, cross_prob):
     return offspring
 
 
-def fix_label_crossover(parents1, parents2, cross_prob):
+def fix_label_crossover(parents1: np.ndarray,
+                        parents2: np.ndarray,
+                        cross_prob: float) -> np.ndarray:
     """
     固定类型数的标签的均匀交叉(固定类型数标签问题)
-    :param parents1: 父代种群1
-    :param parents2: 父代种群2
-    :param cross_prob: 交叉概率
-    :return: 子代种群
+    :param parents1: 父代种群1(解集)，形状: (pop_size, num_dec)
+    :param parents2: 父代种群2(解集)，形状: (pop_size, num_dec)
+    :param cross_prob: 交叉概率，范围: [0, 1]
+    :return: 交叉后的子代种群(解集)，形状: (2 * pop_size, num_dec)
     """
-    if parents1.shape[0] != parents2.shape[0]:
-        raise ValueError("The size of the two parent populations is not equal")
-    if parents1.shape[1] != parents2.shape[1]:
-        raise ValueError("The dim of the two parent populations is not equal")
+    if parents1.shape != parents2.shape:
+        raise ValueError(f"Parent populations must have same shape, "
+                         f"got {parents1.shape} and {parents2.shape}")
     # 得到每种标签的类型和数量
     labels_type, labels_num = np.unique(parents1[0], return_counts=True)
     offspring = fix_label_cx(parents1, parents2, labels_type, labels_num, cross_prob)
     return offspring
 
 
-def fix_label_cx_(parents1, parents2, labels_type, labels_num, cross_prob):
+def fix_label_cx_(parents1: np.ndarray,
+                  parents2: np.ndarray,
+                  labels_type: np.ndarray,
+                  labels_num: np.ndarray,
+                  cross_prob: float) -> np.ndarray:
     """
     固定类型数的标签的均匀交叉(子函数)
-    :param parents1: 父代种群1
-    :param parents2: 父代种群2
-    :param labels_type: 每种标签的类型
-    :param labels_num: 每种标签的数量
-    :param cross_prob: 交叉概率
-    :return: 子代种群
+    :param parents1: 父代种群1(解集)，形状: (pop_size, num_dec)
+    :param parents2: 父代种群2(解集)，形状: (pop_size, num_dec)
+    :param labels_type: 每种标签的类型(1D数组)
+    :param labels_num: 每种标签的数量(1D数组)
+    :param cross_prob: 交叉概率，范围: [0, 1]
+    :return: 交叉后的子代种群(解集)，形状: (2 * pop_size, num_dec)
     """
-    p_size, num_dec = parents1.shape
+    pop_size, num_dec = parents1.shape
     # 初始化子代
     offspring1 = np.zeros(parents1.shape, dtype=int)
     offspring2 = np.zeros(parents2.shape, dtype=int)
@@ -177,7 +193,7 @@ def fix_label_cx_(parents1, parents2, labels_type, labels_num, cross_prob):
     offspring1[equals] = parents1[equals]
     offspring2[equals] = parents2[equals]
     # 这里需要遍历以满足固定数量的约束
-    for i in range(p_size):
+    for i in range(pop_size):
         # 统计剩余标签数量
         last_labels1 = labels_num.copy()
         last_labels2 = labels_num.copy()
@@ -190,10 +206,10 @@ def fix_label_cx_(parents1, parents2, labels_type, labels_num, cross_prob):
                 pass
             else:
                 # 随机从父代中选择继承点
-                r1 = (parents1[i][j] if np.random.random() < 0.5 else parents2[i][
-                    j]) if np.random.random() < cross_prob else offspring1[i][j]
-                r2 = (parents2[i][j] if np.random.random() < 0.5 else parents1[i][
-                    j]) if np.random.random() < cross_prob else offspring2[i][j]
+                r1 = (parents1[i][j] if np.random.random() < 0.5 else parents2[i][j]) \
+                    if np.random.random() < cross_prob else offspring1[i][j]
+                r2 = (parents2[i][j] if np.random.random() < 0.5 else parents1[i][j]) \
+                    if np.random.random() < cross_prob else offspring2[i][j]
                 k1, k2 = np.where(labels_type == r1)[0], np.where(labels_type == r2)[0]
                 # 判断是否可继承，若无法继承，则直接随机从剩余的类型中选择一个
                 if last_labels1[k1] <= 0:
@@ -217,30 +233,34 @@ try:
 
 
     @jit(nopython=True, cache=True)
-    def fix_label_cx_jit(parents1, parents2, labels_type, labels_num, cross_prob):
+    def fix_label_cx_jit(parents1: np.ndarray,
+                         parents2: np.ndarray,
+                         labels_type: np.ndarray,
+                         labels_num: np.ndarray,
+                         cross_prob: float) -> np.ndarray:
         """
         固定类型数的标签的均匀交叉(子函数)(Numba加速版本)
-        :param parents1: 父代种群1
-        :param parents2: 父代种群2
-        :param labels_type: 每种标签的类型
-        :param labels_num: 每种标签的数量
-        :param cross_prob: 交叉概率
-        :return: 子代种群
+        :param parents1: 父代种群1(解集)，形状: (pop_size, num_dec)
+        :param parents2: 父代种群2(解集)，形状: (pop_size, num_dec)
+        :param labels_type: 每种标签的类型(1D数组)
+        :param labels_num: 每种标签的数量(1D数组)
+        :param cross_prob: 交叉概率，范围: [0, 1]
+        :return: 交叉后的子代种群(解集)，形状: (2 * pop_size, num_dec)
         """
-        p_size, num_dec = parents1.shape
+        pop_size, num_dec = parents1.shape
         # 初始化子代
         offspring1 = np.zeros(parents1.shape, dtype=np.int32)
         offspring2 = np.zeros(parents2.shape, dtype=np.int32)
         # 两父代相同位保持不变，不同位均匀交叉，并且需要保证标签等量约束
         # 使用显式循环代替布尔数组索引
-        for i in range(p_size):
+        for i in range(pop_size):
             for j in range(num_dec):
                 if parents1[i, j] == parents2[i, j]:
                     offspring1[i, j] = parents1[i, j]
                     offspring2[i, j] = parents2[i, j]
 
         # 这里需要遍历以满足固定数量的约束
-        for i in range(p_size):
+        for i in range(pop_size):
             # 统计剩余标签数量
             last_labels1 = labels_num.copy()
             last_labels2 = labels_num.copy()
@@ -302,7 +322,11 @@ try:
         return offspring
 
 
-    def fix_label_cx(parents1, parents2, labels_type, labels_num, cross_prob):
+    def fix_label_cx(parents1: np.ndarray,
+                     parents2: np.ndarray,
+                     labels_type: np.ndarray,
+                     labels_num: np.ndarray,
+                     cross_prob: float) -> np.ndarray:
         """
         包装函数，保持原始接口不变，内部调用Numba加速版本
         """

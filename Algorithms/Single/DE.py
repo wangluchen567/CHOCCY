@@ -13,7 +13,7 @@ See the Mulan PSL v2 for more details.
 import numpy as np
 from typing import Optional
 from Algorithms import ALGORITHM
-from Algorithms.Utility.Operators import operator_diff
+from Algorithms.Utility.Operators import operator_differential
 
 
 class DE(ALGORITHM):
@@ -68,7 +68,7 @@ class DE(ALGORITHM):
     def apply_operator(self, parent_indices):
         """重写算子为差分进化算子"""
         parents = np.array([self.pop[indices] for indices in parent_indices])
-        return operator_diff(self.pop, parents, self.lower, self.upper, self.cross_prob, self.factor)
+        return operator_differential(self.pop, parents, self.lower, self.upper, self.cross_prob, self.factor)
 
     def environmental_selection(self, offspring):
         """差分进化环境选择(使用一对一的局部竞争选择)"""

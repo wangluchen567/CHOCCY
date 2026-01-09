@@ -17,17 +17,20 @@ import numpy as np
 from Algorithms.Utility.SupportUtils import two_opt
 
 
-def educate_tsp(problem, offspring, educate_prob):
+def educate_tsp(dist_mat: np.ndarray,
+                population: np.ndarray,
+                educate_prob: float) -> np.ndarray:
     """
-    根据指定问题(tsp)对子代进行教育
-    :param problem: 问题对象
-    :param offspring: 子代
-    :param educate_prob: 对子代教育的概率
-    :return: 教育后的子代
+    针对指定问题(旅行商, tsp)对子代进行教育
+    :param dist_mat: 距离矩阵，形状: (num_dec, num_dec)
+    :param population: 原始种群(解集)，形状: (pop_size, num_dec)
+    :param educate_prob: 对子代教育的概率，范围: [0, 1]
+    :return: 教育后的子代，形状: (pop_size, num_dec)
     """
-    if not hasattr(problem, 'dist_mat'):
-        raise ValueError("The problem must provide the distance matrix")
+    # 浅拷贝，防止原数据被修改
+    offspring = population.copy()
+    # 逐个按概率对子代进行教育
     for i in range(len(offspring)):
         if np.random.rand() < educate_prob:
-            offspring[i], _ = two_opt(offspring[i], problem.dist_mat)
+            offspring[i], _ = two_opt(offspring[i], dist_mat)
     return offspring

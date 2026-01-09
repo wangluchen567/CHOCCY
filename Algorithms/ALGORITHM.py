@@ -16,9 +16,8 @@ import warnings
 import numpy as np
 from tqdm import tqdm
 from scipy.stats import qmc
-from typing import Optional
 from Problems import PROBLEM
-from Algorithms import View
+from typing import Union, Optional
 from Algorithms.Utility.RecordUtils import setup_logger
 from Algorithms.Utility.ReadUtils import load_array, load_arrays
 from Algorithms.Utility.SaveUtils import save_array, save_arrays, get_timestamp, save_json
@@ -37,16 +36,16 @@ class ALGORITHM(object):
     PMU = PROBLEM.PMU  # 序列
     FIX = PROBLEM.FIX  # 固定标签
     # 定义绘图常量
-    NONE = View.NONE  # 不绘制
-    BAR = View.BAR  # 绘制进度条
-    OBJ = View.OBJ  # 绘制目标空间
-    DEC = View.DEC  # 绘制决策空间
-    MIX2D = View.MIX2D  # 绘制目标空间和决策空间混合(二维空间)
-    MIX3D = View.MIX3D  # 绘制目标空间和决策空间混合(三维空间)
-    SCORE = View.SCORE  # 绘制分数情况(单目标为目标值,多目标为评价指标)
-    PROB = View.PROB  # 问题提供绘图方法
-    ALGO = View.ALGO  # 算法提供绘图方法
-    LOG = View.LOG  # 输出日志
+    NONE = 'none'  # 不绘制
+    BAR = 'bar'  # 绘制进度条
+    OBJ = 'obj'  # 绘制目标空间
+    DEC = 'dec'  # 绘制决策空间
+    MIX2D = 'mix2d'  # 绘制目标空间和决策空间混合(二维空间)
+    MIX3D = 'mix3d'  # 绘制目标空间和决策空间混合(三维空间)
+    SCORE = 'score'  # 绘制分数情况(单目标为目标值,多目标为评价指标)
+    PROB = 'problem'  # 问题提供绘图方法
+    ALGO = 'algorithm'  # 算法提供绘图方法
+    LOG = 'log'  # 输出日志
     # 定义指标类型常量(多目标)
     score_types = ['HV', 'GD', 'IGD', 'GD+', 'IGD+']
 
@@ -430,7 +429,7 @@ class ALGORITHM(object):
         """对子代进行教育(等价于局部搜索)"""
         pass
 
-    def get_mating_indices(self, next_size: Optional[int] = None, p: Optional[int] = 2):
+    def get_mating_indices(self, next_size: Optional[int] = None, p: Union[int, bool] = 2):
         """
         配对池选择
         :param next_size: 下一代种群的个体数量

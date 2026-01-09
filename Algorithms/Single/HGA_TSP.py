@@ -54,4 +54,6 @@ class HGATSP(ALGORITHM):
 
     def apply_education(self, offspring):
         """对子代进行教育"""
-        return educate_tsp(self.problem, offspring, self.educate_prob)
+        if not hasattr(self.problem, 'dist_mat'):
+            raise ValueError("The problem must provide the distance matrix")
+        return educate_tsp(self.problem.dist_mat, offspring, self.educate_prob)

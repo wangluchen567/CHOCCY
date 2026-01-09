@@ -11,8 +11,8 @@ NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details.
 """
 import numpy as np
-from typing import Optional
 from Algorithms import ALGORITHM
+from typing import Union, Optional
 
 
 class PSO(ALGORITHM):
@@ -22,7 +22,7 @@ class PSO(ALGORITHM):
                  w: float = 0.7298,
                  c1: float = 1.494,
                  c2: float = 1.494,
-                 k: float = 0.15,
+                 v_factor: float = 0.15,
                  show_mode: Optional[str] = None):
         """
         粒子群优化算法
@@ -33,7 +33,7 @@ class PSO(ALGORITHM):
         :param w: 惯性权重
         :param c1: 个体学习权重
         :param c2: 社会学习权重
-        :param k: 控制粒子速度的比例因子
+        :param v_factor: 控制粒子速度的比例因子
         :param show_mode: 绘图模式
         """
         super().__init__(pop_size, max_iter, None, None, None, show_mode)
@@ -42,30 +42,21 @@ class PSO(ALGORITHM):
         self.w = w  # 惯性权重
         self.c1 = c1  # 个体学习权重
         self.c2 = c2  # 社会学习权重
-        self.k = k  # 控制粒子速度的比例因子
+        self.v_factor = v_factor  # 控制粒子速度的比例因子
         self.particle = None  # 粒子群位置
         self.velocity = None  # 粒子群速度
         # 用于后续速度上下界裁剪
         self.v_min, self.v_max = None, None
-        # 用于后续上下界裁剪
-        self.lower_, self.upper_ = None, None
 
     def init_and_eval_pop(self, pop=None):
         super().init_and_eval_pop(pop)
         # 初始化粒子群位置
         self.particle = self.pop.copy()
         # 设置速度上下界，以方便后续用于裁剪
-        self.v_min = self.k * (self.lower - self.upper).reshape(1, -1).repeat(len(self.particle), 0)
-        self.v_max = self.k * (self.upper - self.lower).reshape(1, -1).repeat(len(self.particle), 0)
+        self.v_min = self.v_factor * (self.lower - self.upper)
+        self.v_max = self.v_factor * (self.upper - self.lower)
         # 初始化粒子群速度为随机值
         self.velocity = np.random.uniform(self.v_min, self.v_max, size=self.particle.shape)
-        # 预处理上下界，以方便后续用于裁剪
-        if isinstance(self.lower, int) or isinstance(self.lower, float):
-            self.lower_ = np.zeros(self.particle.shape) + self.lower
-            self.upper_ = np.zeros(self.particle.shape) + self.upper
-        else:
-            self.lower_ = np.full((len(self.particle), len(self.lower)), self.lower)
-            self.upper_ = np.full((len(self.particle), len(self.upper)), self.upper)
 
     @ALGORITHM.record_time
     def run_step(self, i):
@@ -91,7 +82,7 @@ class PSO(ALGORITHM):
         # 计算下一代粒子群位置
         self.particle = self.particle + self.velocity
         # 根据上下界对位置进行裁剪
-        self.particle = np.clip(self.particle, self.lower_, self.upper_)
+        self.particle = np.clip(self.particle, self.lower, self.upper)
 
     def update_particle(self):
         """更新粒子群个体最优位置"""
@@ -113,5 +104,5 @@ class PSO(ALGORITHM):
         info['w'] = self.w
         info['c1'] = self.c1
         info['c2'] = self.c2
-        info['k'] = self.k
+        info['v_factor'] = self.v_factor
         return info
