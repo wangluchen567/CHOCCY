@@ -38,11 +38,11 @@ Chen's Heuristic Optimizer Constructed with Core numpY
 - 📉 梯度下降优化算法
 - 🔍 局部搜索相关算法
 - 🚚 路由优化相关算法
-- 📝 其他参见[实现清单](./docs/IMPLES.md)
+- 📝 其他参见[实现清单](https://gitee.com/wang567/CHOCCY/blob/master/docs/IMPLES.md)
 
 ## 📚 安装教程
 
-**详细的安装与使用教程请参见[使用指南](./docs/GUIDE.md)** 🔥🔥🔥
+**详细的安装与使用教程请参见[使用指南](https://gitee.com/wang567/CHOCCY/blob/master/docs/GUIDE.md)** 🔥🔥🔥
 
 ### 1. 使用 pip 安装（推荐）
 
@@ -68,7 +68,7 @@ pip install choccy[no-tbb]
 
 ### 2. 从 whl 文件安装
 
-从 [Releases 页面](https://github.com/yourname/choccy/releases) 下载对应版本的 `.whl` 文件，切换到文件所在目录后执行（以 0.1.0 版本为例）：
+从 [Releases 页面](https://gitee.com/wang567/CHOCCY/releases) 下载对应版本的 `.whl` 文件，切换到文件所在目录后执行（以 0.1.0 版本为例）：
 
 ```bash
 pip install choccy-0.1.0-py3-none-any.whl
@@ -162,7 +162,7 @@ CHOCCY/
 > - `examples/`、`demos/`、`tests/`：辅助资源，**仅存在于源码仓库中**（需 `git clone`）
 > - `docs/images/`：文档图片资源，用于 README 中的效果展示
 
-> 📚 **支持的算法与问题集**：完整的算法列表和测试问题清单，请参阅 [实现清单](./docs/IMPLES.md)
+> 📚 **支持的算法与问题集**：完整的算法列表和测试问题清单，请参阅 [实现清单](https://gitee.com/wang567/CHOCCY/blob/master/docs/IMPLES.md)
 
 > **✨ PS: 项目中包含本人研究工作** <br>
 > Neural Network-Based Dimensionality Reduction for Large-Scale Binary Optimization with Millions of Variables (NNDREA), IEEE Transactions on Evolutionary Computation <br>
@@ -281,6 +281,8 @@ Best Decision Variables:
 
 #### 可视化示例
 
+> 💡 **提示**：如果下方的动图无法正常显示，请点击 [此处](https://gitee.com/wang567/CHOCCY) 前往 Gitee 查看完整 README（动图可正常显示）。
+
 以下为使用向量化计算时的优化过程动图（不同参数组合）：
 
 - 左图：`n_vars=2`, `visual_mode='obj'`
@@ -373,7 +375,7 @@ Best Decision Variables:
 
 ### 更多示例
 
-完整的示例代码请参阅 Gitee/GitHub 仓库的 [examples/](./examples) 目录。
+完整的示例代码请参阅 Gitee/GitHub 仓库的 [examples/](https://gitee.com/wang567/CHOCCY/tree/master/examples) 目录。
 
 
 ## 📄 数据集优化结果展示
