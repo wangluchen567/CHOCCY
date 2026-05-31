@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "choccy"
+version = "0.0.9"
+description = "Chen's Heuristic Optimizer Constructed with Core numpY: \nA comprehensive library of optimization algorithms for single and multi-objective problems, built on top of NumPy & Numba for high performance."
+readme = "README.md"
+authors = [
+    {name = "LuChen Wang", email = "wangluchen567@qq.com"}
+]
+license = {text = "MulanPSL-2.0"}
+# 创建分类器，用于PyPI筛选
+classifiers = [
+    "Development Status :: 3 - Alpha",  # 开发状态：Alpha版
+    "Operating System :: OS Independent",  # 系统兼容性：跨平台兼容
+    "Intended Audience :: Science/Research",  # 目标受众：科学与研究
+    "License :: OSI Approved :: Mulan Permissive Software License v2 (MulanPSL-2.0)",
+    "Programming Language :: Python :: 3",  # Python版本支持
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",  # 项目主题：科学与工程、数学计算
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+keywords = ["genetic-algorithm", "evolutionary-algorithms",
+    "multi-objective-optimization", "heuristic-algorithm", "metaheuristic-algorithms"]
+dependencies = [
+    "numpy>=1.23.0",
+    "matplotlib>=3.5.0",
+    "scipy>=1.8.0",
+    "seaborn>=0.12",
+    "tqdm>=4.65",
+    "networkx>=3.0",
+    "numba>=0.57.0; extra != 'cpu-only' and extra != 'no-numba'",
+    "tbb>=2021.0; extra != 'cpu-only'and extra != 'no-tbb' and extra != 'no-numba' "
+]
+[project.optional-dependencies]
+cpu-only = []      # 排除 tbb（暗示纯 CPU）
+no-numba = []      # 排除 numba 与 tbb
+no-tbb = []        # 排除 tbb
+
+# 本地构建与安装流程：
+# 1. 安装构建工具
+# pip install build wheel
+# 2. 构建wheel和源码包
+# python -m build
+# 3. 安装wheel文件
+# pip install dist/choccy-0.0.9-py3-none-any.whl
+
+[project.urls]
+# 主源：Gitee作为官方开发平台
+Homepage = "https://gitee.com/wang567/CHOCCY"
+Issues = "https://gitee.com/wang567/CHOCCY/issues"
+Changelog = "https://gitee.com/wang567/CHOCCY/releases"
+# 镜像：GitHub为镜像
+"Mirror (GitHub)" = "https://github.com/wangluchen567/CHOCCY"
+"Mirror-Issues" = "https://github.com/wangluchen567/CHOCCY/issues"
+
+
+[tool.setuptools.packages.find]
+where = ["."]  # 从当前目录查找
+include = ["choccy*"]  # 包含所有以choccy开头的包
+# 配置打包的包名与目录路径
+[tool.setuptools.package-dir]
+choccy = "choccy"
+# 设置除了.py文件之外需要打包的文件
+[tool.setuptools.package-data]
+choccy = ["*.json", "*.yaml"]
