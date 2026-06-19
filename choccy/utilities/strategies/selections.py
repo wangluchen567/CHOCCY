@@ -46,6 +46,8 @@ def select_by_roulette(fitness: np.ndarray,
                        replace: bool = True) -> np.ndarray:
     """
     轮盘选择法
+
+    适应度值必须为正数，函数内部取倒数后按概率选择（原值越小被选中的概率越大）
     :param fitness: 种群的适应度值向量(最小化)
     :param next_size: 进入下一步操作的个体数量
     :param replace: 是否可以重复抽取选择
@@ -53,9 +55,16 @@ def select_by_roulette(fitness: np.ndarray,
     """
     if next_size is None:
         next_size = len(fitness)
+    # 轮盘选择要求适应度值均为正数
+    if np.any(fitness <= 0):
+        raise ValueError(
+            f"Roulette selection requires all fitness values to be positive, "
+            f"but got min={np.min(fitness):.6e}, max={np.max(fitness):.6e}. "
+            f"Ensure fitness values are positive (e.g., via scaling/shifting) before calling this function."
+        )
     # 对适应度取倒数并进行概率化
-    recip_fitness = 1 / (fitness + 1e-9)
+    recip_fitness = 1 / fitness
     prob = recip_fitness / np.sum(recip_fitness)
     best_indices = np.random.choice(np.arange(len(fitness)), size=next_size,
                                     replace=replace, p=prob.flatten())
-    return best_indices
+    return np.asarray(best_indices)

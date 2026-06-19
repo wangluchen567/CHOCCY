@@ -31,13 +31,13 @@ def polynomial_mutation(offspring: np.ndarray,
     mask = np.random.random((n_sols, n_vars)) < mutate_prob
     mu = np.random.random((n_sols, n_vars))
     # 情况1：mu <= 0.5
-    t = mask * (mu <= 0.5)
+    t = mask & (mu <= 0.5)
     offspring[t] += (ubs[t] - lbs[t]) * (
             (2 * mu[t] + (1 - 2 * mu[t]) * (1 - (offspring[t] - lbs[t]) / (ubs[t] - lbs[t]))
              ** (eta + 1))
             ** (1 / (eta + 1)) - 1)
     # 情况2：mu > 0.5
-    t = mask * (mu > 0.5)
+    t = mask & (mu > 0.5)
     offspring[t] += (ubs[t] - lbs[t]) * (
             1 - (2 * (1 - mu[t]) + 2 * (mu[t] - 0.5) * (1 - (ubs[t] - offspring[t]) / (ubs[t] - lbs[t]))
                  ** (eta + 1))

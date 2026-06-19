@@ -86,7 +86,7 @@ class Comparator(object):
         global_max_iter = 0  # 用于统计全局最大迭代次数
         # 若使用相同解集初始化则先初始化解集
         random_sols = self.problem.init_decs_mat(self.n_sols) \
-            if self.same_start else None and self.n_sols is not None
+            if self.same_start else None
         # 初始化所有算法
         for algorithm in self.algorithms.values():
             # 初始化算法

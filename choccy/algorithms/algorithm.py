@@ -208,7 +208,7 @@ class Algorithm(object):
         if seeds is not None:
             seeds_sols = Solutions(seeds)
             # 统计先验种子解的个数（按算法设置解个数截断）
-            n_seeds = max(self.n_sols, len(seeds_sols))
+            n_seeds = min(self.n_sols, len(seeds_sols))
             self.sols = self.sols.concat(seeds_sols[:n_seeds])
         # 计算需要初始化的随机解个数
         n_random = self.n_sols - n_seeds
@@ -376,34 +376,34 @@ class Algorithm(object):
         return self.eval_penalized_objs(sols).flatten()
 
     def eval_hv(self, sols: Solutions) -> float:
-        """评估解集的超体积指标"""
-        return calc_hv(objs=sols.objs, optimums=self.problem.optimums)
+        """评估解集的 HV 指标"""
+        return calc_hv(objs=np.asarray(sols.get_best().objs), optimums=self.problem.optimums)
 
     def eval_gd(self, sols: Solutions) -> float:
-        """评估解集的超体积指标"""
-        return calc_gd(objs=sols.objs, optimums=self.problem.optimums)
+        """评估解集的 GD 指标"""
+        return calc_gd(objs=np.asarray(sols.get_best().objs), optimums=self.problem.optimums)
 
     def eval_igd(self, sols: Solutions) -> float:
-        """评估解集的超体积指标"""
-        return calc_igd(objs=sols.objs, optimums=self.problem.optimums)
+        """评估解集的 IGD 指标"""
+        return calc_igd(objs=np.asarray(sols.get_best().objs), optimums=self.problem.optimums)
 
     def eval_gd_plus(self, sols: Solutions) -> float:
-        """评估解集的超体积指标"""
-        return calc_gd_plus(objs=sols.objs, optimums=self.problem.optimums)
+        """评估解集的 GD+ 指标"""
+        return calc_gd_plus(objs=np.asarray(sols.get_best().objs), optimums=self.problem.optimums)
 
     def eval_igd_plus(self, sols: Solutions) -> float:
-        """评估解集的超体积指标"""
-        return calc_igd_plus(objs=sols.objs, optimums=self.problem.optimums)
+        """评估解集的 IGD+ 指标"""
+        return calc_igd_plus(objs=np.asarray(sols.get_best().objs), optimums=self.problem.optimums)
 
     def eval_penalized_obj(self, sols: Solutions) -> float:
         """评估解集的约束惩罚后的最优目标值"""
         # 返回约束惩罚后的最优目标值（作为分数）
-        return calc_penalized_objs(sols.objs, sols.cons).flat[0]
+        return calc_penalized_objs(np.asarray(sols.objs), sols.cons).flat[0]
 
     def eval_penalized_objs(self, sols: Solutions) -> np.ndarray:
         """评估计算约束惩罚后的目标值矩阵"""
         # 返回约束惩罚后的最优目标值矩阵（作为带约束的目标值矩阵）
-        return calc_penalized_objs(sols.objs, sols.cons)
+        return calc_penalized_objs(np.asarray(sols.objs), sols.cons)
 
     def apply_operator(self, mating_indices: np.ndarray) -> Solutions:
         """
@@ -519,10 +519,10 @@ class Algorithm(object):
     def update_best_current(self):
         """根据当前规则更新最优解"""
         self.best = self.sols.get_best()
-        # 对最优解的指标进行评估
-        self.best.eval_metrics()
-        # 将当前解的指标与最优解的指标进行同步
-        self.sols.metrics = self.best.metrics.copy()
+        # 在全种群上评估指标（可能包含需要全种群数据的多样性指标）
+        self.sols.eval_metrics()
+        # 最优解的指标同步全种群的指标
+        self.best.metrics = self.sols.metrics.copy()
 
     def update_best_global(self):
         """根据全局规则更新最优解"""

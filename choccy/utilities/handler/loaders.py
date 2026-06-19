@@ -196,7 +196,7 @@ def load_tsp_matrix(file_path):
             current_section = 'node_coord'
         elif current_section == 'dist_matrix':
             parts = line.split()
-            parts_data = [float(parts[i]) for i in range(len(parts))]
+            parts_data = list(map(float, parts))
             lower_triangle_data.extend(parts_data)
         elif current_section == 'node_coord':
             parts = line.split()

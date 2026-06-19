@@ -10,11 +10,14 @@ from typing import Union, Optional
 from ...core import warn_once, PerformanceWarning
 
 
-def calc_hv(objs: np.ndarray, optimums: Optional[Union[np.ndarray, list]] = None) -> float:
+def calc_hv(objs: np.ndarray,
+            optimums: Optional[Union[np.ndarray, list]] = None,
+            extend_factor: float=1.1) -> float:
     """
     计算超体积指标(Hyper-volume)
     :param objs: 目标值
     :param optimums: 理论最优目标值或参考点
+    :param extend_factor: 参考点外推比例（默认1.1）
     :return: 超体积指标值
     """
     if objs.ndim == 1:
@@ -29,7 +32,7 @@ def calc_hv(objs: np.ndarray, optimums: Optional[Union[np.ndarray, list]] = None
     # 根据参考点向量规范化目标值
     f_min = np.min(np.vstack((np.min(objs, axis=0), np.zeros([1, objs_dim]))), axis=0)
     f_max = np.max(refer_array, axis=0)
-    objs_norm = (objs - f_min) / np.tile((f_max - f_min) * 1.1, (objs_size, 1))
+    objs_norm = (objs - f_min) / np.tile((f_max - f_min) * extend_factor, (objs_size, 1))
     objs_norm = objs_norm[np.all(objs_norm <= 1, axis=1)]
     # 参考点向量设置为全1向量
     ref_point = np.ones(objs_dim)

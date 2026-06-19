@@ -103,7 +103,7 @@ class Evaluator(object):
             self.eval_tasks[problem_name] = dict()
             # 若使用相同解集初始化则先初始化解集
             random_sols = problem.init_decs_mat(self.n_sols) \
-                if self.same_start else None and self.n_sols is not None
+                if self.same_start else None
             # 初始化所有算法
             for (algorithm_name, algorithm_template) in self.algorithms.items():
                 # 深拷贝，确保不修改算法原来的参数

@@ -128,9 +128,9 @@ def order_crossover(parents1: np.ndarray,
     offspring2 = np.zeros_like(parents2)
     # 生成所有需要的随机数
     crossover_mask = np.asarray(np.random.random(n_sols) < cross_prob)
-    starts1 = np.random.randint(0, n_vars, size=n_sols)
+    starts1 = np.random.randint(0, n_vars - 1, size=n_sols)  # 确保区间不为空
     ends1 = np.random.randint(starts1 + 1, n_vars + 1, size=n_sols)
-    starts2 = np.random.randint(0, n_vars, size=n_sols)
+    starts2 = np.random.randint(0, n_vars - 1, size=n_sols)  # 确保区间不为空
     ends2 = np.random.randint(starts2 + 1, n_vars + 1, size=n_sols)
     for i in range(n_sols):
         if crossover_mask[i]:

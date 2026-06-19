@@ -17,7 +17,7 @@ class MIP_Rastrigin(Problem):
         :param u_bounds: 决策变量上界
         """
         n_vars = n_real + n_int
-        var_types = np.concatenate([np.zeros(n_real), np.ones(n_int)])
+        var_types = np.concatenate([np.zeros(n_real) + self.REAL, np.zeros(n_int) + self.INT])
         super().__init__(var_types, n_vars, n_objs=1, l_bounds=l_bounds, u_bounds=u_bounds)
 
     def calc_objs_mat(self, xs: np.ndarray):

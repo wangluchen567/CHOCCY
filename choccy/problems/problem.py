@@ -58,8 +58,6 @@ class Problem(object):
         self._get_type_info()  # 获取当前问题存在的类型信息
         self._adjust_bounds()  # 对特定类型的边界进行调整
         self.n_samples = 1000  # 多目标问题理论最优解采样数量
-        self.optimums = self.get_optimums()  # 获取理论最优目标值(或参考点向量)
-        self.pareto_front = self.get_pareto_front()  # 获取帕累托最优前沿
         # 决策向量表示的标签集，用于固定标签问题
         self.label_set = None
         # 初始化函数映射
@@ -174,17 +172,25 @@ class Problem(object):
         # 否则默认使用有限差分法估计目标函数梯度
         # obj_grad = f(x + epsilon) - f(x) / (x * epsilon)
         xs_ = np.where(xs == 0, 1.e-12, xs)
-        # 初始化目标函数值
-        objs = self.calc_objs(xs_)
-        # 并对该结果进行变换
-        objs_trans = np.tile(objs, (self.n_objs, 1))
-        # 对决策向量进行扰动
-        xs_disturb = np.tile(xs_, (self.n_vars, 1)) * (1 + np.eye(self.n_vars) * 1.e-6)
-        # 得到扰动后的向量对应的目标值
-        objs_disturb = self.calc_objs(xs_disturb)
-        # 使用有限差分法得到目标函数的梯度
-        objs_grad = np.array(objs_disturb - objs_trans).T / xs_ / 1.e-6
-        # 返回目标函数梯度结果
+        # 得到决策变量矩阵的形状
+        n_sols, n_vars = xs_.shape
+        # 每个解重复 n_vars 次（对应 n_vars 个变量扰动）
+        xs_tiled = np.repeat(xs_, n_vars, axis=0)  # (n_sols * n_vars, n_vars)
+        # 构造扰动掩码：块对角单位阵
+        pert_mask = np.tile(np.eye(n_vars), (n_sols, 1))  # (n_sols * n_vars, n_vars)
+        # 施加扰动
+        xs_disturb = xs_tiled * (1 + pert_mask * 1e-6)
+        # 计算
+        objs_base = self.calc_objs(xs_)  # (n_sols, n_objs)
+        objs_disturb = self.calc_objs(xs_disturb)  # (n_sols * n_vars, n_objs)
+        objs_base_tiled = np.repeat(objs_base, n_vars, axis=0)  # (n_sols * n_vars, n_objs)
+        # 差分并 reshape
+        diffs = np.asarray(objs_disturb - objs_base_tiled)  # (n_sols * n_vars, n_objs)
+        diffs = diffs.reshape(n_sols, n_vars, self.n_objs)  # (n_sols, n_vars, n_objs)
+        # 逐元素相除
+        objs_grad = diffs / (xs_.reshape(n_sols, n_vars, 1) * 1e-6)
+        if self.n_objs == 1:  # 若是多目标则返回完整的多目标雅可比矩阵 (n_sols, n_vars, n_objs)
+            objs_grad = objs_grad.reshape(n_sols, n_vars)
         return objs_grad
 
     def calc_cons_grad_mat(self, xs: np.ndarray) -> np.ndarray:
@@ -199,17 +205,24 @@ class Problem(object):
         # 否则默认使用有限差分法估计约束函数梯度
         # con_grad = g(x + epsilon) - g(x) / (x * epsilon)
         xs_ = np.where(xs == 0, 1.e-12, xs)
-        # 初始化约束函数值
-        cons = self.calc_cons(xs_)
-        # 并对该结果进行变换
-        cons_trans = np.tile(cons, (self.n_cons, 1))
-        # 对决策向量进行扰动
-        xs_disturb = np.tile(xs_, (self.n_vars, 1)) * (1 + np.eye(self.n_vars) * 1.e-6)
-        # 得到扰动后的向量对应的目标值
-        cons_disturb = self.calc_cons(xs_disturb)
-        # 使用有限差分法得到约束函数的梯度
-        cons_grad = np.array(cons_disturb - cons_trans).T / xs_ / 1.e-6
-        # 返回约束函数梯度结果
+        n_sols, n_vars = xs_.shape
+        # 每个解重复 n_vars 次
+        xs_tiled = np.repeat(xs_, n_vars, axis=0)  # (n_sols * n_vars, n_vars)
+        # 块对角扰动掩码
+        pert_mask = np.tile(np.eye(n_vars), (n_sols, 1))  # (n_sols * n_vars, n_vars)
+        # 施加扰动
+        xs_disturb = xs_tiled * (1 + pert_mask * 1e-6)
+        # 计算
+        cons_base = self.calc_cons(xs_)  # (n_sols, n_cons)
+        cons_disturb = self.calc_cons(xs_disturb)  # (n_sols * n_vars, n_cons)
+        cons_base_tiled = np.repeat(cons_base, n_vars, axis=0)  # (n_sols * n_vars, n_cons)
+        # 差分并 reshape
+        diffs = np.asarray(cons_disturb - cons_base_tiled)  # (n_sols * n_vars, n_cons)
+        diffs = diffs.reshape(n_sols, n_vars, self.n_cons)  # (n_sols, n_vars, n_cons)
+        # 逐元素相除
+        cons_grad = diffs / (xs_.reshape(n_sols, n_vars, 1) * 1e-6)
+        if self.n_cons <= 1:  # 若是多约束则返回完整的多约束雅可比矩阵 (n_sols, n_vars, n_objs)
+            cons_grad = cons_grad.reshape(n_sols, n_vars)
         return cons_grad
 
     def calc_obj(self, x: np.ndarray) -> Union[np.ndarray, float]:
@@ -269,12 +282,28 @@ class Problem(object):
         xs = self.to_row(x)
         return self.calc_cons_grad_mat(xs)[0]
 
+    @property
+    def optimums(self) -> Optional[Union[float, np.ndarray]]:
+        """获取理论最优目标值(或参考点向量)（懒加载缓存）"""
+        # noinspection PyAttributeOutsideInit
+        if not hasattr(self, '_optimums_cached'):
+            self._optimums_cached = self.get_optimums()
+        return self._optimums_cached
+
+    @property
+    def pareto_front(self) -> Optional[np.ndarray]:
+        """获取帕累托最优前沿(以绘图)(懒加载缓存）"""
+        # noinspection PyAttributeOutsideInit
+        if not hasattr(self, '_pareto_front_cached'):
+            self._pareto_front_cached = self.get_pareto_front()
+        return self._pareto_front_cached
+
     def get_optimums(self) -> Optional[Union[float, np.ndarray]]:
-        """获取理论最优目标值(或参考点向量)"""
+        """获取理论最优目标值(或参考点向量)（子类可覆写）"""
         return None
 
     def get_pareto_front(self) -> Optional[np.ndarray]:
-        """获取帕累托最优前沿(以绘图)(形状必须为(n_samples*n_vars))"""
+        """获取帕累托最优前沿(以绘图)（子类可覆写）"""
         return None
 
     def init_decs_mat(self, n_sols: int, seed: Optional[int] = None) -> np.ndarray:
@@ -311,7 +340,7 @@ class Problem(object):
     @staticmethod
     def _init_binary_vars(n_sols: int, indices: np.ndarray) -> np.ndarray:
         """初始化求解二进制问题的决策向量矩阵"""
-        return np.random.randint(2, size=(n_sols, len(indices)))
+        return np.asarray(np.random.randint(2, size=(n_sols, len(indices))))
 
     @staticmethod
     def _init_permutation_vars(n_sols: int, indices: np.ndarray) -> np.ndarray:
