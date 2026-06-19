@@ -25,7 +25,7 @@ def is_dom(p_objs: np.ndarray, q_objs: np.ndarray) -> bool:
     # 条件2: 至少存在一个子目标， p 比 q 好
     condition2 = np.any(p_objs < q_objs)
     # 满足以上两个条件则说明 p 支配 q
-    return condition1 and condition2
+    return bool(condition1 and condition2)
 
 
 def _dom_matrix(objs: np.ndarray) -> np.ndarray:
@@ -110,8 +110,10 @@ def crowding_dist(objs: np.ndarray, fronts: list) -> np.ndarray:
         crowd_dist[f_sorted[0, np.arange(num_dim)]] = float('inf')
         crowd_dist[f_sorted[-1, np.arange(num_dim)]] = float('inf')
         # 计算中间个体的拥挤度增量
-        dist_increments = (objs_f[sorted_indices[2:], np.arange(num_dim)] - objs_f[
-            sorted_indices[:-2], np.arange(num_dim)]) / f_range
+        dist_increments = (
+            objs_f[sorted_indices[2:], np.arange(num_dim)] -
+            objs_f[sorted_indices[:-2], np.arange(num_dim)]
+        ) / f_range
         # 累加增量到距离
         np.add.at(crowd_dist, f_sorted[1:-1], dist_increments)
     # 返回计算得到的拥挤度距离
