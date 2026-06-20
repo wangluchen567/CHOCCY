@@ -42,7 +42,7 @@ class DE(Algorithm):
         self.cross_probs = cross_probs
         self.scale_factor = scale_factor
         # 初始化辅助决策变量（用于求解二进制问题）
-        self.aux_xs = self.sols.xs.copy()
+        self.aux_xs = None
         # 初始化问题的上下界（用于辅助决策变量）
         self.l_bounds, self.u_bounds = None, None
         # 对于二进制问题，辅助决策变量上下界设置为[-5.0, 5.0]

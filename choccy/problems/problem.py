@@ -610,7 +610,6 @@ def create_problem(
 ):
     """
     动态创建问题子类并返回实例
-
     使用示例：
     >>> def my_objective(x):
     ...     return np.sum(x**2)
@@ -623,22 +622,23 @@ def create_problem(
     ...     l_bounds=-10,
     ...     u_bounds=10
     ... )
-    :param calc_objs_mat:
-    :param calc_cons_mat:
-    :param calc_objs_grad_mat:
-    :param calc_cons_grad_mat:
-    :param calc_obj:
-    :param calc_con:
-    :param calc_obj_grad:
-    :param calc_con_grad:
-    :param var_types:
-    :param n_vars:
-    :param n_objs:
-    :param n_cons:
-    :param l_bounds:
-    :param u_bounds:
-    :param name:
-    :param kwargs:
+    注：calc_objs_mat 和 calc_obj 至少需提供其中一个
+    :param calc_objs_mat: 批量目标函数（接收决策矩阵，返回目标值矩阵）
+    :param calc_cons_mat: 批量约束函数（接收决策矩阵，返回约束值矩阵）
+    :param calc_objs_grad_mat: 批量目标梯度函数（接收决策矩阵，返回梯度矩阵）
+    :param calc_cons_grad_mat: 批量约束梯度函数（接收决策矩阵，返回梯度矩阵）
+    :param calc_obj: 单点目标函数（接收单个决策向量，返回目标值），与 calc_objs_mat 二选一
+    :param calc_con: 单点约束函数（接收单个决策向量，返回约束值），与 calc_cons_mat 二选一
+    :param calc_obj_grad: 单点目标梯度函数，与 calc_objs_grad_mat 二选一
+    :param calc_con_grad: 单点约束梯度函数，与 calc_cons_grad_mat 二选一
+    :param var_types: 决策变量类型，默认实数
+    :param n_vars: 决策变量个数
+    :param n_objs: 目标个数
+    :param n_cons: 约束个数
+    :param l_bounds: 决策变量下界
+    :param u_bounds: 决策变量上界
+    :param name: 动态生成的问题类名
+    :param kwargs: 额外属性，将作为类属性注入问题子类
     :return: 初始化后的问题对象
     """
 

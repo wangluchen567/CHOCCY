@@ -120,23 +120,6 @@ def flip_mutation(offspring: np.ndarray, mutate_prob: float) -> np.ndarray:
     return offspring
 
 
-# def fix_label_mutation(offspring: np.ndarray, mutate_prob: float) -> np.ndarray:
-#     """
-#     固定类型数的标签的交换式变异(固定类型数的标签问题)
-#     :param offspring: 需要变异的(子代)种群(决策变量矩阵)，形状: (n_sols, n_vars)
-#     :param mutate_prob: 变异概率，范围: [0, 1]
-#     :return: 变异后的子代种群，形状: (n_sols, n_vars)
-#     """
-#     n_sols, n_vars = offspring.shape
-#     mask = np.random.rand(n_sols, n_vars) < mutate_prob
-#     need_mutate = np.where(np.sum(mask, axis=1) > 0)[0]
-#     points = np.random.randint(n_vars, size=(n_sols, 2))
-#     # 进行交换
-#     offspring[need_mutate, points[need_mutate, 0]], offspring[need_mutate, points[need_mutate, 1]] \
-#         = offspring[need_mutate, points[need_mutate, 1]], offspring[need_mutate, points[need_mutate, 0]]
-#     return offspring
-
-
 def fix_label_mutation(offspring: np.ndarray, mutate_prob: float) -> np.ndarray:
     """
     固定类型数的标签的交换式变异(固定类型数的标签问题)
