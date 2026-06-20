@@ -92,7 +92,7 @@ class MOEAD(Algorithm):
 
     def get_pair_indices(self, j):
         """随机选择两个个体作为父代"""
-        return np.random.choice(self.neighbor_indices[j], size=2, replace=False)
+        return np.asarray(np.random.choice(self.neighbor_indices[j], size=2, replace=False))
 
     def survival_selection(self, offspring, j):
         """进行竞争式环境选择"""
@@ -104,7 +104,6 @@ class MOEAD(Algorithm):
         self.max_point = np.max((offspring.objs.flatten(), self.max_point), axis=0)
         # 对新解的所有邻居解进行更新
         neighbors = self.neighbor_indices[j]
-        np.random.shuffle(neighbors)  # 打乱邻居解
         # 将目标值转换为带约束处理后的目标值（无约束则会自动跳过）
         offspring_objs = calc_penalized_objs(offspring.objs,
                                              offspring.cons,

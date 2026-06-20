@@ -14,7 +14,7 @@ class Adam(Algorithm):
                  beta_2: float = 0.99,
                  visual_mode: Optional[str] = None):
         """
-        梯度下降算法
+        Adam 优化算法
 
         Code Maintainer: LuChen Wang
         :param max_iter: 迭代次数

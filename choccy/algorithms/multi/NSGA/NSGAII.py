@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MulanPSL-2.0
 
 from typing import Optional
-from ....core import record_time
 from ...algorithm import Algorithm
 from ....solutions import Solutions
 from ....utilities.commons import fast_nd_sort, crowding_dist, composite_rank
@@ -31,7 +30,6 @@ class NSGAII(Algorithm):
         """
         super().__init__(n_sols, max_iter, cross_prob, mutate_prob, visual_mode)
 
-    @record_time
     def run_step(self, i):
         """运行算法单步"""
         # 选择阶段：从当前种群中选择父代个体组成配对池

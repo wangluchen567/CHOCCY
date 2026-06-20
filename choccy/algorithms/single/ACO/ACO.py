@@ -31,10 +31,10 @@ class ACO(Algorithm):
         :param visual_mode: 可视化模式
         """
         super().__init__(n_sols, max_iter, None, None, visual_mode)
-        self.alpha = alpha  # 惯性权重
-        self.beta = beta  # 个体学习权重
-        self.rho = rho  # 社会学习权重
-        self.q_const = q_const  # 控制粒子速度的比例因子
+        self.alpha = alpha  # 信息素因子
+        self.beta = beta  # 启发函数因子
+        self.rho = rho  # 信息素挥发因子
+        self.q_const = q_const  # 信息素常量
         self.symmetric = True  # 是否是对称矩阵
         self.dist_mat = None  # 距离矩阵
         self.eta_mat = None  # 启发式信息矩阵
@@ -49,7 +49,7 @@ class ACO(Algorithm):
         # 定义需要的属性
         if hasattr(self.problem, 'dist_mat'):
             # 所有必需属性都存在
-            self.dist_mat = self.problem.dist_mat
+            self.dist_mat = np.asarray(self.problem.dist_mat)
         else:
             raise AttributeError(
                 f"Problem '{type(self.problem).__name__}' missing required 'dist_mat' attribute. "
@@ -61,7 +61,7 @@ class ACO(Algorithm):
         # 调整距离矩阵的对角线元素值
         np.fill_diagonal(self.dist_mat, 1e-6)
         # 启发式信息，一般取距离的倒数
-        self.eta_mat = 1 / self.dist_mat
+        self.eta_mat = np.asarray(1 / self.dist_mat)
         # 调整启发式信息对角线元素的值为 0
         np.fill_diagonal(self.eta_mat, 0)
         # 路径上的信息素矩阵，初始化为 1

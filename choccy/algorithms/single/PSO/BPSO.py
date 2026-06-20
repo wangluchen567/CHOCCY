@@ -10,8 +10,8 @@ from ....utilities.visualization import plot_hybrids_2d
 
 class BPSO(Algorithm):
     def __init__(self,
-                 n_sols: Optional[int] = None,
-                 max_iter: Optional[int] = None,
+                 n_sols: int = 50,
+                 max_iter: int = 200,
                  w: Union[float, tuple] = 1.0,
                  c1: float = 1.494,
                  c2: float = 1.494,
@@ -51,6 +51,9 @@ class BPSO(Algorithm):
     def init_parameters(self):
         """初始化算法参数"""
         super().init_parameters()
+        # 设置速度上下界，以方便后续用于裁剪
+        self.v_min = self.v_factor * (self.problem.l_bounds - self.problem.u_bounds)
+        self.v_max = self.v_factor * (self.problem.u_bounds - self.problem.l_bounds)
         # 初始化可变惯性权重
         if isinstance(self.w, tuple):
             if len(self.w) != 2:
@@ -70,9 +73,6 @@ class BPSO(Algorithm):
     def prepare(self):
         # 初始化粒子群位置
         self.particles = self.sols.copy()
-        # 设置速度上下界，以方便后续用于裁剪
-        self.v_min = self.v_factor * (self.problem.l_bounds - self.problem.u_bounds)
-        self.v_max = self.v_factor * (self.problem.u_bounds - self.problem.l_bounds)
         # 初始化粒子群速度为随机值
         self.velocities = np.random.uniform(self.v_min, self.v_max, size=self.sols.xs.shape)
 

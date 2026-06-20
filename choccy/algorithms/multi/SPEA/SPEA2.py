@@ -118,7 +118,7 @@ class SPEA2(Algorithm):
             # 对每一行的距离进行排序，并获取排序后的索引
             sorted_indices = np.argsort(temp, axis=1)
             # 找到距离最小的个体索引
-            min_index = sorted_indices[:, 1].min()
+            min_index = np.argmin(sorted_indices[:, 1])
             # 将该个体标记为删除
             del_flag[remain[min_index]] = True
         return del_flag

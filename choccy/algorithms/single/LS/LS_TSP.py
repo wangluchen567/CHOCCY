@@ -50,7 +50,7 @@ class LocalSearch(Algorithm):
             # 将回路滚动为从0开始
             zero_index = np.where(route == 0)[0][0]
             route = np.roll(route, -zero_index)
-        # 得到最远插入算法的解
+        # 得到局部搜索算法的解
         self.sols = Solutions(decs=np.array([route], dtype=int))
         # 设置解集的评估函数
         self.set_evaluate_funcs()

@@ -3,7 +3,7 @@
 
 """
 梯度下降算法集
-Gradient Decent
+Gradient Descent
 """
 
 from .Adam import Adam

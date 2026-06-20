@@ -1,5 +1,6 @@
 # Copyright (c) 2024 LuChen Wang
 # SPDX-License-Identifier: MulanPSL-2.0
+from typing import Optional, Union
 
 import numpy as np
 from ...problem import Problem

@@ -60,8 +60,8 @@ class SA(Algorithm):
         for j in range(len(self.sols)):
             new_sol = self.apply_perturb(self.sol)
             new_sol.evaluate()  # 评估新解
-            # 使用 metrospolis 接受准则选择是否接受解
-            if self.metrospolis(self.sol.t, new_sol.t, self.temp):
+            # 使用 metropolis 接受准则选择是否接受解
+            if self.metropolis(self.sol.t, new_sol.t, self.temp):
                 # 若接受解则替换原有解
                 self.sol = new_sol.copy()
             # 更新并记录解
@@ -82,9 +82,9 @@ class SA(Algorithm):
         return calc_penalized_objs(sols.objs, sols.cons, self.penalty_coef)
 
     @staticmethod
-    def metrospolis(old, new, temp):
+    def metropolis(old, new, temp):
         """
-        使用 metrospolis 接受准则接受解
+        使用 metropolis 接受准则接受解
         :param old: 扰动前旧的解(适应度值)
         :param new: 扰动得到的新解(适应度值)
         :param temp: 当前温度

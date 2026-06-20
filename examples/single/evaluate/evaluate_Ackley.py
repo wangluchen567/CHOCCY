@@ -11,7 +11,7 @@ n_sols, max_iter = 50, 100
 # 在算法字典集合中加入算法
 algorithms['GA'] = GA(n_sols, max_iter)
 algorithms['SA'] = SA(n_sols, max_iter)
-algorithms['PSO'] = PSO(n_sols, max_iter, c1=1.2, c2=1.8)
+algorithms['PSO'] = PSO(n_sols, max_iter, w=(0.9, 0.3), c1=2.0, c2=2.0)
 algorithms['DE/rand/1'] = DE(n_sols, max_iter, operator_type=DE.RAND_1)
 algorithms['DE/best/2'] = DE(n_sols, max_iter, operator_type=DE.BEST_2)
 # 构建问题-算法评估器

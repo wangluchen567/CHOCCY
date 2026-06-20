@@ -441,10 +441,10 @@ class Algorithm(object):
         next_size = self.n_sols if next_size is None else next_size
         if isinstance(p, int) and p >= 2:
             # 使用锦标赛选择法获取配对池
-            mating_indices = select_by_tournament(self.sols.fits, next_size, p)
+            mating_indices = select_by_tournament(np.asarray(self.sols.fits), next_size, p)
         elif isinstance(p, bool):
             # 使用轮盘选择法获取配对池
-            mating_indices = select_by_roulette(self.sols.fits, next_size, p)
+            mating_indices = select_by_roulette(np.asarray(self.sols.fits), next_size, p)
         else:
             raise AlgorithmError(f"The parameter setting error: {p}")
         return mating_indices
@@ -456,7 +456,7 @@ class Algorithm(object):
         :return: 进入下一代解集的解索引
         """
         # 默认根据适应度使用精英选择策略进行选择
-        return select_by_elitism(self.sols.fits, next_size)
+        return select_by_elitism(np.asarray(self.sols.fits), next_size)
 
     def global_selection(self, new_sols: Solutions):
         """
@@ -644,7 +644,7 @@ class Algorithm(object):
             frame = plot_history_objs(history, n_iter, **self.visual_config)
         else:  # 对于多目标问题则绘制目标值矩阵
             objs = self.sols.objs if n_iter is None else self.history_sols[n_iter].objs
-            frame = plot_objectives(objs, n_iter, **self.visual_config)
+            frame = plot_objectives(np.asarray(objs), n_iter, **self.visual_config)
         return frame
 
     def plot_hybrids_2d(self, n_iter: Optional[int] = None) -> Optional[Frame]:
@@ -770,8 +770,8 @@ class Algorithm(object):
         return value
 
     def save_sols(self,
-                  file_path: str = None,
-                  file_format: str = None,
+                  file_path: Optional[str] = None,
+                  file_format: Optional[str] = None,
                   as_object: bool = False):
         """
         保存当前解
@@ -786,8 +786,8 @@ class Algorithm(object):
         self.sols.save(file_path, file_format, as_object)
 
     def save_best(self,
-                  file_path: str = None,
-                  file_format: str = None,
+                  file_path: Optional[str] = None,
+                  file_format: Optional[str] = None,
                   as_object: bool = False,
                   weight: Optional[Union[list, np.ndarray]] = None):
         """
@@ -805,8 +805,8 @@ class Algorithm(object):
         best.save(file_path, file_format, as_object)
 
     def save_history(self,
-                     folder_path: str = None,
-                     file_format: str = None,
+                     folder_path: Optional[str] = None,
+                     file_format: Optional[str] = None,
                      as_object: bool = False,
                      best_only: bool = False):
         """
@@ -838,7 +838,7 @@ class Algorithm(object):
             else:
                 # 其他格式：直接保存文件
                 sub_path = os.path.join(
-                    folder_path, f"iter_{i:0{len(str(self.max_iter))}d}{ext_map.get(file_format, '')}"
+                    folder_path, f"iter_{i:0{len(str(self.max_iter))}d}{ext_map.get(str(file_format), '')}"
                 )
             # 保存
             sol.save(sub_path, file_format=file_format, as_object=as_object)

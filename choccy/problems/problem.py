@@ -299,11 +299,21 @@ class Problem(object):
         return self._pareto_front_cached
 
     def get_optimums(self) -> Optional[Union[float, np.ndarray]]:
-        """获取理论最优目标值(或参考点向量)（子类可覆写）"""
+        """
+        获取理论最优目标值(或参考点向量)（子类可覆写）
+
+        此方法被 optimums property 调用并缓存结果，
+        子类应覆写此方法而非直接覆写 property。
+        """
         return None
 
     def get_pareto_front(self) -> Optional[np.ndarray]:
-        """获取帕累托最优前沿(以绘图)（子类可覆写）"""
+        """
+        获取帕累托最优前沿(以绘图)（子类可覆写）
+
+        此方法被 pareto_front property 调用并缓存结果，
+        子类应覆写此方法而非直接覆写 property。
+        """
         return None
 
     def init_decs_mat(self, n_sols: int, seed: Optional[int] = None) -> np.ndarray:
