@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "choccy"
-version = "0.0.9"
+version = "0.1.0"
 description = "Chen's Heuristic Optimizer Constructed with Core numpY: \nA comprehensive library of optimization algorithms for single and multi-objective problems, built on top of NumPy & Numba for high performance."
 readme = "README.md"
 authors = [
@@ -49,7 +49,7 @@ no-tbb = []        # 排除 tbb
 # 2. 构建wheel和源码包
 # python -m build
 # 3. 安装wheel文件
-# pip install dist/choccy-0.0.9-py3-none-any.whl
+# pip install dist/choccy-0.1.0-py3-none-any.whl
 
 [project.urls]
 # 主源：Gitee作为官方开发平台
