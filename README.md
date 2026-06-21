@@ -288,14 +288,14 @@ Best Decision Variables:
 - 左图：`n_vars=2`, `visual_mode='obj'`
 - 右图：`n_vars=1`, `visual_mode='h2d'`
 
-<img src="./docs/images/obj.gif" width="288" height="220"/>
-<img src="./docs/images/h2d1.gif" width="288" height="220"/>
+<img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/obj.gif" width="288" height="220"/>
+<img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/h2d1.gif" width="288" height="220"/>
 
 - 左图：`n_vars=2`, `visual_mode='h2d'`
 - 右图：`n_vars=2`, `visual_mode='h3d'`
 
-<img src="./docs/images/h2d.gif" width="288" height="220"/>
-<img src="./docs/images/h3d.gif" width="288" height="220"/>
+<img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/h2d.gif" width="288" height="220"/>
+<img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/h3d.gif" width="288" height="220"/>
 
 📌 **`visual_mode` 参数说明**：
 
@@ -321,8 +321,8 @@ Best Decision Variables:
 | TSP（旅行商问题） | `examples/single/optimize/optimize_TSP.py`              |
 | 固定标签聚类问题   | `examples/single/optimize/optimize_FixedSizeCluster.py` |
 
-<img src="./docs/images/tsp.gif" width="288" height="230"/>
-<img src="./docs/images/cluster.gif" width="288" height="230"/>
+<img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/tsp.gif" width="288" height="230"/>
+<img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/cluster.gif" width="288" height="230"/>
 
 #### 多种算法实时对比（相同问题）
 
@@ -331,8 +331,8 @@ Best Decision Variables:
 | 实数问题（Ackley 函数） | `examples/single/compare/compare_Ackley.py` |
 | TSP 问题          | `examples/single/compare/compare_TSP.py`    |
 
-<img src="./docs/images/compare_ackley.gif" width="288" height="230"/>
-<img src="./docs/images/compare_tsp.gif" width="288" height="230"/>
+<img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/compare_ackley.gif" width="288" height="230"/>
+<img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/compare_tsp.gif" width="288" height="230"/>
 
 
 #### 多种算法结果对比（静态分析）
@@ -344,8 +344,8 @@ Best Decision Variables:
 
 **对应脚本**：`examples/single/evaluate/evaluate_Ackley.py`
 
-<img src="./docs/images/violin.png" width="288" height="230"/>
-<img src="./docs/images/kde.png" width="288" height="230"/>
+<img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/violin.png" width="288" height="230"/>
+<img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/kde.png" width="288" height="230"/>
 
 > 📌 **注**：为了更清晰地展示对比效果，以上静态图中的迭代次数已缩减为 100 次。
 
@@ -359,8 +359,8 @@ Best Decision Variables:
 | DTLZ2 | 多目标优化问题，具有凹球面形帕累托前沿  | `examples/multi/optimize/optimize_DTLZ.py` |
 
 
-<img src="./docs/images/zdt3.gif" width="288" height="230"/>
-<img src="./docs/images/dtlz2.gif" width="288" height="230"/>
+<img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/zdt3.gif" width="288" height="230"/>
+<img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/dtlz2.gif" width="288" height="230"/>
 
 #### 多种算法实时对比（多目标背包问题）
 
@@ -368,8 +368,8 @@ Best Decision Variables:
 
 **对应脚本**：`examples/multi/compare/compare_MOKP.py`
 
-<img src="./docs/images/compare_mokp.gif" width="288" height="230"/>
-<img src="./docs/images/mokp_hv.png" width="288" height="230"/>
+<img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/compare_mokp.gif" width="288" height="230"/>
+<img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/mokp_hv.png" width="288" height="230"/>
 
 > 📌 **说明**：右侧图片展示的是 HV（Hypervolume，超体积）指标对比，用于衡量多目标算法的收敛性和多样性。
 
