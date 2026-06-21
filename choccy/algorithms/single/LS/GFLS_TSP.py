@@ -66,6 +66,8 @@ class GuidedFastLocalSearch(Algorithm):
         # 初始化惩罚矩阵与惩罚参数
         self.pena_mat = np.zeros_like(self.dist_mat)
         self.pena_coef = 0.0
+        # 初始化停滞计数器
+        self.stagnation = 0
 
     def run_step(self, i):
         # 进行快速局部搜索
@@ -93,6 +95,12 @@ class GuidedFastLocalSearch(Algorithm):
             self.sols.xs[:, :] = self.route.copy()
             # 对新解进行重新评估并更新最优解信息
             self.evaluate_and_update()
+            self.stagnation = 0
+        else:
+            self.stagnation += 1
+
+    def _should_stop(self):
+        return self.stagnation >= self.max_stagnation
 
     def finalize(self, sols: Solutions, inplace: bool = False) -> Solutions:
         """对解进行输出前的最终处理"""

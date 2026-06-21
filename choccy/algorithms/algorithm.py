@@ -337,6 +337,13 @@ class Algorithm(object):
             self.record_state()
             # 绘制迭代过程中每步状态
             self.plot(n_iter=self.n_iter, static=False)
+            # 检查是否满足早停条件
+            if self._should_stop():
+                break
+
+    def _should_stop(self):
+        """检查是否满足早停条件（子类可覆写）"""
+        return False
 
     @record_time
     def _prepare(self):

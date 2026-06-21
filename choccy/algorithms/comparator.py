@@ -134,7 +134,7 @@ class Comparator(object):
         # 算法迭代并优化问题
         for self.n_iter in self.iterator():
             for algorithm in self.algorithms.values():
-                if self.n_iter < algorithm.max_iter:
+                if self.n_iter < algorithm.max_iter and not algorithm._should_stop():
                     # noinspection PyProtectedMember
                     algorithm._run_step(self.n_iter)
                 # 记录解集状态
