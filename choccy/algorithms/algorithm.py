@@ -18,7 +18,9 @@ from ..utilities.metrics import *
 from ..utilities.strategies import *
 from ..utilities.visualization import *
 from ..utilities.logging import setup_logger
+from ..utilities.commons import select_by_cosine
 from ..utilities.commons import calc_penalized_objs
+from ..utilities.commons import select_by_topsis, select_by_vikor
 from ..types import VarType, VisualMode, MetricType, VarTypeDict
 from ..core import record_time, AlgorithmError, VisualizationError
 
@@ -702,40 +704,45 @@ class Algorithm(object):
         frame = self.problem.plot_by_problem(n_iter=n_iter, best=best, **kwargs)
         return frame
 
-    def get_best(self, n_iter: Optional[int] = None, weight: Optional[Union[list, np.ndarray]] = None) -> 'Solutions':
+    def get_best(self,
+                 n_iter: Optional[int] = None,
+                 weight: Optional[Union[list, np.ndarray]] = None,
+                 method: str = 'front') -> 'Solutions':
         """
         获取最优解(集)，可选择指定迭代次数，对于多目标问题可按权重筛选最接近的解。
         :param n_iter: 第n次迭代的最优解(集)，若为None则取最后一次迭代结果
         :param weight: 多目标问题的偏好权重向量，例如 [0.3, 0.7]，长度需等于目标数
-        :return: 符合条件的最优解(集)，单目标时直接返回最优，多目标时可选择返回整个解集或者最接近权重的解
+        :param method: 多目标下选择单解的方法：
+                       'front'   - 返回整个 Pareto 前沿（默认）
+                       'cosine'  - 余弦相似度选最接近 weight 的解（需配合 weight）
+                       'topsis'  - TOPSIS 自动选最均衡的解，weight 可选
+                       'vikor'   - VIKOR 折衷选解，weight 可选
+        :return: 符合条件的最优解(集)，单目标时直接返回最优，多目标时根据 method 返回整个前沿或单个解
         """
-        if len(self.history_best):  # 先检查是否有历史最优解记录
+        if len(self.history_best):
             best = self.history_best[-1] if n_iter is None else self.history_best[n_iter]
-        else:  # 若无历史最优解则默认使用当前最优解
+        else:
             best = self.sols.get_best() if self.best is None else self.best
-        # 多目标 + 指定权重 则 从候选解中挑选最接近权重的解
-        if weight is not None and self.problem.n_objs > 1:
-            # 截取有效维度，避免权重长度超出目标数
-            weight = np.array(weight[:self.problem.n_objs], dtype=float)
-            # 处理权重全零的边界情况（全零无法计算方向相似性）
-            weight_norm = np.linalg.norm(weight)
-            if weight_norm == 0:
-                # 权重无效时退化为等权重
-                weight = np.ones(self.problem.n_objs) / self.problem.n_objs
-                weight_norm = 1.0
-            # 归一化权重向量
-            weight_unit = weight / weight_norm
-            # 提取所有候选解的目标值矩阵 (n_bests x n_objs)
-            best_objs = best.objs.copy()
-            # 归一化每个解的目标向量（L2归一化，逐行处理）
-            obj_norms = np.linalg.norm(best_objs, axis=1, keepdims=True)  # (n_bests, 1)
-            obj_norms = np.maximum(obj_norms, 1e-8)  # 避免除零，保护数值稳定性
-            objs_matrix_normed = best_objs / obj_norms  # (n_bests, n_objs)
-            # 计算余弦相似度（批量点积）
-            similarities = objs_matrix_normed @ weight_unit  # (n_bests,)
-            # 找出最相似解的索引
-            best_idx = np.argmax(similarities)
-            # 提取对应的最优解
+        # 兼容旧行为：仅传递 weight 时自动使用余弦
+        if method == 'front' and weight is not None:
+            method = 'cosine'
+        # 若是多目标且不是返回整个 Pareto 前沿
+        if self.problem.n_objs > 1 and method != 'front':
+            if method == 'topsis':
+                best_idx = select_by_topsis(best.objs.copy(), weight)
+            elif method == 'cosine':
+                # 若使用余弦相似度则必须指定权重
+                if weight is None:
+                    raise AlgorithmError(
+                        "'cosine' method requires a weight vector. "
+                        "Please provide weight=[...] with length equal to n_objs."
+                    )
+                best_idx = select_by_cosine(best.objs.copy(), weight, self.problem.n_objs)
+            elif method == 'vikor':
+                best_idx = select_by_vikor(best.objs.copy(), weight)
+            else:
+                raise AlgorithmError(f"Unknown method '{method}'. "
+                                     f"Available methods: 'front', 'cosine', 'topsis', 'vikor'")
             best = best[best_idx]
         # 对最优解进行格式化以保证正确输出
         return self.finalize(best)
