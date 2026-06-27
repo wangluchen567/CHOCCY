@@ -6,8 +6,7 @@ from typing import Optional
 from ...algorithm import Algorithm
 from ....solutions import Solutions
 from scipy.spatial import distance_matrix
-from ....utilities.commons import dom_matrix
-from ....utilities.commons.truncation import truncation
+from ....utilities.commons import dom_matrix, truncation
 
 
 class SPEA2(Algorithm):

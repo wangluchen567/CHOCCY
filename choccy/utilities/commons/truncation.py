@@ -44,7 +44,7 @@ def truncation(objs: np.ndarray, k: int) -> np.ndarray:
     # ---- 循环删除最拥挤个体 ----
     while n_del < k:
         # 在已排序的距离矩阵中，找到字典序最小的行
-        # 字典序最小 = 最近邻距离最小 → 次近邻距离最小 → ……
+        # 字典序最小 = 最近邻距离最小 -> 次近邻距离最小 -> ...
         order = _arglexmin(sorted_vals)
         r = order[0]  # 当前剩余集合中的本地索引（最拥挤个体）
 
@@ -52,7 +52,7 @@ def truncation(objs: np.ndarray, k: int) -> np.ndarray:
         del_flag[remain[r]] = True
         n_del += 1
 
-        # 还需继续删除 → 增量更新排序矩阵
+        # 还需继续删除 -> 增量更新排序矩阵
         if n_del < k:
             remain, sorted_vals, sort_idx = _remove_individual(
                 remain, sorted_vals, sort_idx, r
@@ -76,7 +76,7 @@ def _remove_individual(remain: np.ndarray,
     :param sorted_vals: 每行按升序排列的距离值矩阵
     :param sort_idx: 每行 argsort 索引矩阵
     :param r: 要删除的个体在当前集合中的本地索引
-    :return: (新的 remain, sorted_vals, sort_idx)
+    :return: 新的 (remain, sorted_vals, sort_idx)
     """
     m = sorted_vals.shape[0]
 
@@ -120,7 +120,7 @@ def _arglexmin(sorted_dists: np.ndarray) -> np.ndarray:
 
     原理：
       要找按(列0, 列1, ..., 列m-1)字典序最小的行，不需要对全行排序。
-      只需逐列递进：先找列0最小值的行 → 若多行并列则在列1中再比 → ……
+      只需逐列递进：先找列0最小值的行 -> 若多行并列则在列1中再比 -> ...
       直到只剩最后一行。
 
     :param sorted_dists: 已按升序排列的距离矩阵，形状 (m, m)
