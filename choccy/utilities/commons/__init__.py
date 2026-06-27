@@ -12,6 +12,7 @@ from .reference import generate_uniform_weights
 from .constraints import calc_penalized_objs
 from .sampling import latin_hypercube
 from .aggregation import aggregate
+from .truncation import truncation
 
 
 __all__ = [
@@ -30,5 +31,6 @@ __all__ = [
     'select_by_cosine',
     'select_by_vikor',
     'generate_uniform_weights',
-    'latin_hypercube'
+    'latin_hypercube',
+    'truncation',
 ]

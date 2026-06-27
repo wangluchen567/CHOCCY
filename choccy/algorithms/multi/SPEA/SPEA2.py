@@ -1,21 +1,13 @@
-"""
-Copyright (c) 2024 LuChen Wang
-CHOCCY is licensed under Mulan PSL v2.
-You can use this software according to the terms and conditions of the Mulan
-PSL v2.
-You may obtain a copy of Mulan PSL v2 at:
-         http://license.coscl.org.cn/MulanPSL2
-THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
-KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
-See the Mulan PSL v2 for more details.
-"""
+# Copyright (c) 2024 LuChen Wang
+# SPDX-License-Identifier: MulanPSL-2.0
+
 import numpy as np
 from typing import Optional
 from ...algorithm import Algorithm
 from ....solutions import Solutions
 from scipy.spatial import distance_matrix
 from ....utilities.commons import dom_matrix
+from ....utilities.commons.truncation import truncation
 
 
 class SPEA2(Algorithm):
@@ -86,39 +78,9 @@ class SPEA2(Algorithm):
             # 若可选数量过多则进行裁剪
             # 为了能求解约束问题这里对根据约束计算的新目标值进行计算
             objs = self.eval_penalized_objs(self.sols)
-            del_indices = self.truncation(objs[chosen], num_chosen - self.n_sols)
+            del_indices = truncation(objs[chosen], num_chosen - self.n_sols)
             chosen_indices = np.where(chosen)[0]
             chosen[chosen_indices[del_indices]] = False
         else:
             pass
         return chosen
-
-    @staticmethod
-    def truncation(objs, k):
-        """
-        截断选择(选择k个个体进行删除)
-
-        Code References:
-            PlatEMO(https://github.com/BIMK/PlatEMO)
-        :param objs: 种群的目标值向量
-        :param k: 选择删除的个体数量
-        :return: 个体是否被删除的标签向量
-        """
-        # 计算每个个体目标值之间的距离
-        dist_mat = distance_matrix(objs, objs)
-        np.fill_diagonal(dist_mat, np.inf)  # 对角线设置为inf
-        # 初始化删除标志数组
-        del_flag = np.zeros(objs.shape[0], dtype=bool)
-        # 寻找要删除的个体
-        while np.sum(del_flag) < k:
-            # 找到尚未被删除的个体索引
-            remain = np.where(~del_flag)[0]
-            # 提取剩余个体之间的距离矩阵
-            temp = dist_mat[np.ix_(remain, remain)]
-            # 对每一行的距离进行排序，并获取排序后的索引
-            sorted_indices = np.argsort(temp, axis=1)
-            # 找到距离最小的个体索引
-            min_index = np.argmin(sorted_indices[:, 1])
-            # 将该个体标记为删除
-            del_flag[remain[min_index]] = True
-        return del_flag
