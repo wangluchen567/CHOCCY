@@ -27,7 +27,7 @@ def calc_gd(objs: np.ndarray, optimums: np.ndarray) -> float:
     # 按行取最小值，得到每个点到最近最优点的距离
     distance = np.min(distance_matrix, axis=1)
     # 计算得到分数值
-    score = np.mean(distance)
+    score = np.linalg.norm(distance) / len(distance)
     return score
 
 
