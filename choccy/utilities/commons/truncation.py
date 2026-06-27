@@ -24,15 +24,13 @@ def truncation(objs: np.ndarray, k: int) -> np.ndarray:
     :param k: 需要删除的个体数量
     :return: 布尔标志向量，形状 (n,)，True 表示该个体被删除
     """
-    n_pop = objs.shape[0]
-
     # ---- 计算距离矩阵 ----
     dist_mat = distance_matrix(objs, objs)
     np.fill_diagonal(dist_mat, np.inf)  # 自身距离为 inf（避免自匹配）
 
     # ---- 初始化状态 ----
-    del_flag = np.zeros(n_pop, dtype=bool)
-    remain = np.arange(n_pop)   # 当前剩余个体的全局索引
+    del_flag = np.zeros(objs.shape[0], dtype=bool)
+    remain = np.arange(objs.shape[0])   # 当前剩余个体的全局索引
     n_del = 0
 
     # ---- 第一次循环：完整排序，建立排序状态 ----
