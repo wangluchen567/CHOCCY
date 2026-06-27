@@ -443,8 +443,8 @@ class MOP1(Problem):
 ```python
 def get_optimums(self):
     """获取理论最优目标值（帕累托前沿）"""
-    optimums = np.zeros((self.n_samples, 2))
-    optimums[:, 0] = np.linspace(0, 4, self.n_samples)
+    optimums = np.zeros((self.n_optimums, 2))
+    optimums[:, 0] = np.linspace(0, 4, self.n_optimums)
     optimums[:, 1] = (np.sqrt(optimums[:, 0]) - 2) ** 2
     return optimums
 ```
