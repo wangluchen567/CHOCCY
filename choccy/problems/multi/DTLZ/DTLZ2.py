@@ -36,10 +36,12 @@ class DTLZ2(Problem):
 
     def get_optimums(self):
         """获取理论最优目标值"""
-        optimums = generate_uniform_weights(self.n_samples, self.n_objs)
+        optimums = generate_uniform_weights(self.n_optimums, self.n_objs)
         optimums = optimums / np.sqrt(np.sum(optimums ** 2, axis=1, keepdims=True))
         return optimums
 
     def get_pareto_front(self):
         """获取帕累托最优前沿(以绘图)"""
-        return self.get_optimums()
+        optimums = generate_uniform_weights(self.n_pareto, self.n_objs)
+        optimums = optimums / np.sqrt(np.sum(optimums ** 2, axis=1, keepdims=True))
+        return optimums

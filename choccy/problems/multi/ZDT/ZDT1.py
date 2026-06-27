@@ -26,11 +26,14 @@ class ZDT1(Problem):
 
     def get_optimums(self):
         """获取理论最优目标值"""
-        optimums = np.zeros((self.n_samples, 2))
-        optimums[:, 0] = np.linspace(0, 1, self.n_samples)
+        optimums = np.zeros((self.n_optimums, 2))
+        optimums[:, 0] = np.linspace(0, 1, self.n_optimums)
         optimums[:, 1] = 1 - optimums[:, 0] ** 0.5
         return optimums
 
     def get_pareto_front(self):
         """获取帕累托最优前沿(以绘图)"""
-        return self.get_optimums()
+        optimums = np.zeros((self.n_pareto, 2))
+        optimums[:, 0] = np.linspace(0, 1, self.n_pareto)
+        optimums[:, 1] = 1 - optimums[:, 0] ** 0.5
+        return optimums
