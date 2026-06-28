@@ -7,10 +7,10 @@ from ...problem import Problem
 from ....utilities.commons import generate_uniform_weights
 
 
-class DTLZ2(Problem):
+class DTLZ3(Problem):
     def __init__(self, n_vars: Optional[int] = None, n_objs: int = 3):
         """
-        DTLZ2
+        DTLZ3
 
         References:
             Scalable test problems for evolutionary multiobjective optimization,
@@ -26,11 +26,12 @@ class DTLZ2(Problem):
 
     def calc_objs_mat(self, xs: np.ndarray):
         ms = self.n_objs
-        g = np.sum((xs[:, ms - 1:] - 0.5) ** 2, axis=1)
+        g = 100 * (self.n_vars - ms + 1 +
+                   np.sum((xs[:, ms - 1:] - 0.5) ** 2 - np.cos(20 * np.pi * (xs[:, ms - 1:] - 0.5)), axis=1))
         objs = (np.tile(1 + g, (ms, 1)).T *
-                np.fliplr(np.cumprod(np.hstack((np.ones((g.shape[0], 1), dtype=float),
+                np.fliplr(np.cumprod(np.hstack((np.ones((xs.shape[0], 1), dtype=float),
                                                 np.cos(xs[:, :ms - 1] * np.pi / 2))), axis=1)) *
-                np.hstack((np.ones((g.shape[0], 1), dtype=float),
+                np.hstack((np.ones((xs.shape[0], 1), dtype=float),
                            np.sin(xs[:, ms - 2::-1] * np.pi / 2))))
         return objs
 

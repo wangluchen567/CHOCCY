@@ -8,3 +8,6 @@
 from .ZDT1 import ZDT1
 from .ZDT2 import ZDT2
 from .ZDT3 import ZDT3
+from .ZDT4 import ZDT4
+from .ZDT5 import ZDT5
+from .ZDT6 import ZDT6
