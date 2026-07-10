@@ -87,6 +87,7 @@ class Algorithm(object):
             'fig_size': (6.4, 4.8),
             'interval': 30,
             'metric': None,
+            'optimums': None,
             'pareto_front': None,
             'save_path': None,
         }
@@ -168,7 +169,8 @@ class Algorithm(object):
             if self.supported_var_types is None else self.supported_var_types
         # 对可视化模式进行解析
         self.visual_mode = VisualMode.parse(self.visual_mode)
-        # 获取帕累托前沿数据，并更新可视化配置
+        # 获取最优解与帕累托前沿数据，并更新可视化配置
+        self.visual_config['optimums'] = self.problem.optimums
         self.visual_config['pareto_front'] = self.problem.pareto_front
         # 设置日志记录器
         self.logger = setup_logger() if self.logger is None else self.logger

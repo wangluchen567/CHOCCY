@@ -28,16 +28,16 @@ class ZDT3(Problem):
 
     def get_optimums(self):
         """获取理论最优目标值"""
-        optimums = np.zeros((self.n_optimums, 2))
-        optimums[:, 0] = np.linspace(0, 1, self.n_optimums)
+        optimums = np.zeros((self.n_samples, 2))
+        optimums[:, 0] = np.linspace(0, 1, self.n_samples)
         optimums[:, 1] = 1 - optimums[:, 0] ** 0.5 - optimums[:, 0] * np.sin(10 * np.pi * optimums[:, 0])
         fronts, ranks = fast_nd_sort(optimums)
         return optimums[fronts[0]]
 
     def get_pareto_front(self):
         """获取帕累托最优前沿(以绘图)"""
-        optimums = np.zeros((self.n_pareto, 2))
-        optimums[:, 0] = np.linspace(0, 1, self.n_pareto)
+        optimums = np.zeros((self.n_samples, 2))
+        optimums[:, 0] = np.linspace(0, 1, self.n_samples)
         optimums[:, 1] = 1 - optimums[:, 0] ** 0.5 - optimums[:, 0] * np.sin(10 * np.pi * optimums[:, 0])
         fronts, ranks = fast_nd_sort(optimums)
         optimums[ranks > 1] = np.nan

@@ -46,7 +46,3 @@ class ZDT5(Problem):
         optimums[:, 0] = np.arange(1, 32)
         optimums[:, 1] = (self.n_vars - 30) / 5 / optimums[:, 0]
         return optimums
-
-    def get_pareto_front(self):
-        """获取帕累托最优前沿(以绘图)"""
-        return self.get_optimums()

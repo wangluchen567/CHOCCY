@@ -57,8 +57,7 @@ class Problem(object):
         self.type_to_indices = None  # 每个问题类别对应的位置
         self._get_type_info()  # 获取当前问题存在的类型信息
         self._adjust_bounds()  # 对特定类型的边界进行调整
-        self.n_optimums = 10000  # 用于指标评估最优解采样数
-        self.n_pareto = 1000  # 绘图用的帕累托前沿采样数
+        self.n_samples = 10000  # 用于指标评估/Pareto前沿绘图 最优解采样数
         # 决策向量表示的标签集，用于固定标签问题
         self.label_set = None
         # 初始化函数映射
@@ -292,7 +291,7 @@ class Problem(object):
         return self._optimums_cached
 
     @property
-    def pareto_front(self) -> Optional[np.ndarray]:
+    def pareto_front(self) -> Optional[Union[list, np.ndarray]]:
         """获取帕累托最优前沿(以绘图)(懒加载缓存）"""
         # noinspection PyAttributeOutsideInit
         if not hasattr(self, '_pareto_front_cached'):
@@ -308,7 +307,7 @@ class Problem(object):
         """
         return None
 
-    def get_pareto_front(self) -> Optional[np.ndarray]:
+    def get_pareto_front(self) -> Optional[Union[list, np.ndarray]]:
         """
         获取帕累托最优前沿(以绘图)（子类可覆写）
 

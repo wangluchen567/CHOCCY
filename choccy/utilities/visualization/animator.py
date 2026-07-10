@@ -13,6 +13,7 @@ class Artist:
         'scatter': 'scatter',
         'surface': 'plot_surface',
         'trisurf': 'plot_trisurf',
+        'wireframe': 'plot_wireframe',
         'bar': 'bar',
         'contour': 'contour',
         'contourf': 'contourf',
@@ -218,6 +219,10 @@ class Frame:
     def add_surface(self, xs, ys, zs, **style):
         """添加3D曲面，返回Artist对象"""
         return self.add('surface', xs, ys, zs, **style)
+
+    def add_wireframe(self, x, y, z, **style):
+        """添加3D网格线，返回Artist对象"""
+        return self.add('wireframe', x, y, z, **style)
 
     def add_trisurf(self, x, y, z, **style):
         """添加三角曲面 (3D)，返回Artist对象"""

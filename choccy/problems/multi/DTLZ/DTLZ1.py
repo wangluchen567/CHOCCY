@@ -35,8 +35,18 @@ class DTLZ1(Problem):
 
     def get_optimums(self):
         """获取理论最优目标值"""
-        return generate_uniform_weights(self.n_optimums, self.n_objs) / 2
+        return generate_uniform_weights(self.n_samples, self.n_objs) / 2
 
     def get_pareto_front(self):
         """获取帕累托最优前沿(以绘图)"""
-        return generate_uniform_weights(self.n_pareto, self.n_objs) / 2
+        if self.n_objs == 2:
+            return self.optimums
+        elif self.n_objs == 3:
+            alpha = np.linspace(0, 1, 16).reshape(-1, 1)
+            return [
+                (alpha @ alpha.T) / 2,
+                (alpha @ (1 - alpha.T)) / 2,
+                ((1 - alpha) @ np.ones((1, 16))) / 2
+            ]
+        else:
+            return None
