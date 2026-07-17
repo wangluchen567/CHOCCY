@@ -5,11 +5,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "choccy"
-version = "0.1.0"
+version = "0.1.1"
 description = "Chen's Heuristic Optimizer Constructed with Core numpY: \nA comprehensive library of optimization algorithms for single and multi-objective problems, built on top of NumPy & Numba for high performance."
 readme = "README.md"
 authors = [
-    {name = "LuChen Wang", email = "wangluchen567@qq.com"}
+    {name = "LuChen Wang"},
+    {email = "wangluchen567@qq.com"}
 ]
 license = {text = "MulanPSL-2.0"}
 # 创建分类器，用于PyPI筛选
