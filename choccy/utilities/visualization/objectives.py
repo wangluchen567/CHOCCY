@@ -84,9 +84,13 @@ def plot_objectives(objs: np.ndarray,
             if isinstance(pareto_front, list) and len(pareto_front) >= 3:  # 使用规则矩形网格绘制
                 frame.add_wireframe(pareto_front[0], pareto_front[1], pareto_front[2],
                                     rstride=1, cstride=1, color='silver', linewidth=0.8)
-            elif isinstance(pareto_front, np.ndarray) and pareto_front.shape[1] >= 3:  # 使用三角曲面绘制（适合不规则形状）
-                frame.add_trisurf(pareto_front[:, 0], pareto_front[:, 1], pareto_front[:, 2],
-                                  edgecolor='gray', color=(1, 1, 1, 0), linewidth=0.16)
+            elif isinstance(pareto_front, np.ndarray) and pareto_front.shape[1] >= 3:  # 绘制为空间中的曲线
+                frame.add_line(pareto_front[:, 0], pareto_front[:, 1], pareto_front[:, 2],
+                               color='gray', linewidth=0.8)
+            elif isinstance(pareto_front, dict) and len(pareto_front) >= 3:  # 使用三角曲面绘制（适合不规则形状）
+                xs, ys, zs = pareto_front.get('x'), pareto_front.get('y'), pareto_front.get('z')
+                if None not in (xs, ys, zs):
+                    frame.add_trisurf(xs, ys, zs, edgecolor='gray', color=(1, 1, 1, 0), linewidth=0.16)
         elif optimums is not None:
             frame.add_scatter(optimums[:, 0], optimums[:, 1], optimums[:, 2], c="gray", s=10)
         # 设置三维图像角度(仰角方位角)
