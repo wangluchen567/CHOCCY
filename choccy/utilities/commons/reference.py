@@ -19,14 +19,20 @@ def generate_uniform_weights(n_sols: int, n_dims: int, method: str = 'nbi') -> n
     :param method: 生成方法
                    'nbi' - NBI 方法（默认），点数 ≈ C(H+M-1, M-1)
                    'mud' - MUD 方法，点数 = n_sols（精确）
+                   'grid' - 网格采样，点数 ≈ n_sols（在超立方体中均匀采样）
+                   'latin' - 拉丁超立方采样，点数 = n_sols（在超立方体中随机采样）
     :return: 参考点矩阵，形状 (N_actual, M)
     """
     if method == 'nbi':
         return uniform_weights_nbi(n_sols, n_dims)
     elif method == 'mud':
         return uniform_weights_mud(n_sols, n_dims)
+    elif method == 'grid':
+        return uniform_weights_grid(n_sols, n_dims)
+    elif method == 'latin':
+        return uniform_weights_latin(n_sols, n_dims)
     else:
-        raise ValueError(f"Unknown method '{method}'. Available: 'nbi', 'mud'")
+        raise ValueError(f"Unknown method '{method}'. Available: 'nbi', 'mud', 'grid', 'latin'")
 
 
 def uniform_weights_nbi(n_sols: int, n_dims: int) -> np.ndarray:
@@ -190,3 +196,47 @@ def _cal_cd2(ut: np.ndarray) -> float:
             1 + 0.5 * np.abs(x[i] - 0.5) + 0.5 * np.abs(x - 0.5) -
             0.5 * np.abs(x[i] - x), axis=1))
     return (13 / 12) ** s - 2 ** (1 - s) / n * cs1 + cs2 / (n ** 2)
+
+
+def uniform_weights_grid(n_sols: int, n_dims: int) -> np.ndarray:
+    """
+    使用网格采样方法在单位超立方体中生成均匀分布的点
+
+    对每个维度进行等分，然后生成所有网格点的笛卡尔积。
+    点数 ≈ n_sols（实际点数可能略有差异，以保证各维度均匀）。
+
+    Code References:
+        PlatEMO(https://github.com/BIMK/PlatEMO)
+
+    :param n_sols: 期望的点数（近似值）
+    :param n_dims: 维度 M
+    :return: 点集矩阵，形状 (N_actual, n_dims)，范围 [0, 1]
+    """
+    # 计算每个维度的等分份数
+    n_per_dim = int(np.ceil(n_sols ** (1.0 / n_dims)))
+    # 生成每个维度的采样点
+    pts = np.linspace(0, 1, n_per_dim)
+    # 生成所有网格点的笛卡尔积
+    wt = np.array(list(itertools.product(pts, repeat=n_dims)))
+    return wt
+
+
+def uniform_weights_latin(n_sols: int, n_dims: int) -> np.ndarray:
+    """
+    使用拉丁超立方采样方法在单位超立方体中生成随机分布的点
+
+    将每个维度分成 N 等份，每份中随机采样一个点，然后随机打乱组合。
+    可精确生成 N 个点，但具有随机性。
+
+    Code References:
+        PlatEMO(https://github.com/BIMK/PlatEMO)
+
+    :param n_sols: 点数（精确值）
+    :param n_dims: 维度 M
+    :return: 点集矩阵，形状 (n_sols, n_dims)，范围 [0, 1]
+    """
+    # 生成排列矩阵：每列是 1..N 的随机排列
+    wt = np.argsort(np.random.rand(n_sols, n_dims), axis=0) + 1  # +1 使范围为 1..N
+    # 在每格内随机偏移，避免所有点都在格点中心
+    wt = (np.random.rand(n_sols, n_dims) + wt - 1) / n_sols
+    return wt
