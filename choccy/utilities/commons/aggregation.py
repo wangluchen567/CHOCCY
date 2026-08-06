@@ -27,7 +27,8 @@ def aggregate(objs: np.ndarray,
     if AggregationMethod.parse(method) == AggregationMethod.PBI:
         # 基于惩罚边界的聚合方法
         norm_w = np.linalg.norm(weights, axis=1)
-        unit_w = weights / (norm_w.reshape(-1, 1) + 1e-12)  # 归一化成单位向量
+        norm_w = np.where(norm_w > 0, norm_w, 1.e-12)  # 防止除 0
+        unit_w = weights / (norm_w.reshape(-1, 1) + 1.e-12)  # 归一化成单位向量
         proj = np.sum((objs - ref_point) * weights, axis=1)
         d1 = np.abs(proj) / norm_w
         d2 = np.linalg.norm(objs - (ref_point + d1.reshape(-1, 1) * unit_w), axis=1)
