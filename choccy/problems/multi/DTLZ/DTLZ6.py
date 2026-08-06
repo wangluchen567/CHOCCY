@@ -6,10 +6,10 @@ from typing import Optional
 from ...problem import Problem
 
 
-class DTLZ5(Problem):
+class DTLZ6(Problem):
     def __init__(self, n_vars: Optional[int] = None, n_objs: int = 3):
         """
-        DTLZ5
+        DTLZ6
 
         References:
             Scalable test problems for evolutionary multiobjective optimization,
@@ -25,7 +25,7 @@ class DTLZ5(Problem):
 
     def calc_objs_mat(self, xs: np.ndarray):
         ms = self.n_objs
-        g = np.sum((xs[:, ms - 1:] - 0.5) ** 2, axis=1)
+        g = np.sum(xs[:, ms - 1:] ** 0.1, axis=1)
         if ms > 2:
             temp = np.tile(g, (ms - 2, 1)).T
             xs[:, 1:ms - 1] = (1 + 2 * temp * xs[:, 1:ms - 1]) / (2 + 2 * temp)
