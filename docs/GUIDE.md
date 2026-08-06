@@ -958,11 +958,11 @@ algorithm.save_history(folder_path='results/history', file_format='json')
 ```python
 # 绘制目标空间图像并保存
 frame = algorithm.plot('obj')
-frame.save(filename='obj.png', dpi=150)
+frame.save_to(filename='obj.png', dpi=150)
 
 # 保存为高分辨率图像
 frame = algorithm.plot('h2d')
-frame.save(filename='h2d.png', dpi=300)
+frame.save_to(filename='h2d.png', dpi=300)
 ```
 
 **参数说明：**

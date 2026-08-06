@@ -580,7 +580,7 @@ class Frame:
             plt.show()
         return fig, ax
 
-    def save(self, filename, dpi=100):
+    def save_to(self, filename, dpi=100):
         """保存帧为图片"""
         fig, _ = self.render_static(show=False)
         fig.savefig(filename, dpi=dpi)

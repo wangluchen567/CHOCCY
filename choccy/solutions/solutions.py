@@ -1041,7 +1041,7 @@ class Solutions(object):
         # 返回新解
         return new_solutions
 
-    def save(self, file_path: str, file_format: Optional[str] = None, as_object: bool = False) -> None:
+    def save_to(self, file_path: str, file_format: Optional[str] = None, as_object: bool = False) -> None:
         """
         保存Solutions到文件
         :param file_path: 文件路径

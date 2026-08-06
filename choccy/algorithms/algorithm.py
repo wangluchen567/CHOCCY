@@ -799,7 +799,7 @@ class Algorithm(object):
         if file_path is None:
             timestamp = datetime.now().strftime("%m%d%H%M%S%f")[:-3]
             file_path = os.path.abspath(f"{type(self).__name__}_sols_{timestamp}")
-        self.sols.save(file_path, file_format, as_object)
+        self.sols.save_to(file_path, file_format, as_object)
 
     def save_best(self,
                   file_path: Optional[str] = None,
@@ -818,7 +818,7 @@ class Algorithm(object):
         if file_path is None:
             timestamp = datetime.now().strftime("%m%d%H%M%S%f")[:-3]
             file_path = os.path.abspath(f"{type(self).__name__}_best_{timestamp}")
-        best.save(file_path, file_format, as_object)
+        best.save_to(file_path, file_format, as_object)
 
     def save_history(self,
                      folder_path: Optional[str] = None,
@@ -857,7 +857,7 @@ class Algorithm(object):
                     folder_path, f"iter_{i:0{len(str(self.max_iter))}d}{ext_map.get(str(file_format), '')}"
                 )
             # 保存
-            sol.save(sub_path, file_format=file_format, as_object=as_object)
+            sol.save_to(sub_path, file_format=file_format, as_object=as_object)
 
     def get_result_info(self, float_format: str = ".6e") -> str:
         """
