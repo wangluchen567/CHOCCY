@@ -8,7 +8,7 @@ A comprehensive library of optimization algorithms for single and multi-objectiv
 built on top of NumPy & Numba for high performance.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "LuChen Wang"
 __email__ = "wangluchen567@qq.com"
 __description__ = ("Chen's Heuristic Optimizer Constructed with Core numpY: \n"
