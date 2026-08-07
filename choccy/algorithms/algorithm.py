@@ -6,6 +6,7 @@
 """
 
 import os
+import logging
 import numpy as np
 from tqdm import tqdm
 from datetime import datetime
@@ -79,6 +80,7 @@ class Algorithm(object):
         self._tracking_requested = False
         # 初始化日志记录器
         self.logger = None
+        self.log_interval = 1
         # 初始化可视化模式(默认进度条显示)
         self.visual_mode = 'progress' \
             if visual_mode is None else visual_mode
@@ -583,6 +585,17 @@ class Algorithm(object):
         """获取解集的历史约束值记录"""
         return [sols.cons for sols in self.history_sols]
 
+    def set_logger(self, logger: Optional[logging.Logger] = None, log_interval : int = 1):
+        """
+        设置日志记录器
+        :param logger: 外部日志记录器实例，若为 None 则保留使用当前 logger
+        :param log_interval: 日志输出间隔步数（>= 1）
+        """
+        if isinstance(logger, logging.Logger):
+            self.logger = logger
+        if log_interval >= 1:
+            self.log_interval = log_interval
+
     def set_visual_config(self, **kwargs):
         """更新绘图配置"""
         self.visual_config.update(kwargs)
@@ -616,7 +629,10 @@ class Algorithm(object):
             pass
         elif visual_mode == VisualMode.LOG:
             # 若是日志模式则进行日志输出
-            self.logger.info(self.format_log_line())
+            if n_iter is None:
+                self.logger.info(self.format_log_line())
+            elif n_iter % self.log_interval == 0 or n_iter == self.max_iter:
+                self.logger.info(self.format_log_line())
         elif visual_mode in self.plot_funcs.keys():
             # 若是绘图模式则进行绘图可视化
             frame = self.plot_funcs[visual_mode](n_iter)
