@@ -7,7 +7,7 @@ from ...problem import Problem
 
 
 class DTLZ9(Problem):
-    def __init__(self, n_vars: Optional[int] = None, n_objs: int = 3):
+    def __init__(self, n_vars: Optional[int] = None, n_objs: int = 2):
         """
         DTLZ9
 
