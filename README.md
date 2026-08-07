@@ -68,10 +68,10 @@ pip install choccy[no-tbb]
 
 ### 2. 从 whl 文件安装
 
-从 [Releases 页面](https://gitee.com/wang567/CHOCCY/releases) 下载对应版本的 `.whl` 文件，切换到文件所在目录后执行（以 0.1.0 版本为例）：
+从 [Releases 页面](https://gitee.com/wang567/CHOCCY/releases) 下载对应版本的 `.whl` 文件，切换到文件所在目录后执行（以 0.1.1 版本为例）：
 
 ```bash
-pip install choccy-0.1.0-py3-none-any.whl
+pip install choccy-0.1.1-py3-none-any.whl
 ```
 
 ### 3. 本地源码运行（适用于开发或调试）
