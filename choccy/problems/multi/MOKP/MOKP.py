@@ -73,4 +73,4 @@ class MOKP(Problem):
     def get_optimums(self):
         """返回参考点（不是理论最优解）"""
         assert self.profits is not None
-        return np.sum(self.profits, axis=0).reshape(1, -1)
+        return np.sum(self.profits, axis=0)

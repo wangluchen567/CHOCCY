@@ -59,7 +59,7 @@ def plot_objectives(objs: np.ndarray,
         # 绘制最优前沿面
         if pareto_front is not None:
             frame.add_line(pareto_front[:, 0], pareto_front[:, 1], marker="", c="gray")
-        elif optimums is not None:
+        elif optimums is not None and isinstance(optimums, np.ndarray) and optimums.ndim == 2:
             frame.add_scatter(optimums[:, 0], optimums[:, 1], c="gray", s=6, alpha=0.6)
         frame.set_labels(xlabel='obj 1', ylabel='obj 2')
         frame.set_ticklabel_format(axis='both', style='sci')
@@ -91,7 +91,7 @@ def plot_objectives(objs: np.ndarray,
                 xs, ys, zs = pareto_front.get('x'), pareto_front.get('y'), pareto_front.get('z')
                 if xs is not None and ys is not None and zs is not None:
                     frame.add_trisurf(xs, ys, zs, edgecolor='gray', color=(1, 1, 1, 0), linewidth=0.16)
-        elif optimums is not None:
+        elif optimums is not None and isinstance(optimums, np.ndarray) and optimums.ndim == 3:
             frame.add_scatter(optimums[:, 0], optimums[:, 1], optimums[:, 2], c="gray", s=3, alpha=0.3)
         # 设置三维图像角度(仰角方位角)
         frame.set_view(elev=kwargs.get('elev', 30), azim=kwargs.get('azim', 30))
