@@ -54,3 +54,10 @@ class DTLZ9(Problem):
             np.sin(0.5 * np.pi * temp)
         ))
         return optimums
+
+    def get_pareto_front(self):
+        """获取帕累托最优前沿(以绘图)"""
+        if self.n_objs <= 3:
+            return self.optimums
+        else:
+            return None
