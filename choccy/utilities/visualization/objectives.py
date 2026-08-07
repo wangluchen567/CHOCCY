@@ -58,9 +58,9 @@ def plot_objectives(objs: np.ndarray,
         optimums = kwargs.get('optimums', None)
         # 绘制最优前沿面
         if pareto_front is not None:
-            frame.add_line(pareto_front[:, 0], pareto_front[:, 1], marker="", c="gray")
+            frame.add_line(pareto_front[:, 0], pareto_front[:, 1], marker="", c="gray", zorder=0)
         elif optimums is not None and isinstance(optimums, np.ndarray) and optimums.ndim == 2:
-            frame.add_scatter(optimums[:, 0], optimums[:, 1], c="gray", s=6, alpha=0.6)
+            frame.add_scatter(optimums[:, 0], optimums[:, 1], c="gray", s=6, alpha=0.6, zorder=0)
         frame.set_labels(xlabel='obj 1', ylabel='obj 2')
         frame.set_ticklabel_format(axis='both', style='sci')
     elif n_objs == 3:
@@ -83,16 +83,16 @@ def plot_objectives(objs: np.ndarray,
         if pareto_front is not None:
             if isinstance(pareto_front, list) and len(pareto_front) >= 3:  # 使用规则矩形网格绘制
                 frame.add_wireframe(pareto_front[0], pareto_front[1], pareto_front[2],
-                                    rstride=1, cstride=1, color='silver', linewidth=0.8)
+                                    rstride=1, cstride=1, color='silver', linewidth=0.8, zorder=0)
             elif isinstance(pareto_front, np.ndarray) and pareto_front.shape[1] >= 3:  # 绘制为空间中的曲线
                 frame.add_line(pareto_front[:, 0], pareto_front[:, 1], pareto_front[:, 2],
-                               color='gray', linewidth=0.8)
+                               color='gray', linewidth=0.8, zorder=0)
             elif isinstance(pareto_front, dict) and len(pareto_front) >= 3:  # 使用三角曲面绘制（适合不规则形状）
                 xs, ys, zs = pareto_front.get('x'), pareto_front.get('y'), pareto_front.get('z')
                 if xs is not None and ys is not None and zs is not None:
-                    frame.add_trisurf(xs, ys, zs, edgecolor='gray', color=(1, 1, 1, 0), linewidth=0.16)
-        elif optimums is not None and isinstance(optimums, np.ndarray) and optimums.ndim == 3:
-            frame.add_scatter(optimums[:, 0], optimums[:, 1], optimums[:, 2], c="gray", s=3, alpha=0.3)
+                    frame.add_trisurf(xs, ys, zs, edgecolor='gray', color=(1, 1, 1, 0), linewidth=0.16, zorder=0)
+        elif optimums is not None and isinstance(optimums, np.ndarray) and optimums.ndim == 2:
+            frame.add_scatter(optimums[:, 0], optimums[:, 1], optimums[:, 2], c="gray", s=3, alpha=0.3, zorder=0)
         # 设置三维图像角度(仰角方位角)
         frame.set_view(elev=kwargs.get('elev', 30), azim=kwargs.get('azim', 30))
         frame.set_labels(xlabel='obj 1', ylabel='obj 2', zlabel='obj 3')
