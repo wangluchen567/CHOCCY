@@ -281,8 +281,6 @@ Best Decision Variables:
 
 #### 可视化示例
 
-> 💡 **提示**：如果下方的动图无法正常显示，请点击 [此处](https://gitee.com/wang567/CHOCCY) 前往 Gitee 查看完整 README（动图可正常显示）。
-
 以下为使用向量化计算时的优化过程动图（不同参数组合）：
 
 - 左图：`n_vars=2`, `visual_mode='obj'`
