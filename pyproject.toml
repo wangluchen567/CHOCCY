@@ -50,7 +50,7 @@ no-tbb = []        # 排除 tbb
 # 2. 构建wheel和源码包
 # python -m build
 # 3. 安装wheel文件
-# pip install dist/choccy-0.1.0-py3-none-any.whl
+# pip install dist/choccy-0.1.1-py3-none-any.whl
 
 [project.urls]
 # 主源：Gitee作为官方开发平台
