@@ -6,7 +6,7 @@ from choccy.algorithms import Comparator
 problem = ZDT1()
 # 初始化算法集合
 algorithms = dict()
-n_sols, max_iter = 100, 100
+n_sols, max_iter = 100, 150
 algorithms['NSGA-II'] = NSGAII(n_sols, max_iter)
 algorithms['SPEA2'] = SPEA2(n_sols, max_iter)
 algorithms['MOEAD'] = MOEAD(n_sols, max_iter)
