@@ -6,9 +6,9 @@ from ...problem import Problem
 
 
 class MOP2(Problem):
-    def __init__(self, n_vars=3, l_bounds=-4.0, u_bounds=4.0):
+    def __init__(self, n_vars: int = 3, l_bounds: float = -4.0, u_bounds: float = 4.0):
         """
-        MOP2
+        MOP2 (Fonseca 2)
 
         References: Multi-objective evolutionary algorithm test suites,
         DA Van Veldhuizen, GB Lamont

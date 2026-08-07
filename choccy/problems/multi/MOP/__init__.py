@@ -7,3 +7,4 @@
 
 from .MOP1 import MOP1
 from .MOP2 import MOP2
+from .MOP3 import MOP3

@@ -1,18 +1,17 @@
 # Copyright (c) 2024 LuChen Wang
 # SPDX-License-Identifier: MulanPSL-2.0
-from typing import Optional, Union
-
 import numpy as np
 from ...problem import Problem
 
 
 class MOP1(Problem):
-    def __init__(self, l_bounds=-1000.0, u_bounds=1000.0):
+    def __init__(self, l_bounds: float = -1000.0, u_bounds: float = 1000.0):
         """
-        MOP1
+        MOP1 (Schaffer 1)
 
-        References: Multi-objective evolutionary algorithm test suites,
-        DA Van Veldhuizen, GB Lamont
+        References:
+            Multi-objective evolutionary algorithm test suites,
+            CAC Coello, GB Lamont, DAV Veldhuizen
         :param l_bounds: 决策变量下界
         :param u_bounds: 决策变量上界
         """
