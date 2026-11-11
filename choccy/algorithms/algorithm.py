@@ -92,6 +92,7 @@ class Algorithm(object):
             'optimums': None,
             'pareto_front': None,
             'save_path': None,
+            'save_dpi': 100,
         }
         # 初始化动画绘制器
         self.animator = Animator()
@@ -607,7 +608,8 @@ class Algorithm(object):
     def plot(self,
              visual_mode: Optional[str] = None,
              n_iter: Optional[int] = None,
-             static: bool = True) -> Optional[Frame]:
+             static: bool = True,
+             **kwargs) -> Optional[Frame]:
         """
         可视化函数，根据不同模式进行可视化绘图
         :param visual_mode: 可视化模式，若不指定则使用默认
@@ -635,32 +637,39 @@ class Algorithm(object):
                 self.logger.info(self.format_log_line())
         elif visual_mode in self.plot_funcs.keys():
             # 若是绘图模式则进行绘图可视化
-            frame = self.plot_funcs[visual_mode](n_iter)
+            frame = self.plot_funcs[visual_mode](n_iter, **kwargs)
             # 若 frame 为 None 则不绘制
             if frame is None:
                 return frame
+            # 合并全局配置与当前配置，以当前配置为高优先
+            config = {**self.visual_config, **kwargs}
             # 若是静态显示则进行静态绘制
             if static:
-                frame.render_static(self.visual_config.get('fig_size', (6.4, 4.8)))
+                frame.render_static(config.get('fig_size', (6.4, 4.8)))
             else:
                 # 检查迭代次数是否是空 或者 是否是最后一次迭代
                 animate = False if n_iter is None or n_iter == self.max_iter else True
                 self.animator.show(frame, animate)
+            # 检查是否保存图像
+            save_path = config.get('save_path', None)
+            save_dpi = config.get('save_dpi', 100)
+            if save_path is not None and frame is not None:
+                frame.save_to(save_path, dpi=save_dpi)
         else:
             raise VisualizationError(f"Unrecognized visualization mode: {visual_mode}")
         return frame
 
-    def plot_decisions(self, n_iter: Optional[int] = None) -> Optional[Frame]:
+    def plot_decisions(self, n_iter: Optional[int] = None, **kwargs) -> Optional[Frame]:
         """
         绘制决策空间实现可视化
         :param n_iter: 当前迭代次数，显示在标题中
         :return: 绘图帧实例 (失败则为None)
         """
         xs = self.sols.xs if n_iter is None else self.history_sols[n_iter].xs
-        frame = plot_decisions(xs, n_iter, **self.visual_config)
+        frame = plot_decisions(xs, n_iter, **{**self.visual_config, **kwargs})
         return frame
 
-    def plot_objectives(self, n_iter: Optional[int] = None) -> Optional[Frame]:
+    def plot_objectives(self, n_iter: Optional[int] = None, **kwargs) -> Optional[Frame]:
         """
         绘制目标空间实现可视化
         :param n_iter: 当前迭代次数，显示在标题中
@@ -668,13 +677,13 @@ class Algorithm(object):
         """
         if self.sols.n_objs == 1:  # 对于单目标问题绘制目标值矩阵历史记录情况
             history = self.history_objs if n_iter is None else self.history_objs[:n_iter + 1]
-            frame = plot_history_objs(history, n_iter, **self.visual_config)
+            frame = plot_history_objs(history, n_iter, **{**self.visual_config, **kwargs})
         else:  # 对于多目标问题则绘制目标值矩阵
             objs = self.sols.objs if n_iter is None else self.history_sols[n_iter].objs
-            frame = plot_objectives(np.asarray(objs), n_iter, **self.visual_config)
+            frame = plot_objectives(np.asarray(objs), n_iter, **{**self.visual_config, **kwargs})
         return frame
 
-    def plot_hybrids_2d(self, n_iter: Optional[int] = None) -> Optional[Frame]:
+    def plot_hybrids_2d(self, n_iter: Optional[int] = None, **kwargs) -> Optional[Frame]:
         """
         实现决策空间与目标空间混合绘制(绘制二维图像)(仅支持单目标问题)
         :param n_iter: 当前迭代次数，显示在标题中
@@ -682,10 +691,10 @@ class Algorithm(object):
         """
         xs = self.sols.xs if n_iter is None else self.history_sols[n_iter].xs
         objs = self.sols.objs if n_iter is None else self.history_sols[n_iter].objs
-        frame = plot_hybrids_2d(self.problem, xs, objs, n_iter, **self.visual_config)
+        frame = plot_hybrids_2d(self.problem, xs, objs, n_iter, **{**self.visual_config, **kwargs})
         return frame
 
-    def plot_hybrids_3d(self, n_iter: Optional[int] = None) -> Optional[Frame]:
+    def plot_hybrids_3d(self, n_iter: Optional[int] = None, **kwargs) -> Optional[Frame]:
         """
         实现决策空间与目标空间混合绘制(绘制三维图像)(仅支持单目标问题)
         :param n_iter: 当前迭代次数，显示在标题中
@@ -693,10 +702,10 @@ class Algorithm(object):
         """
         xs = self.sols.xs if n_iter is None else self.history_sols[n_iter].xs
         objs = self.sols.objs if n_iter is None else self.history_sols[n_iter].objs
-        frame = plot_hybrids_3d(self.problem, xs, objs, n_iter, **self.visual_config)
+        frame = plot_hybrids_3d(self.problem, xs, objs, n_iter, **{**self.visual_config, **kwargs})
         return frame
 
-    def plot_metrics(self, n_iter: Optional[int] = None) -> Optional[Frame]:
+    def plot_metrics(self, n_iter: Optional[int] = None, **kwargs) -> Optional[Frame]:
         """
         根据历史记录绘制性能指标收敛变化
         :param n_iter: 当前迭代次数，显示在标题中
@@ -704,7 +713,7 @@ class Algorithm(object):
         """
         history_best = self.history_best if n_iter is None else self.history_best[:n_iter + 1]
         history_metrics = {key: [best.metrics[key] for best in history_best] for key in self.best.metrics}
-        frame = plot_metrics(history_metrics, n_iter, **self.visual_config)
+        frame = plot_metrics(history_metrics, n_iter, **{**self.visual_config, **kwargs})
         return frame
 
     def plot_by_algorithm(self, n_iter: Optional[int] = None, **kwargs) -> Optional[Frame]:
@@ -726,7 +735,7 @@ class Algorithm(object):
         best = self.get_best(n_iter)
         if best is None:
             return None
-        frame = self.problem.plot_by_problem(n_iter=n_iter, best=best, **kwargs)
+        frame = self.problem.plot_by_problem(n_iter=n_iter, best=best, **{**self.visual_config, **kwargs})
         return frame
 
     def get_best(self,
