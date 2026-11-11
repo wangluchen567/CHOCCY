@@ -1,3 +1,11 @@
+# Copyright (c) 2024 LuChen Wang
+# SPDX-License-Identifier: MulanPSL-2.0
+
+"""
+可视化绘图
+"""
+
+import time
 import warnings
 import seaborn as sns
 import networkx as nx
@@ -672,6 +680,7 @@ class Animator:
         :param frame: Frame对象
         :param animate: 是否进行动画延迟
         """
+        t_start = time.perf_counter()
         if not self._realtime_mode:
             self.start_realtime()
         # 根据save_frames决定是否保存帧
@@ -697,8 +706,10 @@ class Animator:
         self._force_update()
         # 检查是否进行动画延迟
         if animate:
-            # 控制动画延迟
-            plt.pause(self.delay)
+            # 只补足剩余间隔，使帧周期尽量接近 delay
+            real_delay = self.delay - (time.perf_counter() - t_start)
+            if real_delay > 0:  # 延时补充
+                plt.pause(real_delay)
         else:
             # 若停止动画则关闭实时模式
             self.stop_realtime()

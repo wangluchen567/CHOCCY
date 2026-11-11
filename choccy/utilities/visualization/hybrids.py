@@ -43,7 +43,7 @@ def plot_hybrids_2d(problem: Problem,
     sym = kwargs.get('sym', True)
     fixed = kwargs.get('fixed', False)
     # 问题采样设置
-    n_samples = kwargs.get('n_samples', 1000)
+    n_samples = kwargs.get('n_samples', 256)
     show_samples = kwargs.get('show_samples', True)
     # 等高线配置
     fill_contour = kwargs.get('fill_contour', True)
@@ -199,7 +199,7 @@ def plot_hybrids_3d(problem: Problem,
     sym = kwargs.get('sym', True)
     fixed = kwargs.get('fixed', False)
     # 问题采样设置
-    n_samples = kwargs.get('n_samples', 1000)
+    n_samples = kwargs.get('n_samples', 64)
     show_samples = kwargs.get('show_samples', True)
     surface_color_map = kwargs.get('surface_color_map', 'viridis')
     show_color_bar = kwargs.get('show_color_bar', False)
