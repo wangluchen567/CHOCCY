@@ -281,22 +281,24 @@ Best Decision Variables:
 
 #### 可视化示例
 
+> 💡 **提示**：如果下方的动图无法正常显示，请点击 [此处](https://gitee.com/wang567/CHOCCY) 前往 Gitee，或点击 [此处](https://github.com/wangluchen567/CHOCCY) 前往 GitHub 查看完整 README（动图可正常显示）。
+
 以下为使用向量化计算时的优化过程动图（不同参数组合）：
 
 - 左图：`n_vars=2`, `visual_mode='obj'`
 - 右图：`n_vars=1`, `visual_mode='h2d'`
 
 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-    <img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/obj.gif" height="230"/>
-    <img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/h2d1.gif" height="230"/>
+    <img src="./docs/images/obj.gif" height="230"/>
+    <img src="./docs/images/h2d1.gif" height="230"/>
 </div>
 
 - 左图：`n_vars=2`, `visual_mode='h2d'`
 - 右图：`n_vars=2`, `visual_mode='h3d'`
 
 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-    <img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/h2d.gif" height="230"/>
-    <img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/h3d.gif" height="230"/>
+    <img src="./docs/images/h2d.gif" height="230"/>
+    <img src="./docs/images/h3d.gif" height="230"/>
 </div>
 
 📌 **`visual_mode` 参数说明**：
@@ -324,8 +326,8 @@ Best Decision Variables:
 | 固定标签聚类问题   | `examples/single/optimize/optimize_FixedSizeCluster.py` |
 
 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-    <img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/tsp.gif" height="230"/>
-    <img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/cluster.gif" height="230"/>
+    <img src="./docs/images/tsp.gif" height="230"/>
+    <img src="./docs/images/cluster.gif" height="230"/>
 </div>
 
 #### 多种算法实时对比（相同问题）
@@ -336,8 +338,8 @@ Best Decision Variables:
 | TSP 问题          | `examples/single/compare/compare_TSP.py`    |
 
 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-    <img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/compare_ackley.gif" height="230"/>
-    <img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/compare_tsp.gif" height="230"/>
+    <img src="./docs/images/compare_ackley.gif" height="230"/>
+    <img src="./docs/images/compare_tsp.gif" height="230"/>
 </div>
 
 #### 多种算法结果对比（静态分析）
@@ -350,8 +352,8 @@ Best Decision Variables:
 **对应脚本**：`examples/single/evaluate/evaluate_Ackley.py`
 
 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-    <img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/violin.png" height="230"/>
-    <img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/kde.png" height="230"/>
+    <img src="./docs/images/violin.png" height="230"/>
+    <img src="./docs/images/kde.png" height="230"/>
 </div>
 
 > 📌 **注**：为了更清晰地展示对比效果，以上静态图中的迭代次数已缩减为 100 次。
@@ -366,8 +368,8 @@ Best Decision Variables:
 | DTLZ2 | 多目标优化问题，具有凹球面形帕累托前沿  | `examples/multi/optimize/optimize_DTLZ.py` |
 
 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-    <img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/zdt3.gif" height="230"/>
-    <img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/dtlz2.gif" height="230"/>
+    <img src="./docs/images/zdt3.gif" height="230"/>
+    <img src="./docs/images/dtlz2.gif" height="230"/>
 </div>
 
 #### 多种算法实时对比（多目标背包问题）
@@ -377,8 +379,8 @@ Best Decision Variables:
 **对应脚本**：`examples/multi/compare/compare_MOKP.py`
 
 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-    <img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/compare_mokp.gif" height="230"/>
-    <img src="https://cdn.jsdelivr.net/gh/wangluchen567/CHOCCY@master/docs/images/mokp_hv.png" height="230"/>
+    <img src="./docs/images/compare_mokp.gif" height="230"/>
+    <img src="./docs/images/mokp_hv.png" height="230"/>
 </div>
 
 > 📌 **说明**：右侧图片展示的是 HV（Hypervolume，超体积）指标对比，用于衡量多目标算法的收敛性和多样性。
